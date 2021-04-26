@@ -1,0 +1,44 @@
+﻿@page "/personlist"
+@using DoctorAppWeb.Shared
+@using PatientsWcf
+@inject HttpClient Http
+
+<h1>Пациенты</h1>
+
+@if (persons == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Дата рождения</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PersonDto person in persons)
+            {
+                <tr>
+                    <td>@person.Lastname</td>
+                    <td>@person.Firstname</td>
+                    <td>@person.Patronymic</td>
+                    <td>@person.Birthday?.ToString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private PersonDto[] persons;
+
+    protected override async Task OnInitializedAsync()
+    {
+        persons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
+    }
+}
