@@ -1,7 +1,10 @@
 ﻿@page "/personlist"
 @using DoctorAppWeb.Shared
 @using PatientsWcf
+@using IndexedDB.Blazor;
+@using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
 
 <h1>Пациенты</h1>
 
@@ -40,5 +43,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         persons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
+
+        using (var db = await this.DbFactory.Create<ExampleDb>())
+        {
+            db.Persons.Add(new Person()
+            {
+                FirstName = "First",
+                LastName = "Last"
+            });
+            await db.SaveChanges();
+        }
     }
 }

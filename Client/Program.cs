@@ -1,3 +1,4 @@
+using IndexedDB.Blazor;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ namespace DoctorAppWeb.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("DoctorAppWeb.ServerAPI"));
-
+            builder.Services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();
