@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using DoctorAppWeb.Shared.Models
+@using DoctorAppWeb.Client.Services
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -6,9 +10,8 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="top-row">
+            <button type="button" class="btn btn-link ml-md-auto" @onclick="@LogoutClick">Logout</button>
         </div>
 
         <div class="content px-4">
@@ -16,3 +19,21 @@
         </div>
     </div>
 </div>
+    @functions{
+
+        [CascadingParameter]
+        Task<AuthenticationState> AuthenticationState { get; set; }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (!(await AuthenticationState).User.Identity.IsAuthenticated)
+            {
+                navigationManager.NavigateTo("/login");
+            }
+        }
+        async Task LogoutClick()
+        {
+            await authStateProvider.Logout();
+            navigationManager.NavigateTo("/login");
+        }
+    }

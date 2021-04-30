@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoctorAppWeb.Server", "Server\DoctorAppWeb.Server.csproj", "{71416E2F-DD88-4CA6-8641-9791D4FA3D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoctorAppWeb.Server", "Server\DoctorAppWeb.Server.csproj", "{71416E2F-DD88-4CA6-8641-9791D4FA3D84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoctorAppWeb.Client", "Client\DoctorAppWeb.Client.csproj", "{55580EBE-37DE-4F46-B6CA-D23222C945D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoctorAppWeb.Client", "Client\DoctorAppWeb.Client.csproj", "{55580EBE-37DE-4F46-B6CA-D23222C945D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoctorAppWeb.Shared", "Shared\DoctorAppWeb.Shared.csproj", "{65718D5A-A275-4236-A65B-30E3F9B9A693}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoctorAppWeb.Shared", "Shared\DoctorAppWeb.Shared.csproj", "{65718D5A-A275-4236-A65B-30E3F9B9A693}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,5 +8,6 @@ namespace DoctorAppWeb.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {
+
     }
 }
