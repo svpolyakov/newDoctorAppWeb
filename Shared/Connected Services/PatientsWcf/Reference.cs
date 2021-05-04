@@ -32,6 +32,8 @@ namespace PatientsWcf
         
         private string HowGiveDocumentField;
         
+        private System.Guid IDField;
+        
         private string LastnameField;
         
         private string PatronymicField;
@@ -126,6 +128,19 @@ namespace PatientsWcf
             set
             {
                 this.HowGiveDocumentField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid ID
+        {
+            get
+            {
+                return this.IDField;
+            }
+            set
+            {
+                this.IDField = value;
             }
         }
         
@@ -231,6 +246,9 @@ namespace PatientsWcf
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicant", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/Authorize", ReplyAction="http://tempuri.org/IInpatientDoctor/AuthorizeResponse")]
+        System.Threading.Tasks.Task<bool> AuthorizeAsync(string login, string password);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
@@ -291,6 +309,11 @@ namespace PatientsWcf
         public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)
         {
             return base.Channel.GetIndicantAsync(id);
+        }
+        
+        public System.Threading.Tasks.Task<bool> AuthorizeAsync(string login, string password)
+        {
+            return base.Channel.AuthorizeAsync(login, password);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PatientsWcf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,12 +24,16 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user == null) return BadRequest("User does not exist");
-            var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-            if (!singInResult.Succeeded) return BadRequest("Invalid password");
-            await _signInManager.SignInAsync(user, request.RememberMe);
-            return Ok();
+            //var user = await _userManager.FindByNameAsync(request.UserName);
+            //if (user == null) return BadRequest("User does not exist");
+            //var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+            //if (!singInResult.Succeeded) return BadRequest("Invalid password");
+            //await _signInManager.SignInAsync(user, request.RememberMe);
+            //return Ok();
+
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            bool result = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
+            return result ? Ok() : BadRequest();
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterRequest parameters)
