@@ -50,7 +50,10 @@ namespace DoctorAppWeb.Server
             });
             services.AddControllers().AddNewtonsoftJson();
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages(options => {
+                options.Conventions.AllowAnonymousToPage("/authrequired");
+                //options.Conventions.AllowAnonymousToPage("/counter");
+            });
             //services.AddDatabaseDeveloperPageExceptionFilter();
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDBContext>();
             //services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDBContext>();
