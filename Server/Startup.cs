@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace DoctorAppWeb.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
-            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: opt => { opt.EnableRetryOnFailure(maxRetryCount: 20, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); }));
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 10;
                 options.Password.RequireLowercase = false;
@@ -52,7 +53,7 @@ namespace DoctorAppWeb.Server
             services.AddControllersWithViews();
             services.AddRazorPages(options => {
                 options.Conventions.AllowAnonymousToPage("/authrequired");
-                //options.Conventions.AllowAnonymousToPage("/counter");
+                options.Conventions.AllowAnonymousToPage("/counter");
             });
             //services.AddDatabaseDeveloperPageExceptionFilter();
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDBContext>();

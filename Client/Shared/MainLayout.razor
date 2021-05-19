@@ -1,8 +1,12 @@
 ﻿@inherits LayoutComponentBase
 @using DoctorAppWeb.Shared.Models
 @using DoctorAppWeb.Client.Services
+@using DoctorAppWeb.Shared.Models
+@using IndexedDB.Blazor;
+@inject HttpClient Http
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
+@inject IIndexedDbFactory DbFactory
 
 <div class="page">
     <div class="sidebar">
@@ -19,21 +23,72 @@
         </div>
     </div>
 </div>
-    @functions{
+@functions{
 
         [CascadingParameter]
         Task<AuthenticationState> AuthenticationState { get; set; }
+        string UserName = null;
 
-        protected override async Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
+    {
+        try
         {
-            if (!(await AuthenticationState).User.Identity.IsAuthenticated)
+            ConnectionStatus result = null;
+            result = await Http.GetFromJsonAsync<ConnectionStatus>("Tools");
+
+
+
+            if (result == null)
             {
-                navigationManager.NavigateTo("/login");
+                throw new Exception();
             }
         }
-        async Task LogoutClick()
+        catch (Exception ex)
         {
-            await authStateProvider.Logout();
+            CustomAuthorization customAuthorization = null;
+            using (var db = await this.DbFactory.Create<MainDB>())
+            {
+                customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == UserName);
+                if(customAuthorization != null)
+                {
+                    if(customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now)
+                    {
+                        customAuthorization.ActualAuthorization = false;
+                        await db.SaveChanges();
+                    }
+                }
+            }
+
+            if (customAuthorization == null || (customAuthorization.ActualAuthorization.HasValue && !customAuthorization.ActualAuthorization.Value))
+            {
+                navigationManager.NavigateTo("/authrequired");
+            }
+            return;
+        }
+
+        if (!(await AuthenticationState).User.Identity.IsAuthenticated)
+        {
             navigationManager.NavigateTo("/login");
         }
+        else
+        {
+            UserName = (await AuthenticationState).User.Identity.Name;
+            using (var db = await this.DbFactory.Create<MainDB>())
+            {
+                db.CustomAuthorizations.Add(new CustomAuthorization
+                {
+                    Login = (await AuthenticationState).User.Identity.Name,
+                    Password = "Hash",
+                    ActualAuthorization = false,
+                    DateUpdate = DateTime.Now
+                });
+                await db.SaveChanges();
+            }
+        }
     }
+    async Task LogoutClick()
+    {
+        await authStateProvider.Logout();
+        navigationManager.NavigateTo("/login");
+    }
+}

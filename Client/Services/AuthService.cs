@@ -20,7 +20,15 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task<CurrentUser> CurrentUserInfo()
         {
-            var result = await _httpClient.GetFromJsonAsync<CurrentUser>("api/auth/currentuserinfo");
+            CurrentUser result = null;
+            try
+            {
+                result = await _httpClient.GetFromJsonAsync<CurrentUser>("api/auth/currentuserinfo");
+            }
+            catch
+            {
+                
+            }
             return result;
         }
 

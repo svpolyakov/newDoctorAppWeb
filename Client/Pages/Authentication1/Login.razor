@@ -4,57 +4,63 @@
 @layout AuthLayout
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
+    <br />
+    <br />
+    <br />
+    <h2 class="loginTitle">
+        Рабочее место врача на обходе
+    </h2>
+    <br />    
+    <div class="authForm">
+        <br />
+        
+        <br />
 
-<h1 class="h2 font-weight-normal login-title">
-    Login
-</h1>
+        <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+            <DataAnnotationsValidator />
+            <div class="loginData">
+                <label for="inputUsername" class="sr-only">User Name</label>
+                <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.UserName" autofocus placeholder="Username" />
+                <ValidationMessage For="@(() => loginRequest.UserName)" />
+                <br />
+                <label for="inputPassword" class="sr-only">Password</label>
+                <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
+                <ValidationMessage For="@(() => loginRequest.Password)" />
+                <br />
+                <div class="flexContainer">
+                    <button class="btn btn-lg btn-primary" type="submit">Войти</button> <NavLink href="counter">Забыли пароль ?</NavLink>
+                </div>
+                <label class="text-danger">@error</label>
+            </div>
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
-    <DataAnnotationsValidator />
 
-    <label for="inputUsername" class="sr-only">User Name</label>
-    <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.UserName" autofocus placeholder="Username" />
-    <ValidationMessage For="@(() => loginRequest.UserName)" />
+            <br />
+            <br />
+            <br />
+            <NavLink href="register">
+                <h6 class="font-weight-normal text-center">Create account</h6>
+            </NavLink>
 
-    <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
-    <ValidationMessage For="@(() => loginRequest.Password)" />
-
-    <div class="form-check m-3">
-        <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginRequest.RememberMe" />
-        <label class="form-check-label" for="inputRememberMe">Remember Me</label>
+        </EditForm>  
+        
     </div>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    @code{
+        LoginRequest loginRequest { get; set; } = new LoginRequest();
+        string error { get; set; }
 
-    <label class="text-danger">@error</label>
 
-    <NavLink href="register">
-        <h6 class="font-weight-normal text-center">Create account</h6>
-    </NavLink>
-    <NavLink href="authrequired">
-        <h6 class="font-weight-normal text-center">page</h6>
-    </NavLink>
-    <NavLink href="counter">
-        <h6 class="font-weight-normal text-center">pageWithAuth</h6>
-    </NavLink>
-</EditForm>
-
-@code{
-    LoginRequest loginRequest { get; set; } = new LoginRequest();
-    string error { get; set; }
-
-    async Task OnSubmit()
-    {
-        error = null;
-        try
+        async Task OnSubmit()
         {
-            await authStateProvider.Login(loginRequest);
-            navigationManager.NavigateTo("");
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
+            error = null;
+            try
+            {
+                await authStateProvider.Login(loginRequest);
+                navigationManager.NavigateTo("");
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+            }
         }
     }
-}

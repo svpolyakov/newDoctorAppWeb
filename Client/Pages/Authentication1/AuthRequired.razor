@@ -3,8 +3,11 @@
 @using DoctorAppWeb.Shared.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using IndexedDB.Blazor;
 @attribute [AllowAnonymous]
-<h3>AuthRequired</h3>
+@inject NavigationManager navigationManager
+@inject IIndexedDbFactory DbFactory
+<h2>Auth FAKE</h2>
 
 <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
     <DataAnnotationsValidator />
@@ -28,6 +31,28 @@
 
     async Task OnSubmit()
     {
+        CustomAuthorization customAuthorization = null;
+        using (var db = await this.DbFactory.Create<MainDB>())
+        {
+            customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == loginRequest.UserName);
+            if (customAuthorization != null)
+            {
+                if (customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now)
+                {
+                    customAuthorization.ActualAuthorization = false;
+                    await db.SaveChanges();
+                }
+            }
+        }
 
+        if (customAuthorization == null || (customAuthorization.ActualAuthorization.HasValue && !customAuthorization.ActualAuthorization.Value))
+        {
+            navigationManager.NavigateTo("/authrequired");
+        }
+        else
+        {
+            navigationManager.NavigateTo("");
+        }
+        return;
     }
 }

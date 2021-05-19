@@ -1,0 +1,31 @@
+﻿.authForm {
+    border: solid 2px;
+    border-color: #3CD0CE;
+    border-radius: 8px;
+    width: 28%;
+    height: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.loginTitle {
+    text-align: center;
+}
+
+button {
+    width: 40%;
+}
+
+
+.loginData {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flexContainer {
+    display: flex;
+    margin-top: 0.5em;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+}
