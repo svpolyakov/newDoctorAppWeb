@@ -32,6 +32,7 @@
     async Task OnSubmit()
     {
         CustomAuthorization customAuthorization = null;
+
         using (var db = await this.DbFactory.Create<MainDB>())
         {
             customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == loginRequest.UserName);
@@ -40,8 +41,12 @@
                 if (customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now)
                 {
                     customAuthorization.ActualAuthorization = false;
-                    await db.SaveChanges();
                 }
+                else
+                {
+                    customAuthorization.ActualAuthorization = true;
+                }
+                await db.SaveChanges();
             }
         }
 

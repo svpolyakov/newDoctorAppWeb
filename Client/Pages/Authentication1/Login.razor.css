@@ -1,4 +1,4 @@
-﻿.authForm {
+﻿/*.authForm {
     border: solid 2px;
     border-color: #3CD0CE;
     border-radius: 8px;
@@ -8,15 +8,15 @@
     margin-right: auto;
 }
 .loginTitle {
-    text-align: center;
-}
+    text-align: center;*/
+/*}*/
 
 button {
     width: 40%;
 }
 
 
-.loginData {
+/*.loginData {
     width: 70%;
     margin-left: auto;
     margin-right: auto;
@@ -28,4 +28,4 @@ button {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
-}
+}*/

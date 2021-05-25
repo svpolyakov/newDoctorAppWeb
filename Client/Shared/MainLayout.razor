@@ -25,9 +25,11 @@
 </div>
 @functions{
 
-        [CascadingParameter]
-        Task<AuthenticationState> AuthenticationState { get; set; }
-        string UserName = null;
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+
+    //[Parameter]
+    //public static string UserName { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -35,8 +37,6 @@
         {
             ConnectionStatus result = null;
             result = await Http.GetFromJsonAsync<ConnectionStatus>("Tools");
-
-
 
             if (result == null)
             {
@@ -48,10 +48,11 @@
             CustomAuthorization customAuthorization = null;
             using (var db = await this.DbFactory.Create<MainDB>())
             {
-                customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == UserName);
+                DateTime? maxDate = db.CustomAuthorizations.Max(x => x.DateUpdate);
+                customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.DateUpdate == maxDate);
                 if(customAuthorization != null)
                 {
-                    if(customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now)
+                    if(maxDate == null || (customAuthorization.DateUpdate.HasValue && maxDate?.AddDays(1) < DateTime.Now))
                     {
                         customAuthorization.ActualAuthorization = false;
                         await db.SaveChanges();
@@ -63,6 +64,10 @@
             {
                 navigationManager.NavigateTo("/authrequired");
             }
+            //else
+            //{
+            //    navigationManager.NavigateTo("");
+            //}
             return;
         }
 
@@ -72,12 +77,18 @@
         }
         else
         {
-            UserName = (await AuthenticationState).User.Identity.Name;
             using (var db = await this.DbFactory.Create<MainDB>())
             {
+                string userName = (await AuthenticationState).User.Identity.Name;
+                foreach(CustomAuthorization customAuth in db.CustomAuthorizations.Where(x => x.Login == userName))
+                {
+                    db.CustomAuthorizations.Remove(customAuth);
+                }
+                await db.SaveChanges();
+
                 db.CustomAuthorizations.Add(new CustomAuthorization
                 {
-                    Login = (await AuthenticationState).User.Identity.Name,
+                    Login = userName,
                     Password = "Hash",
                     ActualAuthorization = false,
                     DateUpdate = DateTime.Now

@@ -58,7 +58,7 @@ namespace DoctorAppWeb.Server
             //services.AddDatabaseDeveloperPageExceptionFilter();
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDBContext>();
             //services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDBContext>();
-            //services.AddAuthentication().AddIdentityServerJwt();            
+            //services.AddAuthentication().AddIdentityServerJwt();
 
         }
 
