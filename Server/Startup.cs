@@ -33,7 +33,7 @@ namespace DoctorAppWeb.Server
             services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: opt => { opt.EnableRetryOnFailure(maxRetryCount: 20, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); }));
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-                options.Password.RequiredLength = 10;
+                options.Password.RequiredLength = 5;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;

@@ -10,7 +10,7 @@ namespace DoctorAppWeb.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PersonsController : Controller
+    public class PersonsController : ControllerBase
     {
         [HttpGet]
         public IEnumerable<PersonDto> Get()

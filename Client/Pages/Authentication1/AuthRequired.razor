@@ -7,7 +7,7 @@
 @attribute [AllowAnonymous]
 @inject NavigationManager navigationManager
 @inject IIndexedDbFactory DbFactory
-<h2>Auth FAKE</h2>
+<h3>Автономный режим</h3>
 
 <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
     <DataAnnotationsValidator />
@@ -36,28 +36,19 @@
         using (var db = await this.DbFactory.Create<MainDB>())
         {
             customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == loginRequest.UserName);
-            if (customAuthorization != null)
+            if (customAuthorization == null || (customAuthorization != null && customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now))
             {
-                if (customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now)
-                {
-                    customAuthorization.ActualAuthorization = false;
-                }
-                else
-                {
-                    customAuthorization.ActualAuthorization = true;
-                }
+                navigationManager.NavigateTo("/authrequired");
+            }
+            else
+            {
+                customAuthorization.DateActual = DateTime.Now;
                 await db.SaveChanges();
+                navigationManager.NavigateTo("");
             }
         }
 
-        if (customAuthorization == null || (customAuthorization.ActualAuthorization.HasValue && !customAuthorization.ActualAuthorization.Value))
-        {
-            navigationManager.NavigateTo("/authrequired");
-        }
-        else
-        {
-            navigationManager.NavigateTo("");
-        }
+
         return;
     }
 }

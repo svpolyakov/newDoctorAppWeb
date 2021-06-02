@@ -1,0 +1,59 @@
+﻿@page "/selectactions"
+@using DoctorAppWeb.Shared
+@using IndexedDB.Blazor;
+@using DoctorAppWeb.Shared.Models;
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+<h3>Рабочее место врача на обходе</h3>
+<div id="lastUpdate">
+    <h4>Последнее обновление: @info.DateGetData</h4><br />
+</div>
+<div id="lastUpload">
+    <h4>Последняя выгрузка: @info.DateSetData</h4><br />
+</div>
+<div>
+    <div><button @onclick="GetData">Забрать</button></div><div><button>Изменить отбор</button></div>
+</div>
+<div>
+    <button @onclick="UploadData">Выгрузить</button>
+</div>
+<div>
+    <button @onclick="Continue">Продолжить работу</button>
+</div>
+<div id="resultLoad">
+
+</div>
+@code {
+    Info info { get; set; } = new Info();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var db = await this.DbFactory.Create<MainDB>())
+        {
+            db.InfoData.Add(new Info { DateGetData = DateTime.Now, DateSetData = DateTime.Now });
+            info = db.InfoData.FirstOrDefault();
+            db.CustomPerson.Add(new CustomPerson()
+            {
+                CustomGridPerson = new List<CustomGridPerson>() { new CustomGridPerson { NameColumnEn = "dsfdsdfs1", NameColumnRu = "fdffdsfsfds1"} },
+                CustomGroupPersons = new List<CustomGroupPersons> { new CustomGroupPersons() { NameButtonEn = "dsfdsfdsfds1", NameButtonRu = "dffdsfdccxzcz1" } },
+                DateUpdate = DateTime.Now
+            });
+            await db.SaveChanges();
+        }
+    }
+
+    public async Task GetData()
+    {
+
+    }
+
+    public Task UploadData()
+    {
+        return null;
+    }
+
+    public Task Continue()
+    {
+        return null;
+    }
+}
