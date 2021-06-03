@@ -4,6 +4,7 @@
 @using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
+@inject IModalService modal
 <h3>Рабочее место врача на обходе</h3>
 <div id="lastUpdate">
     <h4>Последнее обновление: @info.DateGetData</h4><br />
@@ -12,7 +13,7 @@
     <h4>Последняя выгрузка: @info.DateSetData</h4><br />
 </div>
 <div>
-    <div><button @onclick="GetData">Забрать</button></div><div><button>Изменить отбор</button></div>
+    <div><button @onclick="GetData">Забрать</button></div><div><button @onclick="@(()=>modal.Show<SelectedType>("Modal Example"))" class="btn btn-primary">Изменить отбор</button></div>
 </div>
 <div>
     <button @onclick="UploadData">Выгрузить</button>

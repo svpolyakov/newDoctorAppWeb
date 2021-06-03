@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using DoctorAppWeb.Client.Services;
 using IndexedDB.Blazor;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -28,6 +29,9 @@ namespace DoctorAppWeb.Client
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
+            builder.Services.AddBlazoredModal();
+
+
             //builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();

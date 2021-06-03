@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using DoctorAppWeb.Server.Data;
 using DoctorAppWeb.Server.Models;
 using IndexedDB.Blazor;
@@ -59,7 +60,7 @@ namespace DoctorAppWeb.Server
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDBContext>();
             //services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDBContext>();
             //services.AddAuthentication().AddIdentityServerJwt();
-
+            services.AddBlazoredModal();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
