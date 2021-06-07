@@ -53,14 +53,14 @@
         <span class="text-nowrap" style="justify-self: flex-end; margin-left: auto;">Последняя выгрузка: @info.DateSetData</span>
     </div>
     <div class="select-actions-container select-actions-middle-container">
-        <div style="flex: 1;"></div>
-        <div style="flex: 3;"
+        <div style="flex: 2;"></div>
+        <div style="flex: 5;"
              class="select-actions-container select-actions-middle-container select-actions-middle-center-container">
             <button @onclick="GetData" class="btn btn-info">Забрать "Мои пациенты"</button>
             <button class="btn btn-info" @onclick="UploadData">Выгрузить</button>
             <button class="btn btn-info" @onclick="UploadData">Продолжить работу</button>
         </div>
-        <div style="flex: 1;"
+        <div style="flex: 2;"
              class="select-actions-container select-actions-middle-container select-actions-middle-right-container">
             <button @onclick="@(()=>modal.Show<SelectedType>("Изменить отбор"))"
                     class="btn btn-info w-100">

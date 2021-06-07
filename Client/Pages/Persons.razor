@@ -5,41 +5,139 @@
 @using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
-
-<h1>Пациенты</h1>
-
+<h1>Мои пациенты</h1>
 @if (persons == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Загрузка...</em></p>
 }
 else
-{
-    <table class="table">
+{    
+    <style>
+        .persons-top-container
+        {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .persons-bottom-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    </style>
+    <div class="persons-top-container alert alert-secondary">
+        <span class="btn">Всего пациентов @persons.Count()</span>
+        <span style="justify-self: flex-end; margin-left: auto;">
+            <button class="btn btn-info" type="button" @onclick="OnFilterButtonClicked">Изменить отбор</button>
+        </span>        
+    </div>
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Фамилия</th>
-                <th>Имя</th>
-                <th>Отчество</th>
-                <th>Дата рождения</th>
+                <th scope="col">
+                    <input type="search" 
+                           class="form-control ds-input" 
+                           id="search-input" 
+                           placeholder="Поиск..." aria-label="Поиск для..." 
+                           autocomplete="off" spellcheck="false" 
+                           role="combobox" aria-autocomplete="list" 
+                           aria-expanded="false" 
+                           aria-owns="algolia-autocomplete-listbox-2" dir="auto" 
+                           style="position: relative; vertical-align: top;"
+                           @onchange="@OnSearchQueryChangedAsync">
+                </th>
+                <th scope="col">
+                    <span class="btn">Возраст</span>
+                </th>
+                <th scope="col">
+                    <span class="btn">Отделение</span>
+                </th>                
             </tr>
         </thead>
         <tbody>
-            @foreach (PersonDto person in persons)
+            @foreach (PersonDto person in persons.Take(10))
             {
                 <tr>
-                    <td>@person.Lastname</td>
-                    <td>@person.Firstname</td>
-                    <td>@person.Patronymic</td>
-                    <td>@person.Birthday?.ToString()</td>
+                    <th scope="row">@person.Lastname @person.Firstname @person.Patronymic</th>
+                    <td>30</td>
+                    <td>Терапевтическое</td>
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">
+                    <div class="persons-bottom-container">
+                        <span style="justify-self: flex-end; margin-left: auto;" class="btn">
+                            Показано 1-10 из @persons.Count()
+                        </span>
+                        <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
+                        <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
+                    </div>
+                </th>
+            </tr>
+        </tfoot>
     </table>
+
+
+
+
+
+
+ 
+
 }
 
 @code {
+
+    /// <summary>
+    /// Пациенты, отображаемые на странице
+    /// </summary>
     private PersonDto[] persons;
 
+    /// <summary>
+    /// Номер страницы
+    /// </summary>
+    private int PageNumber = 1;
+
+    /// <summary>
+    /// Выполняется по событию изменения текста в поле поиска
+    /// </summary>
+    /// <returns></returns>
+    protected async Task OnSearchQueryChangedAsync()
+    {
+
+    }
+
+    /// <summary>
+    /// Выполняется по событию нажатия кнопки "Изменить отбор"
+    /// </summary>
+    /// <returns></returns>
+    protected async Task OnFilterButtonClicked()
+    {
+
+    }
+
+    /// <summary>
+    /// Выполняется по событию нажатия кнопки перехода на предыдущую страницу
+    /// </summary>
+    /// <returns></returns>
+    protected async Task OnPrevPageClicked()
+    {
+    }
+
+    /// <summary>
+    /// Выполняется по событию нажатия кнопки перехода на следующую страницу
+    /// </summary>
+    /// <returns></returns>
+    protected async Task OnNextPageClicked()
+    {
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
         persons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
