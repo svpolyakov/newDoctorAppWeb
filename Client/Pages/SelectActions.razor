@@ -13,7 +13,11 @@
     <h4>Последняя выгрузка: @info.DateSetData</h4><br />
 </div>
 <div>
-    <div><button @onclick="GetData">Забрать</button></div><div><button @onclick="@(()=>modal.Show<SelectedType>("Modal Example"))" class="btn btn-primary">Изменить отбор</button></div>
+    <div><button @onclick="GetData">Забрать</button></div>
+    <div>
+        <button @onclick="@(()=>modal.Show<SelectedType>("Изменить отбор"))" 
+                 class="btn btn-primary">Изменить отбор</button>
+    </div>
 </div>
 <div>
     <button @onclick="UploadData">Выгрузить</button>
