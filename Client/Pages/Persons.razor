@@ -1,12 +1,13 @@
 ﻿@page "/personlist"
 @using DoctorAppWeb.Shared
 @using PatientsWcf
+@using System.Linq; 
 @using IndexedDB.Blazor;
 @using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 <h1>Мои пациенты</h1>
-@if (persons == null)
+@if (PersonsOnPage == null)
 {
     <p><em>Загрузка...</em></p>
 }
@@ -26,11 +27,12 @@ else
         }
     </style>
     <div class="persons-top-container alert alert-secondary">
-        <span class="btn">Всего пациентов @persons.Count()</span>
+        <span class="btn">Всего пациентов @AllPersons.Count()</span>
         <span style="justify-self: flex-end; margin-left: auto;">
             <button class="btn btn-info" type="button" @onclick="OnFilterButtonClicked">Изменить отбор</button>
         </span>        
     </div>
+    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -41,10 +43,20 @@ else
                            placeholder="Поиск..." aria-label="Поиск для..." 
                            autocomplete="off" spellcheck="false" 
                            role="combobox" aria-autocomplete="list" 
-                           aria-expanded="false" 
+                           aria-expanded="false"
+                           list="search-persons-datalist"
                            aria-owns="algolia-autocomplete-listbox-2" dir="auto" 
                            style="position: relative; vertical-align: top;"
-                           @onchange="@OnSearchQueryChangedAsync">
+                           @oninput="@OnInputSearchAsync"
+                           @onchange="@OnSearchAsync">
+                    <datalist id="search-persons-datalist">
+                         
+                        @foreach (var person in AllPersons)
+                        {
+                            <option value="@person.Lastname @person.Firstname @person.Patronymic">@person.Lastname @person.Firstname @person.Patronymic</option>
+                        }
+                         
+                    </datalist>
                 </th>
                 <th scope="col">
                     <span class="btn">Возраст</span>
@@ -55,7 +67,8 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (PersonDto person in persons.Take(10))
+
+            @foreach (PersonDto person in PersonsOnPage)
             {
                 <tr>
                     <th scope="row">@person.Lastname @person.Firstname @person.Patronymic</th>
@@ -69,31 +82,37 @@ else
                 <th colspan="3">
                     <div class="persons-bottom-container">
                         <span style="justify-self: flex-end; margin-left: auto;" class="btn">
-                            Показано 1-10 из @persons.Count()
+                            Показано @((PageNumber-1)*PageSize+1) - @((PageNumber-1)*PageSize+ PersonsOnPage.Count()) из @AllPersons.Count()
                         </span>
-                        <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
-                        <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
+                        @if (PageNumber > 1)
+                        {
+                            <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
+                        }
+                        @if (PageNumber < PagesCount)
+                        {
+                            <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
+                        }
+
                     </div>
                 </th>
             </tr>
         </tfoot>
     </table>
 
-
-
-
-
-
  
-
 }
 
 @code {
 
     /// <summary>
+    /// Все пациенты
+    /// </summary>
+    private PersonDto[] AllPersons;
+
+    /// <summary>
     /// Пациенты, отображаемые на странице
     /// </summary>
-    private PersonDto[] persons;
+    private PersonDto[] PersonsOnPage;
 
     /// <summary>
     /// Номер страницы
@@ -101,13 +120,48 @@ else
     private int PageNumber = 1;
 
     /// <summary>
+    /// Кол-во записей на странице
+    /// </summary>
+    private int PageSize = 10;
+
+    /// <summary>
+    /// Кол-во страниц
+    /// </summary>
+    private int PagesCount;
+
+    /// <summary>
+    /// Значение в поисковой строке
+    /// </summary>
+    private string InputSearchValue = "";
+
+    /// <summary>
+    /// Поисковое выражение
+    /// </summary>
+    private string SearchQuery = "";
+
+    /// <summary>
+    /// Выполняется по событию ввода текста в поле поиска
+    /// </summary>
+    /// <returns></returns>
+    protected async Task OnInputSearchAsync( ChangeEventArgs evt )
+    {
+        InputSearchValue = evt.Value.ToString();
+    }
+
+    /// <summary>
     /// Выполняется по событию изменения текста в поле поиска
     /// </summary>
     /// <returns></returns>
-    protected async Task OnSearchQueryChangedAsync()
+    protected async Task OnSearchAsync(ChangeEventArgs evt)
     {
-
+        SearchQuery = evt.Value.ToString();
+        PageNumber = 1;
+        int PersonsCount = AllPersons.Where(p=>(p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
+        PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+        UpdatePagePersons();
     }
+
+
 
     /// <summary>
     /// Выполняется по событию нажатия кнопки "Изменить отбор"
@@ -124,6 +178,8 @@ else
     /// <returns></returns>
     protected async Task OnPrevPageClicked()
     {
+        this.PageNumber--;
+        this.UpdatePagePersons();
     }
 
     /// <summary>
@@ -132,24 +188,33 @@ else
     /// <returns></returns>
     protected async Task OnNextPageClicked()
     {
+        this.PageNumber++;
+        this.UpdatePagePersons();
     }
 
+
     /// <summary>
-    /// 
+    /// Обновление отображаемых записей
     /// </summary>
-    /// <returns></returns>
+    protected void UpdatePagePersons()
+    {
+        if( string.IsNullOrEmpty(SearchQuery))
+        {
+            PersonsOnPage = AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+        }
+        else
+        {
+            PersonsOnPage = AllPersons.Where(p => (p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+        }
+
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
-        persons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
-
-        using (var db = await this.DbFactory.Create<ExampleDb>())
-        {
-            db.Persons.Add(new Person()
-            {
-                FirstName = "First",
-                LastName = "Last"
-            });
-            await db.SaveChanges();
-        }
+        AllPersons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
+        int PersonsCount = AllPersons.Count();
+        PagesCount = PersonsCount % PageSize > 0? (int)(1+Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+        UpdatePagePersons();
     }
 }
