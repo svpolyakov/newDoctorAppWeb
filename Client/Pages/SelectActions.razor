@@ -13,7 +13,7 @@
     <h4>Последняя выгрузка: @info.DateSetData</h4><br />
 </div>
 <div>
-    <div><button @onclick="GetData">Забрать</button></div><div><button @onclick="@(()=>modal.Show<SelectedType>("Modal Example"))" class="btn btn-primary">Изменить отбор</button></div>
+    <div><button @onclick="GetData">Забрать</button></div><div><button @onclick="@(()=>modal.Show<SelectedType>("Изменить отбор"))" class="btn btn-primary">Изменить отбор</button></div>
 </div>
 <div>
     <button @onclick="UploadData">Выгрузить</button>
@@ -31,6 +31,7 @@
     {
         using (var db = await this.DbFactory.Create<MainDB>())
         {
+
             db.InfoData.Add(new Info { DateGetData = DateTime.Now, DateSetData = DateTime.Now });
             info = db.InfoData.FirstOrDefault();
             db.CustomPerson.Add(new CustomPerson()
@@ -46,6 +47,14 @@
     public async Task GetData()
     {
 
+        try
+        {
+            await Http.GetFromJsonAsync<ConnectionStatus>("Tools");
+        }
+        catch
+        {
+            modal.Show<NoConnect>();
+        }
     }
 
     public Task UploadData()
