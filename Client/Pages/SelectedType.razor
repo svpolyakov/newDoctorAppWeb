@@ -1,10 +1,18 @@
 ﻿@page "/selectedtype"
 
-<div><button>Мои пациенты</button></div>
-<div><button>Поступившие</button></div>
-<div><button>Замена врача</button></div>
-<div><button>По отделениям</button></div>
-<div><button>Все пациенты</button></div>
+<style>
+    .select-type-container > div
+    {
+        margin: 10px 10px;
+    }
+</style>
+<div class="select-type-container">
+    <div><button class="btn btn-info" style="width: 100%;">Мои пациенты</button></div>
+    <div><button class="btn btn-info" style="width: 100%;">Поступившие</button></div>
+    <div><button class="btn btn-info" style="width: 100%;">Замена врача</button></div>
+    <div><button class="btn btn-info" style="width: 100%;">По отделениям</button></div>
+    <div><button class="btn btn-info" style="width: 100%;">Все пациенты</button></div>
+</div>
 
 @code {
 

@@ -16,6 +16,7 @@ namespace DoctorAppWeb.Server.Controllers
         public IEnumerable<PersonDto> Get()
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            
             return inpatientDoctorClient.GetPersonsAsync().Result.ToArray();
         }
     }

@@ -19,7 +19,7 @@ namespace DoctorAppWeb.Server.Controllers
         public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
+            _signInManager = signInManager;            
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)

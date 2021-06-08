@@ -13,6 +13,7 @@ namespace DoctorAppWeb.Client.Services
     {
         private readonly IAuthService api;
         private CurrentUser _currentUser;
+
         public CustomStateProvider(IAuthService api)
         {
             this.api = api;
