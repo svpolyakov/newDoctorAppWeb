@@ -6,7 +6,7 @@
   },
   "ExtendedData": {
     "inputs": [
-      "http://192.168.0.120/Govno/?wsdl"
+      "http://192.168.0.120/Doctest/?wsdl"
     ],
     "collectionTypes": [
       "System.Collections.Generic.Dictionary`2",

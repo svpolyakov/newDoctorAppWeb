@@ -344,7 +344,7 @@ namespace PatientsWcf
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IInpatientDoctor))
             {
-                return new System.ServiceModel.EndpointAddress("http://192.168.0.120/Govno/");
+                return new System.ServiceModel.EndpointAddress("http://192.168.0.120/Doctest/");
             }
             throw new System.InvalidOperationException(string.Format("Не удалось найти конечную точку с именем \"{0}\".", endpointConfiguration));
         }
