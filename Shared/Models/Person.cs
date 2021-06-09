@@ -16,11 +16,5 @@ namespace DoctorAppWeb.Shared.Models
         public string LastName { get; set; }
     }
 
-
-    public class ExampleDb : IndexedDb
-    {
-        public ExampleDb(IJSRuntime jSRuntime, string name, int version) : base(jSRuntime, name, version) { }
-
-        public IndexedSet<Person> Persons { get; set; }
-    }
+     
 }

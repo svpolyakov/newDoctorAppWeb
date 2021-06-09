@@ -1,7 +1,7 @@
 ﻿@page "/personlist"
 @using DoctorAppWeb.Shared
 @using PatientsWcf
-@using System.Linq; 
+@using System.Linq;
 @using IndexedDB.Blazor;
 @using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
@@ -12,14 +12,14 @@
     <p><em>Загрузка...</em></p>
 }
 else
-{    
+{
     <style>
-        .persons-top-container
-        {
+        .persons-top-container {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
         }
+
         .persons-bottom-container {
             display: flex;
             flex-direction: row;
@@ -30,28 +30,30 @@ else
         <span class="btn">Всего пациентов @PersonsCount</span>
         <span style="justify-self: flex-end; margin-left: auto;">
             <button class="btn btn-info" type="button" @onclick="OnFilterButtonClicked">Изменить отбор</button>
-        </span>        
+        </span>
     </div>
+
     
-    
+
+
     <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">
-                    <input type="search" 
-                           class="form-control ds-input" 
-                           id="search-input" 
+                    <input type="search"
+                           class="form-control ds-input"
+                           id="search-input"
                            placeholder="Поиск..."
                            style="position: relative; vertical-align: top;"
                            @oninput="@OnInputSearchAsync"
                            @onchange="@OnSearchAsync">
                     <datalist id="search-persons-datalist">
-                         
+
                         @foreach (var person in AllPersons)
                         {
                             <option value="@person.Lastname @person.Firstname @person.Patronymic">@person.Lastname @person.Firstname @person.Patronymic</option>
                         }
-                         
+
                     </datalist>
                 </th>
                 <th scope="col">
@@ -59,7 +61,7 @@ else
                 </th>
                 <th scope="col">
                     <span class="btn">Отделение</span>
-                </th>                
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -107,7 +109,7 @@ else
         </tfoot>
     </table>
 
- 
+
 }
 
 @code {
@@ -156,7 +158,7 @@ else
     /// Выполняется по событию ввода текста в поле поиска
     /// </summary>
     /// <returns></returns>
-    protected async Task OnInputSearchAsync( ChangeEventArgs evt )
+    protected void OnInputSearchAsync(ChangeEventArgs evt)
     {
         InputSearchValue = evt.Value.ToString();
     }
@@ -165,11 +167,11 @@ else
     /// Выполняется по событию изменения текста в поле поиска
     /// </summary>
     /// <returns></returns>
-    protected async Task OnSearchAsync(ChangeEventArgs evt)
+    protected void OnSearchAsync(ChangeEventArgs evt)
     {
         SearchQuery = evt.Value.ToString();
         PageNumber = 1;
-        PersonsCount = AllPersons.Where(p=>(p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
+        PersonsCount = AllPersons.Where(p => (p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }
@@ -180,7 +182,7 @@ else
     /// Выполняется по событию нажатия кнопки "Изменить отбор"
     /// </summary>
     /// <returns></returns>
-    protected async Task OnFilterButtonClicked()
+    protected void OnFilterButtonClicked()
     {
 
     }
@@ -189,7 +191,7 @@ else
     /// Выполняется по событию нажатия кнопки перехода на предыдущую страницу
     /// </summary>
     /// <returns></returns>
-    protected async Task OnPrevPageClicked()
+    protected void OnPrevPageClicked()
     {
         this.PageNumber--;
         this.UpdatePagePersons();
@@ -199,7 +201,7 @@ else
     /// Выполняется по событию нажатия кнопки перехода на следующую страницу
     /// </summary>
     /// <returns></returns>
-    protected async Task OnNextPageClicked()
+    protected void OnNextPageClicked()
     {
         this.PageNumber++;
         this.UpdatePagePersons();
@@ -211,7 +213,7 @@ else
     /// </summary>
     protected void UpdatePagePersons()
     {
-        if( string.IsNullOrEmpty(SearchQuery))
+        if (string.IsNullOrEmpty(SearchQuery))
         {
             PersonsOnPage = AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
@@ -223,11 +225,15 @@ else
     }
 
 
+
+    
+
+
     protected override async Task OnInitializedAsync()
     {
         AllPersons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
         PersonsCount = AllPersons.Count();
-        PagesCount = PersonsCount % PageSize > 0? (int)(1+Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+        PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }
 }

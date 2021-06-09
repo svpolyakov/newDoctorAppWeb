@@ -44,7 +44,6 @@
         margin: 10px;  
         height: 50px;
     }
-
 </style>
 <div class="select-actions-container">
     <h3 class="text-center">Рабочее место врача на обходе</h3>   
@@ -71,13 +70,11 @@
         </div>
     </div>
 </div>
-
               
 <div align="right">
     <button @onclick="Continue" class="btn btn-primary">Продолжить работу</button>
 </div>
-<div id="resultLoad">
-</div>
+
 @code {
     Info info { get; set; } = new Info();
 
@@ -89,10 +86,12 @@
             info = db.InfoData.FirstOrDefault();
             db.CustomPerson.Add(new CustomPerson()
             {
-                CustomGridPerson = new List<CustomGridPerson>() { new CustomGridPerson { NameColumnEn = "dsfdsdfs1", NameColumnRu = "fdffdsfsfds1"} },
+                CustomGridPerson = new List<CustomGridPerson>() { new CustomGridPerson { NameColumnEn = "dsfdsdfs1", NameColumnRu = "fdffdsfsfds1" } },
                 CustomGroupPersons = new List<CustomGroupPersons> { new CustomGroupPersons() { NameButtonEn = "dsfdsfdsfds1", NameButtonRu = "dffdsfdccxzcz1" } },
                 DateUpdate = DateTime.Now
             });
+
+            
             await db.SaveChanges();
         }
     }
