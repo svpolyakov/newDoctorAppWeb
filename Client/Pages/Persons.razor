@@ -27,11 +27,12 @@ else
         }
     </style>
     <div class="persons-top-container alert alert-secondary">
-        <span class="btn">Всего пациентов @AllPersons.Count()</span>
+        <span class="btn">Всего пациентов @PersonsCount</span>
         <span style="justify-self: flex-end; margin-left: auto;">
             <button class="btn btn-info" type="button" @onclick="OnFilterButtonClicked">Изменить отбор</button>
         </span>        
     </div>
+    
     
     <table class="table table-striped">
         <thead>
@@ -40,12 +41,7 @@ else
                     <input type="search" 
                            class="form-control ds-input" 
                            id="search-input" 
-                           placeholder="Поиск..." aria-label="Поиск для..." 
-                           autocomplete="off" spellcheck="false" 
-                           role="combobox" aria-autocomplete="list" 
-                           aria-expanded="false"
-                           list="search-persons-datalist"
-                           aria-owns="algolia-autocomplete-listbox-2" dir="auto" 
+                           placeholder="Поиск..."
                            style="position: relative; vertical-align: top;"
                            @oninput="@OnInputSearchAsync"
                            @onchange="@OnSearchAsync">
@@ -67,32 +63,44 @@ else
             </tr>
         </thead>
         <tbody>
-
-            @foreach (PersonDto person in PersonsOnPage)
+            @if (PersonsOnPage.Count() == 0)
             {
                 <tr>
-                    <th scope="row">@person.Lastname @person.Firstname @person.Patronymic</th>
-                    <td>30</td>
-                    <td>Терапевтическое</td>
+                    <th scope="row" colspan="3">
+                        <div class="alert alert-warning">Нет записей удовлетворяющих поисковому выражению: "@SearchQuery"</div>
+                    </th>
                 </tr>
+            }
+            else
+            {
+                @foreach (PersonDto person in PersonsOnPage)
+                {
+                    <tr>
+                        <th scope="row">@person.Lastname @person.Firstname @person.Patronymic</th>
+                        <td>30</td>
+                        <td>Терапевтическое</td>
+                    </tr>
+                }
             }
         </tbody>
         <tfoot>
             <tr>
                 <th colspan="3">
                     <div class="persons-bottom-container">
-                        <span style="justify-self: flex-end; margin-left: auto;" class="btn">
-                            Показано @((PageNumber-1)*PageSize+1) - @((PageNumber-1)*PageSize+ PersonsOnPage.Count()) из @AllPersons.Count()
-                        </span>
-                        @if (PageNumber > 1)
+                        @if (PersonsOnPage.Count() > 0)
                         {
-                            <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
+                            <span style="justify-self: flex-end; margin-left: auto;" class="btn">
+                                Показано @((PageNumber-1)*PageSize+1) - @((PageNumber-1)*PageSize+ PersonsOnPage.Count()) из @PersonsCount
+                            </span>
+                            @if (PageNumber > 1)
+                            {
+                                <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
+                            }
+                            @if (PageNumber < PagesCount)
+                            {
+                                <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
+                            }
                         }
-                        @if (PageNumber < PagesCount)
-                        {
-                            <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
-                        }
-
                     </div>
                 </th>
             </tr>
@@ -113,6 +121,11 @@ else
     /// Пациенты, отображаемые на странице
     /// </summary>
     private PersonDto[] PersonsOnPage;
+
+    /// <summary>
+    /// Кол-во пациентов, удовлетворяющих поисковому выражению
+    /// </summary>
+    private int PersonsCount;
 
     /// <summary>
     /// Номер страницы
@@ -156,7 +169,7 @@ else
     {
         SearchQuery = evt.Value.ToString();
         PageNumber = 1;
-        int PersonsCount = AllPersons.Where(p=>(p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
+        PersonsCount = AllPersons.Where(p=>(p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }
@@ -204,7 +217,7 @@ else
         }
         else
         {
-            PersonsOnPage = AllPersons.Where(p => (p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            PersonsOnPage = AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
 
     }
@@ -213,7 +226,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         AllPersons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
-        int PersonsCount = AllPersons.Count();
+        PersonsCount = AllPersons.Count();
         PagesCount = PersonsCount % PageSize > 0? (int)(1+Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }

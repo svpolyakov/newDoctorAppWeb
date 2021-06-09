@@ -2,13 +2,13 @@
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello @context.User.Identity.Name !!</h1>
+        <h1>Добро пожаловать, @context.User.Identity.Name =)) !!</h1>
 
-        <p>Welcome to Blazor Learner</p>
-
-        <SurveyPrompt Title="How is Blazor working for you?" />
+        <p>Привет, друг</p>
+        <LineDiagram Title="?"></LineDiagram>
+        <SurveyPrompt Title="?" />
     </Authorized>
     <Authorizing>
-        <h1>Loading ...</h1>
+        <h1>Загрузка ...</h1>
     </Authorizing>
 </AuthorizeView>
