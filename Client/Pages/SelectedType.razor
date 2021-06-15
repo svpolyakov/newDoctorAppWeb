@@ -1,19 +1,68 @@
 ﻿@page "/selectedtype"
-
+@using DoctorAppWeb.Shared
+@using PatientsWcf
+@using System.Linq;
+@using IndexedDB.Blazor;
+@using DoctorAppWeb.Shared.Models;
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject IPatientsService PatientsService
 <style>
-    .select-type-container > div
-    {
+    .select-type-container > div {
         margin: 10px 10px;
     }
 </style>
-<div class="select-type-container">
-    <div><button class="btn btn-info" style="width: 100%;">Мои пациенты</button></div>
-    <div><button class="btn btn-info" style="width: 100%;">Поступившие</button></div>
-    <div><button class="btn btn-info" style="width: 100%;">Замена врача</button></div>
-    <div><button class="btn btn-info" style="width: 100%;">По отделениям</button></div>
-    <div><button class="btn btn-info" style="width: 100%;">Все пациенты</button></div>
-</div>
 
+<div class="select-type-container">
+
+    @if (CustomGroupPersons == null)
+    {
+        <p>Загрузка...</p>
+    }
+    else
+    {
+        @foreach (var customGroupPerson in CustomGroupPersons)
+        {
+            <div>
+                @if (customGroupPerson.Selected)
+                {
+                    <button class="btn btn-primary" style="width: 100%;">
+                        @customGroupPerson.NameButtonRu
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-info" style="width: 100%;" 
+                            @onclick="@(async ()=> {
+                                            await PatientsService.SelectCustomGroupPerson(customGroupPerson.Id);
+                                            await Update();
+                                            await ModalInstance.CloseAsync(ModalResult.Ok<CustomGroupPerson>(await PatientsService.GetCustomGroupPerson()));
+                                        })">
+                        @customGroupPerson.NameButtonRu
+                    </button>
+                }
+            </div>
+        }
+    }
+    
+</div>
 @code {
+
+    [CascadingParameter] 
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    private CustomGroupPerson[] CustomGroupPersons;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        CustomGroupPersons = await PatientsService.GetCustomGroupPersons();
+    }
+
+    protected async Task Update()
+    {
+        CustomGroupPersons = await PatientsService.GetCustomGroupPersons();
+    }
 
 }

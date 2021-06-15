@@ -13,19 +13,7 @@
 }
 else
 {
-    <style>
-        .persons-top-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-        }
 
-        .persons-bottom-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-        }
-    </style>
     <div class="persons-top-container alert alert-secondary">
         <span class="btn">Всего пациентов @PersonsCount</span>
         <span style="justify-self: flex-end; margin-left: auto;">
@@ -226,7 +214,7 @@ else
 
 
 
-    
+
 
 
     protected override async Task OnInitializedAsync()
@@ -235,5 +223,6 @@ else
         PersonsCount = AllPersons.Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
+        
     }
 }

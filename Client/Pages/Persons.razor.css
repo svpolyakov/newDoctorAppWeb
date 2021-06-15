@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DoctorAppWeb.Client.Pages
+﻿.persons-top-container
 {
-    public class Persons
-    {
-    }
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.persons-bottom-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }

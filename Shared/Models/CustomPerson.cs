@@ -12,12 +12,14 @@ namespace DoctorAppWeb.Shared.Models
         [Key]
         public long Id { get; set; }
         public List<CustomGridPerson> CustomGridPerson { get; set; }
-        public List<CustomGroupPersons> CustomGroupPersons { get; set; }
+        public List<CustomGroupPerson> CustomGroupPersons { get; set; }
         public DateTime? DateUpdate { get; set; }
     }
 
     public class CustomGridPerson
     {
+        [Key]
+        public long Id { get; set; }
         public string NameColumnEn { get; set; }
         public string NameColumnRu { get; set; }
         public bool OrderColumn { get; set; }
@@ -26,8 +28,10 @@ namespace DoctorAppWeb.Shared.Models
         public bool IsGrouping { get; set; }
     }
 
-    public class CustomGroupPersons
+    public class CustomGroupPerson
     {
+        [Key]
+        public long Id { get; set; }
         public string NameButtonEn { get; set; }
         public string NameButtonRu { get; set; }
         public bool OrderButton { get; set; }

@@ -1,53 +1,56 @@
 ﻿@page "/selectactions"
 @using DoctorAppWeb.Shared
+@using PatientsWcf;
 @using IndexedDB.Blazor;
 @using DoctorAppWeb.Shared.Models;
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 @inject IModalService modal
+@inject IPatientsService PatientService
 <style>
-    .select-actions-container
-    {
+    .select-actions-container {
         padding: 20px;
     }
+
     .select-actions-container .select-actions-top-container {
         width: 100%;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
     }
+
     .select-actions-container .select-actions-middle-container {
         width: 100%;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
     }
-    .select-actions-container .select-actions-middle-container .select-actions-middle-center-container 
-    {
+
+    .select-actions-container .select-actions-middle-container .select-actions-middle-center-container {
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
     }
-    .select-actions-container .select-actions-middle-container .select-actions-middle-center-container > button
-    {
-        margin: 10px;  
+
+    .select-actions-container .select-actions-middle-container .select-actions-middle-center-container > button {
+        margin: 10px;
         height: 50px;
     }
-    .select-actions-container .select-actions-middle-container .select-actions-middle-right-container 
-    {
+
+    .select-actions-container .select-actions-middle-container .select-actions-middle-right-container {
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
     }
-    .select-actions-container .select-actions-middle-container .select-actions-middle-right-container > *
-    {
-        margin: 10px;  
+
+    .select-actions-container .select-actions-middle-container .select-actions-middle-right-container > * {
+        margin: 10px;
         height: 50px;
     }
 </style>
 <div class="select-actions-container">
-    <h3 class="text-center">Рабочее место врача на обходе</h3>   
-    <div class="select-actions-container select-actions-top-container alert alert-secondary mt-4" role="alert">                                            
+    <h3 class="text-center">Рабочее место врача на обходе</h3>
+    <div class="select-actions-container select-actions-top-container alert alert-secondary mt-4" role="alert">
         <span class="text-nowrap">Последнее обновление: @info.DateGetData</span>
         <span class="text-nowrap" style="justify-self: flex-end; margin-left: auto;">Последняя выгрузка: @info.DateSetData</span>
     </div>
@@ -55,13 +58,14 @@
         <div style="flex: 2;"></div>
         <div style="flex: 5;"
              class="select-actions-container select-actions-middle-container select-actions-middle-center-container">
-            <button @onclick="GetData" class="btn btn-info">Забрать "Мои пациенты"</button>
+            <button @onclick="GetData" class="btn btn-info">Забрать "@GetDataButtonLabel"</button>
             <button class="btn btn-info" @onclick="UploadData">Выгрузить</button>
             <button class="btn btn-info" @onclick="UploadData">Продолжить работу</button>
         </div>
+
         <div style="flex: 2;"
              class="select-actions-container select-actions-middle-container select-actions-middle-right-container">
-            <button @onclick="@(()=>modal.Show<SelectedType>("Изменить отбор"))"
+            <button @onclick="@OnSelectionChangeClicked"
                     class="btn btn-info w-100">
                 Изменить отбор
             </button>
@@ -70,35 +74,64 @@
         </div>
     </div>
 </div>
-              
+
+
+
+
+
 <div align="right">
     <button @onclick="Continue" class="btn btn-primary">Продолжить работу</button>
 </div>
 
 @code {
-    Info info { get; set; } = new Info();
+    public Info info { get; set; } = new Info();
+
+    private string GetDataButtonLabel;
+
+    public async Task OnSelectionChangeClicked()
+    {
+        try
+        {
+            var ModalRef = modal.Show<SelectedType>("Изменить отбор");
+            var SelectionResult = (await ModalRef.Result);
+            object ResultData = SelectionResult.Data;
+            CustomGroupPerson SelectedCustomGroupPerson = (CustomGroupPerson)ResultData;
+            GetDataButtonLabel = SelectedCustomGroupPerson.NameButtonRu;
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex);
+        }
+
+
+
+
+
+        //;        
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
-        using (var db = await this.DbFactory.Create<MainDB>())
-        {
-            db.InfoData.Add(new Info { DateGetData = DateTime.Now, DateSetData = DateTime.Now });
-            info = db.InfoData.FirstOrDefault();
-            db.CustomPerson.Add(new CustomPerson()
-            {
-                CustomGridPerson = new List<CustomGridPerson>() { new CustomGridPerson { NameColumnEn = "dsfdsdfs1", NameColumnRu = "fdffdsfsfds1" } },
-                CustomGroupPersons = new List<CustomGroupPersons> { new CustomGroupPersons() { NameButtonEn = "dsfdsfdsfds1", NameButtonRu = "dffdsfdccxzcz1" } },
-                DateUpdate = DateTime.Now
-            });
-
-            
-            await db.SaveChanges();
-        }
+        CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
+        GetDataButtonLabel = custromGroupPerson.NameButtonRu;
     }
 
     public async Task GetData()
     {
-
+        InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+        switch ((await PatientService.GetCustomGroupPerson()).NameButtonRu)
+        {
+            case "Мои пациенты":
+                break;
+            case "Поступившие":
+                break;
+            case "По отделениям":
+                break;
+            case "Все пациенты":
+                await inpatientDoctorClient.GetPersonsAsync();
+                break;
+        }
     }
 
     public Task UploadData()

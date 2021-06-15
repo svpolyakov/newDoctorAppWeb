@@ -28,10 +28,11 @@ namespace DoctorAppWeb.Client
             builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
+            builder.Services.AddScoped<IPatientsService, PatientsService>();
+            builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
 
-
+            
             //builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();
