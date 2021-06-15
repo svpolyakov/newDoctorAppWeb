@@ -1,5 +1,6 @@
 ﻿using DoctorAppWeb.Server.Models;
-using DoctorAppWeb.Shared.Models;
+using DoctorAppWeb.Shared.DataModel.Application;
+
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -14,9 +15,11 @@ namespace DoctorAppWeb.Server.Data
 {
     public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<UserInfo> Developers { get; set; }
+
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
         }
-        public DbSet<UserInfo> Developers { get; set; }
+        
     }
 }

@@ -1,8 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@using DoctorAppWeb.Shared.Models
-@using DoctorAppWeb.Client.Services
-@using DoctorAppWeb.Shared.Models
-@using IndexedDB.Blazor;
 @inject HttpClient Http
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
@@ -24,7 +20,7 @@
     </div>
 </div>
 
-<BlazoredModal />
+
 @functions{
 
     [CascadingParameter]
@@ -46,7 +42,7 @@
         {
             CustomAuthorization customAuthorization = null;
             DateTime? maxDate = null;
-            using (var db = await this.DbFactory.Create<MainDB>())
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
                 maxDate = db.CustomAuthorizations.Max(x => x.DateActual);
                 customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.DateActual.HasValue && x.DateActual == maxDate);
@@ -69,7 +65,7 @@
         }
         else
         {
-            using (var db = await this.DbFactory.Create<MainDB>())
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
                 string userName = (await AuthenticationState).User.Identity.Name;
                 foreach(CustomAuthorization customAuth in db.CustomAuthorizations.Where(x => x.Login == userName))

@@ -23,6 +23,14 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Nurse\" />
+    <Folder Include="Shared\Controls\" />
+    <Folder Include="Shared\Forms\" />
+    <Folder Include="Shared\Navigation\" />
+    <Folder Include="Shared\Data\" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

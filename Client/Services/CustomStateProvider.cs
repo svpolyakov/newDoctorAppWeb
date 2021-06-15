@@ -1,4 +1,4 @@
-﻿using DoctorAppWeb.Shared.Models;
+﻿using DoctorAppWeb.Shared.DataModel.Application;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace DoctorAppWeb.Server.Controllers
 {
@@ -12,12 +13,19 @@ namespace DoctorAppWeb.Server.Controllers
     [Route("[controller]")]
     public class PersonsController : ControllerBase
     {
+        private readonly ILogger<PersonsController> _logger;
+
+        public PersonsController(ILogger<PersonsController> logger) {
+            _logger = logger;
+            _logger.LogDebug("Create");
+        }
+
         [HttpGet]
-        public IEnumerable<PersonDto> Get()
+        public async Task<IEnumerable<PersonDto>> GetAsync()
         {
-            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            
-            return inpatientDoctorClient.GetPersonsAsync().Result.ToArray();
+            _logger.LogDebug("GetAsync");
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();            
+            return await inpatientDoctorClient.GetPersonsAsync();
         }
     }
 }

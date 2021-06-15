@@ -1,0 +1,59 @@
+﻿@page "/doctor/"
+@inject ILogger<Index> Logger;
+@inject IDataWCFService DataWCFService
+
+@if (Doctors == null || Persons == null || Departments == null    )
+{
+    <div> Загрузка .. </div>
+}
+else
+{
+    <h4>persons</h4>
+    <div>
+        @foreach (var doctor in Persons.Take(3))
+        {
+            <div>@doctor.DocumentSerie</div>
+        }
+    </div>
+    <h4>departments</h4>
+    <div>
+        @foreach (var department in Departments.Take(3))
+        {
+            <div>@department.BusinessElementShortName</div>
+        }
+    </div>
+    <h4>indicants</h4>
+    <div>
+        @if(Indicants!=null)
+        @foreach (var indicant in Indicants.Take(3))
+        {
+            <div>@(indicant.IndicantName)</div>
+        }
+    </div>
+    <h4>doctors</h4>
+    <div>
+        @foreach (var doctor in Doctors.Take(3))
+        {
+            <div>@doctor.FirstName</div>
+        }
+    </div>
+}
+
+@code {
+    private List<PatientsWcf.ActualDoctorDto> Doctors { get; set; }
+    private List<PatientsWcf.IndicantDto> Indicants { get; set; }
+    private List<PatientsWcf.DepartmentDto> Departments { get; set; }
+    private List<PatientsWcf.PersonDto> Persons { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        Logger.LogDebug("OnInitializedAsync()");
+        Doctors = await DataWCFService.GetAllActualDoctorsAsync();
+        Persons = await DataWCFService.GetPersonsAsync();
+        Departments = await DataWCFService.GetAllDepartmentsAsync();
+        //Indicants = await DataWCFService.GetIndicantAsync(System.Guid.Parse("asdasdasdasdasdasdasdadf"));
+
+
+        await base.OnInitializedAsync();
+    }
+}

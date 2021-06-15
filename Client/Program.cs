@@ -1,5 +1,7 @@
 using Blazored.Modal;
 using DoctorAppWeb.Client.Services;
+using DoctorAppWeb.Shared.SharedServices;
+
 using IndexedDB.Blazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -24,15 +26,18 @@ namespace DoctorAppWeb.Client
 
             builder.Services.AddOptions();
             builder.Services.AddAuthorizationCore();
+            builder.Services.AddHttpClient();
             builder.Services.AddScoped<CustomStateProvider>();
             builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IPatientsService, PatientsService>();
+            builder.Services.AddScoped<IDataWCFService, HttpDataWCFService>();
             builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
-
             
+
+
             //builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();

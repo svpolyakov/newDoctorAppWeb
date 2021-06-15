@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
 using PatientsWcf;
 using System;
 using System.Collections.Generic;
@@ -14,34 +16,42 @@ namespace DoctorAppWeb.Server.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ILogger<AuthController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthController(
+                ILogger<AuthController> logger,
+                UserManager<ApplicationUser> userManager, 
+                SignInManager<ApplicationUser> signInManager)
         {
+            _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;            
         }
+
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
+            _logger.LogDebug("Login(..)");
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null) return BadRequest("User does not exist");
             var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
             if (!singInResult.Succeeded) return BadRequest("Invalid password");
             await _signInManager.SignInAsync(user, request.RememberMe);
             return Ok();
-
-            //InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            //bool result = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
-            //return result ? Ok() : BadRequest();
         }
+
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterRequest parameters)
         {
+            _logger.LogDebug("Register(..)");
             var user = new ApplicationUser();
             user.UserName = parameters.UserName;
             var result = await _userManager.CreateAsync(user, parameters.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
+            if (!result.Succeeded) 
+                return BadRequest(result.Errors.FirstOrDefault()?.Description);
 
             return await Login(new LoginRequest
             {
@@ -49,16 +59,23 @@ namespace DoctorAppWeb.Server.Controllers
                 Password = parameters.Password
             });
         }
+
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
+            _logger.LogDebug("Logout(..)");
             await _signInManager.SignOutAsync();
             return Ok();
         }
+
+
         [HttpGet]
         public CurrentUser CurrentUserInfo()
         {
+
+            _logger.LogDebug("CurrentUserInfo(..)");
             return new CurrentUser
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,

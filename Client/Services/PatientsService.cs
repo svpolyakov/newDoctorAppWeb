@@ -1,4 +1,5 @@
-﻿using DoctorAppWeb.Shared.Models;
+﻿using DoctorAppWeb.Shared.DataModel;
+using DoctorAppWeb.Shared.DataModel.Application;
 
 using IndexedDB.Blazor;
 
@@ -10,6 +11,19 @@ using System.Threading.Tasks;
 
 namespace DoctorAppWeb.Client.Services
 {
+
+
+    public interface IPatientsService
+    {
+        public Task SelectCustomGroupPerson(long id);
+        public Task<CustomPerson> GetCustomPerson();
+        public Task<CustomGroupPerson> GetCustomGroupPerson();
+        public Task<CustomGroupPerson[]> GetCustomGroupPersons();
+
+    }
+
+
+
     public class PatientsService: IPatientsService
     {
         private readonly IIndexedDbFactory _dbFactory;
@@ -19,7 +33,7 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task<CustomPerson> GetCustomPerson()
         {
-            using (MainDB db = await this._dbFactory.Create<MainDB>())
+            using (IndexedApplicationDb db = await this._dbFactory.Create<IndexedApplicationDb>())
             {
                 var person = db.CustomPersons.FirstOrDefault();
                 if(person != null)
@@ -69,7 +83,7 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task SelectCustomGroupPerson(long id )
         {
-            using (MainDB db = await this._dbFactory.Create<MainDB>())
+            using (IndexedApplicationDb db = await this._dbFactory.Create<IndexedApplicationDb>())
             {             
                 var person = await GetCustomPerson();
                 person.DateUpdate = DateTime.Now;                                         
@@ -92,7 +106,7 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task<CustomGroupPerson> GetCustomGroupPerson()
         {
-            using (MainDB db = await this._dbFactory.Create<MainDB>())
+            using (IndexedApplicationDb db = await this._dbFactory.Create<IndexedApplicationDb>())
             {
                 var person = await GetCustomPerson();
                 return person.CustomGroupPersons.Where(g => g.Selected).FirstOrDefault();                 
@@ -101,7 +115,7 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task<CustomGroupPerson[]> GetCustomGroupPersons()
         {
-            using (MainDB db = await this._dbFactory.Create<MainDB>())
+            using (IndexedApplicationDb db = await this._dbFactory.Create<IndexedApplicationDb>())
             {
                 var person = await GetCustomPerson();
                 return person.CustomGroupPersons.ToArray();

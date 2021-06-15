@@ -1,14 +1,24 @@
-﻿using DoctorAppWeb.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using PatientsWcf;
+using DoctorAppWeb.Shared.DataModel.Application;
 
 namespace DoctorAppWeb.Client.Services
 {
+
+    public interface IAuthService
+    {
+        Task Login(LoginRequest loginRequest);
+        Task Register(RegisterRequest registerRequest);
+        Task Logout();
+        Task<CurrentUser> CurrentUserInfo();
+    }
+
+
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
