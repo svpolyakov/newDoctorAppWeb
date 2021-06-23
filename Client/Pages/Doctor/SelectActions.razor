@@ -82,9 +82,13 @@
 </div>
 
 @code {
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
     public Info info { get; set; } = new Info();
 
     private string GetDataButtonLabel;
+    private long? FilterType;
 
     public async Task OnSelectionChangeClicked()
     {
@@ -95,17 +99,12 @@
             object ResultData = SelectionResult.Data;
             CustomGroupPerson SelectedCustomGroupPerson = (CustomGroupPerson)ResultData;
             GetDataButtonLabel = SelectedCustomGroupPerson.NameButtonRu;
+            FilterType = SelectedCustomGroupPerson.Id;
         }
         catch(Exception ex)
         {
             System.Diagnostics.Debug.WriteLine(ex);
         }
-
-
-
-
-
-        //;        
     }
 
 
@@ -113,23 +112,18 @@
     {
         CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
         GetDataButtonLabel = custromGroupPerson.NameButtonRu;
+        FilterType = custromGroupPerson.Id;
     }
 
     public async Task GetData()
     {
-        InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-        switch ((await PatientService.GetCustomGroupPerson()).NameButtonRu)
-        {
-            case "Мои пациенты":
-                break;
-            case "Поступившие":
-                break;
-            case "По отделениям":
-                break;
-            case "Все пациенты":
-                await inpatientDoctorClient.GetPersonsAsync();
-                break;
-        }
+        string userName = (await AuthenticationState).User.Identity.Name;
+        var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
+        request.Headers.Add("FilterType", FilterType?.ToString());
+        request.Headers.Add("UserLogin", userName);
+        using var httpResponse = await Http.SendAsync(request);
+        IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+
     }
 
     public Task UploadData()

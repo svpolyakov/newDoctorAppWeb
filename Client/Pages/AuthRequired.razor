@@ -41,7 +41,7 @@
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == loginRequest.UserName);
-            if (customAuthorization == null || (customAuthorization != null && customAuthorization.DateUpdate?.AddDays(1) < DateTime.Now))
+            if (customAuthorization == null || (customAuthorization != null && customAuthorization.DateActual?.AddDays(1) < DateTime.Now))
             {
                 navigationManager.NavigateTo("/authrequired");
             }

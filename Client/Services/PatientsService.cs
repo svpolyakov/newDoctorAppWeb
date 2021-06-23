@@ -64,12 +64,18 @@ namespace DoctorAppWeb.Client.Services
                     person.CustomGroupPersons.Add(new CustomGroupPerson()
                     {
                         Id = 3,
-                        NameButtonRu = "По отделениям",
+                        NameButtonRu = "Замена врача",
                         Selected = false
                     });
                     person.CustomGroupPersons.Add(new CustomGroupPerson()
                     {
                         Id = 4,
+                        NameButtonRu = "По отделениям",
+                        Selected = false
+                    });
+                    person.CustomGroupPersons.Add(new CustomGroupPerson()
+                    {
+                        Id = 5,
                         NameButtonRu = "Все пациенты",
                         Selected = false
                     });

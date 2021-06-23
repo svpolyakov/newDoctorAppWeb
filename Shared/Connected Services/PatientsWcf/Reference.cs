@@ -12,6 +12,30 @@ namespace PatientsWcf
     using System.Runtime.Serialization;
     
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="FilterPersonTypeDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public enum FilterPersonTypeDto : int
+    {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        NotDefined = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        MyPatients = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Admitted = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        SubstitutionDoctor = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Departments = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        AllPatients = 5,
+    }
+    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PersonDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
@@ -242,10 +266,6 @@ namespace PatientsWcf
     public partial class AuthResultDto : object
     {
         
-        private System.Collections.Generic.List<PatientsWcf.AuthInfoDto> AuthInfoListField;
-        
-        private bool AuthResultField;
-        
         private string FirstNameField;
         
         private string LastNameField;
@@ -257,32 +277,6 @@ namespace PatientsWcf
         private string SnilsField;
         
         private System.Guid UserIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.AuthInfoDto> AuthInfoList
-        {
-            get
-            {
-                return this.AuthInfoListField;
-            }
-            set
-            {
-                this.AuthInfoListField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool AuthResult
-        {
-            get
-            {
-                return this.AuthResultField;
-            }
-            set
-            {
-                this.AuthResultField = value;
-            }
-        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string FirstName
@@ -359,73 +353,6 @@ namespace PatientsWcf
             set
             {
                 this.UserIdField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="AuthInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
-    public partial class AuthInfoDto : object
-    {
-        
-        private System.Guid DepartmentIDField;
-        
-        private string DepartmentNameField;
-        
-        private string DepartmentShortNameField;
-        
-        private string PositionField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid DepartmentID
-        {
-            get
-            {
-                return this.DepartmentIDField;
-            }
-            set
-            {
-                this.DepartmentIDField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DepartmentName
-        {
-            get
-            {
-                return this.DepartmentNameField;
-            }
-            set
-            {
-                this.DepartmentNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DepartmentShortName
-        {
-            get
-            {
-                return this.DepartmentShortNameField;
-            }
-            set
-            {
-                this.DepartmentShortNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Position
-        {
-            get
-            {
-                return this.PositionField;
-            }
-            set
-            {
-                this.PositionField = value;
             }
         }
     }
@@ -594,13 +521,95 @@ namespace PatientsWcf
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PositionInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class PositionInfoDto : object
+    {
+        
+        private System.Guid DepartmentIDField;
+        
+        private string DepartmentNameField;
+        
+        private string DepartmentShortNameField;
+        
+        private string PositionField;
+        
+        private System.Nullable<System.Guid> PositionIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid DepartmentID
+        {
+            get
+            {
+                return this.DepartmentIDField;
+            }
+            set
+            {
+                this.DepartmentIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DepartmentName
+        {
+            get
+            {
+                return this.DepartmentNameField;
+            }
+            set
+            {
+                this.DepartmentNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DepartmentShortName
+        {
+            get
+            {
+                return this.DepartmentShortNameField;
+            }
+            set
+            {
+                this.DepartmentShortNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Position
+        {
+            get
+            {
+                return this.PositionField;
+            }
+            set
+            {
+                this.PositionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.Guid> PositionID
+        {
+            get
+            {
+                return this.PositionIDField;
+            }
+            set
+            {
+                this.PositionIDField = value;
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="PatientsWcf.IInpatientDoctor")]
     public interface IInpatientDoctor
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPersons", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPersonsResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PersonDto>> GetPersonsAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PersonDto>> GetPersonsAsync(PatientsWcf.FilterPersonTypeDto filterType, string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicant", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id);
@@ -613,6 +622,9 @@ namespace PatientsWcf
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllDepartments", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllDepartmentsResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetUserPosition", ReplyAction="http://tempuri.org/IInpatientDoctor/GetUserPositionResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PositionInfoDto>> GetUserPositionAsync(System.Guid userId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
@@ -665,9 +677,9 @@ namespace PatientsWcf
         {
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PersonDto>> GetPersonsAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PersonDto>> GetPersonsAsync(PatientsWcf.FilterPersonTypeDto filterType, string login)
         {
-            return base.Channel.GetPersonsAsync();
+            return base.Channel.GetPersonsAsync(filterType, login);
         }
         
         public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)
@@ -688,6 +700,11 @@ namespace PatientsWcf
         public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync()
         {
             return base.Channel.GetAllDepartmentsAsync();
+        }
+        
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PositionInfoDto>> GetUserPositionAsync(System.Guid userId)
+        {
+            return base.Channel.GetUserPositionAsync(userId);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()
@@ -718,7 +735,7 @@ namespace PatientsWcf
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IInpatientDoctor))
             {
-                return new System.ServiceModel.EndpointAddress("http://192.168.0.120/Doctest/");
+                return new System.ServiceModel.EndpointAddress("http://95.161.3.172:666/Doctest/");
             }
             throw new System.InvalidOperationException(string.Format("Не удалось найти конечную точку с именем \"{0}\".", endpointConfiguration));
         }

@@ -3,7 +3,6 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
-
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -68,26 +67,35 @@
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
                 string userName = (await AuthenticationState).User.Identity.Name;
-                foreach(CustomAuthorization customAuth in db.CustomAuthorizations.Where(x => x.Login == userName))
+                CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
+                if (authorization == null)
                 {
-                    db.CustomAuthorizations.Remove(customAuth);
+                    db.CustomAuthorizations.Add(new CustomAuthorization
+                    {
+                        Login = userName,
+                        Password = "Hash",
+                        DateActual = DateTime.Now,
+                        DateUpdate = null
+                    });
                 }
-                await db.SaveChanges();
-
-                db.CustomAuthorizations.Add(new CustomAuthorization
+                else
                 {
-                    Login = userName,
-                    Password = "Hash",
-                    DateActual = null,
-                    DateUpdate = null
-                });
-
+                    authorization.DateActual = DateTime.Now;
+                }
                 await db.SaveChanges();
             }
         }
     }
     async Task LogoutClick()
     {
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            foreach(CustomAuthorization customAuthorization in db.CustomAuthorizations)
+            {
+                db.CustomAuthorizations.Remove(customAuthorization);
+            }
+            await db.SaveChanges();
+        }
         await authStateProvider.Logout();
         navigationManager.NavigateTo("/login");
     }

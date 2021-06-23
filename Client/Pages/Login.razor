@@ -5,6 +5,8 @@
 @layout AuthLayout
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
+@inject CustomStateProvider authStateProvider
+@inject IIndexedDbFactory DbFactory
 
 <br />
 <br />
@@ -54,6 +56,14 @@
         error = null;
         try
         {
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+            {
+                foreach (CustomAuthorization customAuthorization in db.CustomAuthorizations)
+                {
+                    db.CustomAuthorizations.Remove(customAuthorization);
+                }
+                await db.SaveChanges();
+            }
             await authStateProvider.Login(loginRequest);
             navigationManager.NavigateTo("");
         }

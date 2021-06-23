@@ -45,10 +45,10 @@ namespace DoctorAppWeb.Shared.SharedServices
             _logger.LogDebug("Create");
         }
 
-        public Task<List<PatientsWcf.PersonDto>> GetPersonsAsync()
+        public Task<List<PatientsWcf.PersonDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
         {
             _logger.LogDebug("GetPersonsAsync");
-            return _client.GetPersonsAsync();
+            return _client.GetPersonsAsync(FilterPersonTypeDto.AllPatients, login);
         }
 
         public Task<List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)

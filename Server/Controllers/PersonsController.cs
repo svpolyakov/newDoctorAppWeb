@@ -23,9 +23,16 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpGet]
         public async Task<IEnumerable<PersonDto>> GetAsync()
         {
-            _logger.LogDebug("GetAsync");
-            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();            
-            return await inpatientDoctorClient.GetPersonsAsync();
+            int parseResult;
+            int.TryParse(Request.Headers["FilterType"], out parseResult);
+            string login = Request.Headers["UserLogin"].ToString();
+            if(parseResult != 0 && Enum.IsDefined(typeof(FilterPersonTypeDto), parseResult))
+            {
+                using InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+                return await inpatientDoctorClient.GetPersonsAsync((FilterPersonTypeDto) parseResult, login); //всунуть логин
+            }
+            return null;
         }
+        
     }
 }

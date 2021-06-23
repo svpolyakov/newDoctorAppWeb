@@ -33,7 +33,6 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            _logger.LogDebug("Login(..)");
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null) return BadRequest("User does not exist");
             var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);

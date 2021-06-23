@@ -6,7 +6,7 @@
   },
   "ExtendedData": {
     "inputs": [
-      "http://192.168.0.120/Doctest/?wsdl"
+      "http://95.161.3.172:666/Doctest/?wsdl"
     ],
     "collectionTypes": [
       "System.Collections.Generic.Dictionary`2",

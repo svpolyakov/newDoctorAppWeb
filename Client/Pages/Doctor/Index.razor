@@ -40,6 +40,8 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
     private List<PatientsWcf.ActualDoctorDto> Doctors { get; set; }
     private List<PatientsWcf.IndicantDto> Indicants { get; set; }
     private List<PatientsWcf.DepartmentDto> Departments { get; set; }
@@ -47,12 +49,11 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        string userName = (await AuthenticationState).User.Identity.Name;
         Logger.LogDebug("OnInitializedAsync()");
         Doctors = await DataWCFService.GetAllActualDoctorsAsync();
-        Persons = await DataWCFService.GetPersonsAsync();
+        Persons = await DataWCFService.GetPersonsAsync(FilterPersonTypeDto.AllPatients, userName);
         Departments = await DataWCFService.GetAllDepartmentsAsync();
-        //Indicants = await DataWCFService.GetIndicantAsync(System.Guid.Parse("asdasdasdasdasdasdasdadf"));
-
 
         await base.OnInitializedAsync();
     }
