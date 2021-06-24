@@ -20,9 +20,9 @@ namespace DoctorAppWeb.Shared.DataModel
         public IndexedSet<CustomPerson> CustomPersons { get; set; }
 
 
-        /*public IndexedSet<Department> Departments { get; set; }
-        public IndexedSet<Doctor> Doctors { get; set; }                
-        public IndexedSet<Patient> Patients { get; set; }*/
+        //public IndexedSet<Department> Departments { get; set; }
+        //public IndexedSet<Doctor> Doctors { get; set; }
+        public IndexedSet<Patient> Patients { get; set; }
 
         public IndexedApplicationDb(IJSRuntime jSRuntime, string name, int version) 
                 : base(jSRuntime, name, version) { }

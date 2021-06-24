@@ -42,27 +42,75 @@ namespace PatientsWcf
     public partial class PersonDto : object
     {
         
+        private System.Nullable<int> AgeField;
+        
+        private string BedField;
+        
         private System.Nullable<System.DateTime> BirthdayField;
         
-        private System.Nullable<System.DateTime> DateGivingDocumentField;
+        private string DiagnosField;
         
-        private string DocumentNumberField;
-        
-        private string DocumentSerieField;
-        
-        private string DocumentTypeField;
+        private string DoctorField;
         
         private string FirstnameField;
         
-        private string HowGiveDocumentField;
-        
         private System.Guid IDField;
+        
+        private bool InResuscitationField;
         
         private string LastnameField;
         
+        private string ObservationModeField;
+        
+        private string ObservationTypeField;
+        
         private string PatronymicField;
         
+        private string PhysicalRestraintField;
+        
+        private string ResponsibleDepField;
+        
+        private string RoomField;
+        
+        private System.Nullable<System.DateTime> SDDepTreatmentCaseField;
+        
+        private System.Nullable<System.DateTime> SDInpatientServiceCaseField;
+        
+        private string ServiceCaseNumberField;
+        
         private int SexEnumField;
+        
+        private string StayDepField;
+        
+        private System.Nullable<System.Guid> VersionIDField;
+        
+        private bool isChangedField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> Age
+        {
+            get
+            {
+                return this.AgeField;
+            }
+            set
+            {
+                this.AgeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Bed
+        {
+            get
+            {
+                return this.BedField;
+            }
+            set
+            {
+                this.BedField = value;
+            }
+        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Nullable<System.DateTime> Birthday
@@ -78,54 +126,28 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DateGivingDocument
+        public string Diagnos
         {
             get
             {
-                return this.DateGivingDocumentField;
+                return this.DiagnosField;
             }
             set
             {
-                this.DateGivingDocumentField = value;
+                this.DiagnosField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DocumentNumber
+        public string Doctor
         {
             get
             {
-                return this.DocumentNumberField;
+                return this.DoctorField;
             }
             set
             {
-                this.DocumentNumberField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DocumentSerie
-        {
-            get
-            {
-                return this.DocumentSerieField;
-            }
-            set
-            {
-                this.DocumentSerieField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DocumentType
-        {
-            get
-            {
-                return this.DocumentTypeField;
-            }
-            set
-            {
-                this.DocumentTypeField = value;
+                this.DoctorField = value;
             }
         }
         
@@ -143,19 +165,6 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string HowGiveDocument
-        {
-            get
-            {
-                return this.HowGiveDocumentField;
-            }
-            set
-            {
-                this.HowGiveDocumentField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Guid ID
         {
             get
@@ -165,6 +174,19 @@ namespace PatientsWcf
             set
             {
                 this.IDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool InResuscitation
+        {
+            get
+            {
+                return this.InResuscitationField;
+            }
+            set
+            {
+                this.InResuscitationField = value;
             }
         }
         
@@ -182,6 +204,32 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ObservationMode
+        {
+            get
+            {
+                return this.ObservationModeField;
+            }
+            set
+            {
+                this.ObservationModeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ObservationType
+        {
+            get
+            {
+                return this.ObservationTypeField;
+            }
+            set
+            {
+                this.ObservationTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string Patronymic
         {
             get
@@ -195,6 +243,84 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PhysicalRestraint
+        {
+            get
+            {
+                return this.PhysicalRestraintField;
+            }
+            set
+            {
+                this.PhysicalRestraintField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ResponsibleDep
+        {
+            get
+            {
+                return this.ResponsibleDepField;
+            }
+            set
+            {
+                this.ResponsibleDepField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Room
+        {
+            get
+            {
+                return this.RoomField;
+            }
+            set
+            {
+                this.RoomField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> SDDepTreatmentCase
+        {
+            get
+            {
+                return this.SDDepTreatmentCaseField;
+            }
+            set
+            {
+                this.SDDepTreatmentCaseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> SDInpatientServiceCase
+        {
+            get
+            {
+                return this.SDInpatientServiceCaseField;
+            }
+            set
+            {
+                this.SDInpatientServiceCaseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ServiceCaseNumber
+        {
+            get
+            {
+                return this.ServiceCaseNumberField;
+            }
+            set
+            {
+                this.ServiceCaseNumberField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public int SexEnum
         {
             get
@@ -204,6 +330,45 @@ namespace PatientsWcf
             set
             {
                 this.SexEnumField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StayDep
+        {
+            get
+            {
+                return this.StayDepField;
+            }
+            set
+            {
+                this.StayDepField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.Guid> VersionID
+        {
+            get
+            {
+                return this.VersionIDField;
+            }
+            set
+            {
+                this.VersionIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool isChanged
+        {
+            get
+            {
+                return this.isChangedField;
+            }
+            set
+            {
+                this.isChangedField = value;
             }
         }
     }
