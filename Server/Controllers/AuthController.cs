@@ -49,7 +49,7 @@ namespace DoctorAppWeb.Server.Controllers
                 var appUser = new ApplicationUser
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserName = authResult.FirstName,
+                    UserName = request.UserName,
                     Email = "noemail@mail.ru",
                     SecurityStamp = Guid.NewGuid().ToString()
                 };

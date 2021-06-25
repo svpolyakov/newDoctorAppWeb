@@ -83,8 +83,8 @@
 
 @code {
 
-    [CascadingParameter]
-    Task<AuthenticationState> AuthenticationState { get; set; }
+        [CascadingParameter]
+        Task<AuthenticationState> AuthenticationState { get; set; }
     public Info info { get; set; } = new Info();
 
     private string GetDataButtonLabel;
@@ -113,17 +113,65 @@
         CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
         GetDataButtonLabel = custromGroupPerson.NameButtonRu;
         FilterType = custromGroupPerson.Id;
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            info = db.InfoData.FirstOrDefault();
+        } 
     }
 
     public async Task GetData()
     {
-        string userName = (await AuthenticationState).User.Identity.Name;
-        var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
-        request.Headers.Add("FilterType", FilterType?.ToString());
-        request.Headers.Add("UserLogin", userName);
-        using var httpResponse = await Http.SendAsync(request);
-        IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+        try
+        {
+            string userName = (await AuthenticationState).User.Identity.Name;
+            var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
+            request.Headers.Add("FilterType", FilterType?.ToString());
+            request.Headers.Add("UserLogin", userName);
+            using var httpResponse = await Http.SendAsync(request);
+            IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+            if (result != null)
+            {
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    db.Patients.Clear();
+                    foreach (PersonDto person in result)
+                    {
+                        db.Patients.Add(new Patient
+                        {
+                            PersonID = person.ID,
+                            FirstName = person.Firstname,
+                            SurName = person.Lastname,
+                            Patronymic = person.Patronymic,
+                            Age = person.Age,
+                            BirthDay = person.Birthday,
+                            Bed = person.Bed,
+                            Room = person.Room,
+                            IsChanged = person.isChanged,
+                            VersionID = person.VersionID,
+                            StayDep = person.StayDep,
+                            ResponsibleDep = person.ResponsibleDep,
+                            InResuscitation = person.InResuscitation,
+                            ObservationMode = person.ObservationMode,
+                            PhysicalRestraint = person.PhysicalRestraint,
+                            ObservationType = person.ObservationType,
+                            ServiceCaseNumber = person.ServiceCaseNumber,
+                            Doctor = person.Doctor,
+                            Diagnos = person.Diagnos,
+                            SDDepTreatmentCase = person.SDDepTreatmentCase,
+                            SDInpatientServiceCase = person.SDInpatientServiceCase
+                        });
+                    }
+                    db.InfoData.Clear();
+                    info.DateGetData = DateTime.Now;
+                    db.InfoData.Add(info);
+                    await db.SaveChanges();
+                }
+            }
+        }
+        catch
+        {
 
+        }
     }
 
     public Task UploadData()
