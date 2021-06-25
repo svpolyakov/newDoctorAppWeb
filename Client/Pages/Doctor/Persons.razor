@@ -1,5 +1,4 @@
 ﻿@page "/personlist"
- 
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 
@@ -36,7 +35,7 @@ else
                     <datalist id="search-persons-datalist">                        
                         @foreach (var person in AllPersons)
                         {
-                            <option value="@person.Lastname @person.Firstname @person.Patronymic">@person.Lastname @person.Firstname @person.Patronymic</option>
+                            <option value="@person.SurName @person.FirstName @person.Patronymic">@person.SurName @person.FirstName @person.Patronymic</option>
                         }
 
                     </datalist>
@@ -60,12 +59,12 @@ else
             }
             else
             {
-                @foreach (PersonDto person in PersonsOnPage)
+                @foreach (Patient person in PersonsOnPage)
                 {
                     <tr>
-                        <th scope="row">@person.Lastname @person.Firstname @person.Patronymic</th>
-                        <td>30</td>
-                        <td>Терапевтическое</td>
+                        <th scope="row">@person.SurName @person.FirstName @person.Patronymic</th>
+                        <td>@person.Age</td>
+                        <td>@person.StayDep</td>
                     </tr>
                 }
             }
@@ -99,15 +98,19 @@ else
 
 @code {
 
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+    private long? FilterType = 1;
+    public Info info { get; set; } = new Info();
     /// <summary>
     /// Все пациенты
     /// </summary>
-    private PersonDto[] AllPersons;
+    private Patient[] AllPersons;
 
     /// <summary>
     /// Пациенты, отображаемые на странице
     /// </summary>
-    private PersonDto[] PersonsOnPage;
+    private Patient[] PersonsOnPage;
 
     /// <summary>
     /// Кол-во пациентов, удовлетворяющих поисковому выражению
@@ -156,7 +159,7 @@ else
     {
         SearchQuery = evt.Value.ToString();
         PageNumber = 1;
-        PersonsCount = AllPersons.Where(p => (p.Firstname + " " + p.Lastname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
+        PersonsCount = AllPersons.Where(p => (p.FirstName + " " + p.SurName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }
@@ -204,23 +207,78 @@ else
         }
         else
         {
-            PersonsOnPage = AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            PersonsOnPage = AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
 
     }
 
-
-
-
-
-
-
     protected override async Task OnInitializedAsync()
     {
-        AllPersons = await Http.GetFromJsonAsync<PersonDto[]>("Persons");
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            if (!db.Patients.Any())
+            {
+                await LoadDataToIndexedDb();
+            }
+            AllPersons = db.Patients.ToArray();
+        }
         PersonsCount = AllPersons.Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
-        
+    }
+
+    private async Task LoadDataToIndexedDb()
+    {
+        try
+        {
+            string userName = (await AuthenticationState).User.Identity.Name;
+            var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
+            request.Headers.Add("FilterType", FilterType?.ToString());
+            request.Headers.Add("UserLogin", userName);
+            using var httpResponse = await Http.SendAsync(request);
+            IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+            if (result != null)
+            {
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    db.Patients.Clear();
+                    foreach (PersonDto person in result)
+                    {
+                        db.Patients.Add(new Patient
+                        {
+                            PersonID = person.ID,
+                            FirstName = person.Firstname,
+                            SurName = person.Lastname,
+                            Patronymic = person.Patronymic,
+                            Age = person.Age,
+                            BirthDay = person.Birthday,
+                            Bed = person.Bed,
+                            Room = person.Room,
+                            IsChanged = person.isChanged,
+                            VersionID = person.VersionID,
+                            StayDep = person.StayDep,
+                            ResponsibleDep = person.ResponsibleDep,
+                            InResuscitation = person.InResuscitation,
+                            ObservationMode = person.ObservationMode,
+                            PhysicalRestraint = person.PhysicalRestraint,
+                            ObservationType = person.ObservationType,
+                            ServiceCaseNumber = person.ServiceCaseNumber,
+                            Doctor = person.Doctor,
+                            Diagnos = person.Diagnos,
+                            SDDepTreatmentCase = person.SDDepTreatmentCase,
+                            SDInpatientServiceCase = person.SDInpatientServiceCase
+                        });
+                    }
+                    db.InfoData.Clear();
+                    info.DateGetData = DateTime.Now;
+                    db.InfoData.Add(info);
+                    await db.SaveChanges();
+                }
+            }
+        }
+        catch
+        {
+
+        }
     }
 }
