@@ -24,6 +24,7 @@
 
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; }
+    public static bool HasDbUserInfo = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -68,7 +69,7 @@
             {
                 string userName = (await AuthenticationState).User.Identity.Name;
                 CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
-                if (authorization == null)
+                if (authorization == null && !HasDbUserInfo)
                 {
                     db.CustomAuthorizations.Add(new CustomAuthorization
                     {
@@ -77,8 +78,9 @@
                         DateActual = DateTime.Now,
                         DateUpdate = null
                     });
+                    HasDbUserInfo = true;
                 }
-                else
+                else if(HasDbUserInfo && authorization != null)
                 {
                     authorization.DateActual = DateTime.Now;
                 }
@@ -95,6 +97,7 @@
                 db.CustomAuthorizations.Remove(customAuthorization);
             }
             await db.SaveChanges();
+            HasDbUserInfo = false;
         }
         await authStateProvider.Logout();
         navigationManager.NavigateTo("/login");

@@ -30,18 +30,41 @@ namespace DoctorAppWeb.Server.Controllers
         }
 
 
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginRequest request)
+        //{
+
+        //    InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+        //    AuthResultDto authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
+        //    return authResult != null ? Ok() : BadRequest();
+        //}
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            //var user = await _userManager.FindByNameAsync(request.UserName);
-            //if (user == null) return BadRequest("User does not exist");
-            //var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-            //if (!singInResult.Succeeded) return BadRequest("Invalid password");
-            //await _signInManager.SignInAsync(user, request.RememberMe);
-            //return Ok();
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            AuthResultDto authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);            
-            return authResult != null ? Ok() : BadRequest();
+            AuthResultDto authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
+            if (authResult != null)
+            {
+                var appUser = new ApplicationUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = authResult.FirstName,
+                    Email = "noemail@mail.ru",
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+                try
+                {
+                    var userPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
+                    await _signInManager.SignInAsync(appUser, request.RememberMe);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest("Invalid login");
+                }
+            }
+            return BadRequest();
         }
 
 
