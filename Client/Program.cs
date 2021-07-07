@@ -35,11 +35,7 @@ namespace DoctorAppWeb.Client
             builder.Services.AddScoped<IDataWCFService, HttpDataWCFService>();
             builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
-            
-
-
             //builder.Services.AddApiAuthorization();
-
             await builder.Build().RunAsync();
         }
     }

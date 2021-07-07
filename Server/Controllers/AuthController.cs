@@ -29,16 +29,6 @@ namespace DoctorAppWeb.Server.Controllers
             _signInManager = signInManager;            
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> Login(LoginRequest request)
-        //{
-
-        //    InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-        //    AuthResultDto authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
-        //    return authResult != null ? Ok() : BadRequest();
-        //}
-
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -50,9 +40,17 @@ namespace DoctorAppWeb.Server.Controllers
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = request.UserName,
-                    Email = "noemail@mail.ru",
-                    SecurityStamp = Guid.NewGuid().ToString()
+                    FirstName = authResult.FirstName,
+                    LastName = authResult.LastName,
+                    MiddleName = authResult.MiddleName,
+                    Snils = authResult.Snils,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    NormalizedUserName = authResult.LastName + " " + authResult.FirstName + " " + authResult.MiddleName
                 };
+                authResult.Permissions.ForEach(x =>
+                {
+                    appUser.Permissions += x + " ";
+                });
                 try
                 {
                     var userPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
@@ -71,7 +69,6 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterRequest parameters)
         {
-            _logger.LogDebug("Register(..)");
             var user = new ApplicationUser();
             user.UserName = parameters.UserName;
             var result = await _userManager.CreateAsync(user, parameters.Password);
@@ -90,7 +87,6 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            _logger.LogDebug("Logout(..)");
             await _signInManager.SignOutAsync();
             return Ok();
         }
@@ -99,8 +95,6 @@ namespace DoctorAppWeb.Server.Controllers
         [HttpGet]
         public CurrentUser CurrentUserInfo()
         {
-
-            _logger.LogDebug("CurrentUserInfo(..)");
             return new CurrentUser
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,

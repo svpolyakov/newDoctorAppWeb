@@ -1,15 +1,16 @@
 ﻿@page "/personlist"
+@using Microsoft.AspNetCore.Components.Authorization
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h1>Мои пациенты</h1>
 @if (PersonsOnPage == null)
 {
     <p><em>Загрузка...</em></p>
 }
 else
 {
-
+    <h3>@FullDocName</h3>
     <div class="persons-top-container alert alert-secondary">
         <span class="btn">Всего пациентов @PersonsCount</span>
         <span style="justify-self: flex-end; margin-left: auto;">
@@ -17,7 +18,7 @@ else
         </span>
     </div>
 
-    
+
 
 
     <table class="table table-striped">
@@ -26,13 +27,13 @@ else
                 <th scope="col">
                     <input type="search"
                            class="form-control ds-input"
-                           list="search-persons-datalist"                          
+                           list="search-persons-datalist"
                            id="search-input"
                            placeholder="Поиск..."
                            style="position: relative; vertical-align: top;"
                            @oninput="@OnInputSearchAsync"
                            @onchange="@OnSearchAsync">
-                    <datalist id="search-persons-datalist">                        
+                    <datalist id="search-persons-datalist">
                         @foreach (var person in AllPersons)
                         {
                             <option value="@person.SurName @person.FirstName @person.Patronymic">@person.SurName @person.FirstName @person.Patronymic</option>
@@ -100,6 +101,7 @@ else
 
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; }
+    public string FullDocName { get; set; }
     private long? FilterType = 1;
     public Info info { get; set; } = new Info();
     /// <summary>
@@ -209,7 +211,6 @@ else
         {
             PersonsOnPage = AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
-
     }
 
     protected override async Task OnInitializedAsync()
@@ -218,16 +219,22 @@ else
         {
             if (!db.Patients.Any())
             {
-                await LoadDataToIndexedDb();
+                AllPersons = (await LoadDataToIndexedDb()).ToArray();
             }
-            AllPersons = db.Patients.ToArray();
+            else
+            {
+                AllPersons = db.Patients.ToArray();
+            }
         }
-        PersonsCount = AllPersons.Count();
-        PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
-        UpdatePagePersons();
+        if (AllPersons != null)
+        {
+            PersonsCount = AllPersons.Count();
+            PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+            UpdatePagePersons();
+        }
     }
 
-    private async Task LoadDataToIndexedDb()
+    private async Task<IndexedSet<Patient>> LoadDataToIndexedDb()
     {
         try
         {
@@ -273,6 +280,7 @@ else
                     info.DateGetData = DateTime.Now;
                     db.InfoData.Add(info);
                     await db.SaveChanges();
+                    return db.Patients;
                 }
             }
         }
@@ -280,5 +288,6 @@ else
         {
 
         }
+        return null;
     }
 }
