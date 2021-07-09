@@ -65,18 +65,28 @@
         }
         else
         {
+            string userName = (await AuthenticationState).User.Identity.Name;
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
-                string userName = (await AuthenticationState).User.Identity.Name;
                 CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
                 if (authorization == null && !HasDbUserInfo)
                 {
+                    UserInfoDto userInfo = await Http.GetFromJsonAsync<UserInfoDto>("Tools/" + userName);
                     db.CustomAuthorizations.Add(new CustomAuthorization
                     {
                         Login = userName,
                         Password = "Hash",
                         DateActual = DateTime.Now,
-                        DateUpdate = null
+                        DateUpdate = null,
+                        FirstName = userInfo.FirstName,
+                        LastName = userInfo.LastName,
+                        MiddleName = userInfo.MiddleName,
+                        Availability_265 = userInfo.Permissions.Contains("285"),
+                        Availability_283 = userInfo.Permissions.Contains("283"),
+                        Availability_5 = userInfo.Permissions.Contains("5"),
+                        Availability_751 = userInfo.Permissions.Contains("751"),
+                        Snils = userInfo.Snils,
+                        UserId = userInfo.UserIdAV
                     });
                     HasDbUserInfo = true;
                 }

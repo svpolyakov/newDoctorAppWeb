@@ -29,7 +29,7 @@ namespace DoctorAppWeb.Server.Controllers
             if(parseResult != 0 && Enum.IsDefined(typeof(FilterPersonTypeDto), parseResult))
             {
                 using InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-                return await inpatientDoctorClient.GetPersonsAsync((FilterPersonTypeDto) parseResult, login); //всунуть логин
+                return await inpatientDoctorClient.GetPersonsAsync((FilterPersonTypeDto) parseResult, login);
             }
             return null;
         }

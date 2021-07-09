@@ -27,7 +27,7 @@ namespace DoctorAppWeb.Client.Services
 
 
 
-        public Task<AuthResultDto> AuthorizeAsync(string login, string password)
+        public Task<Guid?> AuthorizeAsync(string login, string password)
         {
             throw new NotImplementedException($"Метод не определён, ищите его в {nameof(AuthService)}");
         }

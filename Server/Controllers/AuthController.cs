@@ -33,24 +33,15 @@ namespace DoctorAppWeb.Server.Controllers
         public async Task<IActionResult> Login(LoginRequest request)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            AuthResultDto authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
-            if (authResult != null)
+            Guid? authResult = await inpatientDoctorClient.AuthorizeAsync(request.UserName, request.Password);
+            if (authResult.HasValue)
             {
                 var appUser = new ApplicationUser
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = authResult.ToString(),
                     UserName = request.UserName,
-                    FirstName = authResult.FirstName,
-                    LastName = authResult.LastName,
-                    MiddleName = authResult.MiddleName,
-                    Snils = authResult.Snils,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                    NormalizedUserName = authResult.LastName + " " + authResult.FirstName + " " + authResult.MiddleName
-                };
-                authResult.Permissions.ForEach(x =>
-                {
-                    appUser.Permissions += x + " ";
-                });
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };                
                 try
                 {
                     var userPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
@@ -63,6 +54,12 @@ namespace DoctorAppWeb.Server.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        public async Task<UserInfoDto> GetUserInfo(string login)
+        {
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            return await inpatientDoctorClient.GetUserInfoAsync(login);
         }
 
 

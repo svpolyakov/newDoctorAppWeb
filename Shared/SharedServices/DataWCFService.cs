@@ -57,7 +57,7 @@ namespace DoctorAppWeb.Shared.SharedServices
             return _client.GetIndicantAsync(id);
         }
 
-        public Task<PatientsWcf.AuthResultDto> AuthorizeAsync(string login, string password)
+        public Task<Guid?> AuthorizeAsync(string login, string password)
         {
             _logger.LogDebug("AuthorizeAsync");
             return _client.AuthorizeAsync(login, password);
