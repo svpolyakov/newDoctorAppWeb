@@ -3,6 +3,8 @@
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService modal
+@inject IPatientsService PatientService
 
 @if (PersonsOnPage == null)
 {
@@ -13,6 +15,7 @@ else
     <h3>@FullDocName</h3>
     <div class="persons-top-container alert alert-secondary">
         <span class="btn">Всего пациентов @PersonsCount</span>
+        <span>@GetDataButtonLabel</span>
         <span style="justify-self: flex-end; margin-left: auto;">
             <button class="btn btn-info" type="button" @onclick="OnFilterButtonClicked">Изменить отбор</button>
         </span>
@@ -34,7 +37,7 @@ else
                            @oninput="@OnInputSearchAsync"
                            @onchange="@OnSearchAsync">
                     <datalist id="search-persons-datalist">
-                        @foreach (var person in AllPersons)
+                        @foreach (var person in PatientService.AllPersons)
                         {
                             <option value="@person.SurName @person.FirstName @person.Patronymic">@person.SurName @person.FirstName @person.Patronymic</option>
                         }
@@ -102,12 +105,13 @@ else
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; }
     public string FullDocName { get; set; }
-    private long? FilterType = 1;
+    //private long? FilterType = 1;
     public Info info { get; set; } = new Info();
+    private string GetDataButtonLabel;
     /// <summary>
     /// Все пациенты
     /// </summary>
-    private Patient[] AllPersons;
+    //private Patient[] AllPersons;
 
     /// <summary>
     /// Пациенты, отображаемые на странице
@@ -161,7 +165,7 @@ else
     {
         SearchQuery = evt.Value.ToString();
         PageNumber = 1;
-        PersonsCount = AllPersons.Where(p => (p.FirstName + " " + p.SurName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
+        PersonsCount = PatientService.AllPersons.Where(p => (p.FirstName + " " + p.SurName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Count();
         PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
         UpdatePagePersons();
     }
@@ -172,9 +176,29 @@ else
     /// Выполняется по событию нажатия кнопки "Изменить отбор"
     /// </summary>
     /// <returns></returns>
-    protected void OnFilterButtonClicked()
+    protected async void OnFilterButtonClicked()
     {
+        try
+        {
+            var ModalRef = modal.Show<SelectedType>("Изменить отбор");
+            var SelectionResult = (await ModalRef.Result);
+            PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList() ?? new List<Patient>();
+            object ResultData = SelectionResult.Data;
+            CustomGroupPerson SelectedCustomGroupPerson = (CustomGroupPerson)ResultData;
+            GetDataButtonLabel = SelectedCustomGroupPerson.NameButtonRu;
+            PatientService.FilterType = SelectedCustomGroupPerson.Id;
+            if (PatientService.AllPersons != null)
+            {
+                PersonsCount = PatientService.AllPersons.Count();
+                PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+                UpdatePagePersons();
+            }
+        }
+        catch (Exception ex)
+        {
 
+        }
+        StateHasChanged();
     }
 
     /// <summary>
@@ -205,30 +229,40 @@ else
     {
         if (string.IsNullOrEmpty(SearchQuery))
         {
-            PersonsOnPage = AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            PersonsOnPage = PatientService.AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
         else
         {
-            PersonsOnPage = AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            PersonsOnPage = PatientService.AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
+        if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
+        {
+            PatientService.FilterType = 1;
+        }
+        string userName = (await AuthenticationState).User.Identity.Name;
+        PatientService.UserName = userName;
+        CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
+        GetDataButtonLabel = custromGroupPerson.NameButtonRu;
+        PatientService.FilterType = custromGroupPerson.Id;
+
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             if (!db.Patients.Any())
             {
-                AllPersons = (await LoadDataToIndexedDb()).ToArray();
+                PatientService.AllPersons = (await LoadDataToIndexedDb()).ToList();
             }
             else
             {
-                AllPersons = db.Patients.ToArray();
+                PatientService.AllPersons = db.Patients.ToList();
             }
         }
-        if (AllPersons != null)
+        if (PatientService.AllPersons != null)
         {
-            PersonsCount = AllPersons.Count();
+            PersonsCount = PatientService.AllPersons.Count();
             PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
             UpdatePagePersons();
         }
@@ -240,15 +274,17 @@ else
         {
             string userName = (await AuthenticationState).User.Identity.Name;
             var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
-            request.Headers.Add("FilterType", FilterType?.ToString());
+            request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
             using var httpResponse = await Http.SendAsync(request);
             IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
-            if (result != null)
+            if (result != null && result.Any())
             {
+                PatientService.AllPersons = new List<Patient>();
                 using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 {
                     db.Patients.Clear();
+                    await db.SaveChanges();
                     foreach (PersonDto person in result)
                     {
                         db.Patients.Add(new Patient
@@ -276,9 +312,6 @@ else
                             SDInpatientServiceCase = person.SDInpatientServiceCase
                         });
                     }
-                    db.InfoData.Clear();
-                    info.DateGetData = DateTime.Now;
-                    db.InfoData.Add(info);
                     await db.SaveChanges();
                     return db.Patients;
                 }

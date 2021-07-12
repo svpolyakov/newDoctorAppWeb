@@ -1,8 +1,9 @@
 ﻿@page "/selectedtype"
- 
+@using Microsoft.AspNetCore.Components.Authorization
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
-@inject IPatientsService PatientsService
+@inject IPatientsService PatientService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <style>
     .select-type-container > div {
         margin: 10px 10px;
@@ -28,11 +29,11 @@
                 }
                 else
                 {
-                    <button class="btn btn-info" style="width: 100%;" 
-                            @onclick="@(async ()=> {
-                                            await PatientsService.SelectCustomGroupPerson(customGroupPerson.Id);
-                                            await Update();
-                                            await ModalInstance.CloseAsync(ModalResult.Ok<CustomGroupPerson>(await PatientsService.GetCustomGroupPerson()));
+                    <button class="btn btn-info" style="width: 100%;"
+                            @onclick="@(async ()=> {                                            
+                                            await PatientService.SelectCustomGroupPerson(customGroupPerson.Id);                                            
+                                            await Update();           
+                                            await ModalInstance.CloseAsync(ModalResult.Ok<CustomGroupPerson>(await PatientService.GetCustomGroupPerson()));
                                         })">
                         @customGroupPerson.NameButtonRu
                     </button>
@@ -40,25 +41,27 @@
             </div>
         }
     }
-    
+
 </div>
 @code {
 
-    [CascadingParameter] 
+    [CascadingParameter]
     BlazoredModalInstance ModalInstance { get; set; }
 
     private CustomGroupPerson[] CustomGroupPersons;
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
 
 
 
     protected override async Task OnInitializedAsync()
     {
-        CustomGroupPersons = await PatientsService.GetCustomGroupPersons();
+        CustomGroupPersons = await PatientService.GetCustomGroupPersons();
     }
 
     protected async Task Update()
     {
-        CustomGroupPersons = await PatientsService.GetCustomGroupPersons();
+        CustomGroupPersons = await PatientService.GetCustomGroupPersons();
     }
-
 }

@@ -1,6 +1,6 @@
 ﻿using DoctorAppWeb.Shared.DataModel;
 using DoctorAppWeb.Shared.DataModel.Application;
-
+using DoctorAppWeb.Shared.DataModel.MedOrganization;
 using IndexedDB.Blazor;
 
 using System;
@@ -19,14 +19,19 @@ namespace DoctorAppWeb.Client.Services
         public Task<CustomPerson> GetCustomPerson();
         public Task<CustomGroupPerson> GetCustomGroupPerson();
         public Task<CustomGroupPerson[]> GetCustomGroupPersons();
-
+        public List<Patient> AllPersons { get; set; }
+        public long? FilterType { get; set; }
+        public string UserName { get; set; }        
     }
 
 
 
     public class PatientsService: IPatientsService
     {
-        private readonly IIndexedDbFactory _dbFactory;
+        public List<Patient> AllPersons { get; set; }
+        public long? FilterType { get; set; }
+        public string UserName { get; set; }
+        private readonly IIndexedDbFactory _dbFactory;        
         public PatientsService(IIndexedDbFactory dbFactory) {
             _dbFactory = dbFactory;
         }
@@ -101,6 +106,7 @@ namespace DoctorAppWeb.Client.Services
 
         public async Task SelectCustomGroupPerson(long id )
         {
+            FilterType = id;
             using (IndexedApplicationDb db = await this._dbFactory.Create<IndexedApplicationDb>())
             {             
                 var person = await GetCustomPerson();
