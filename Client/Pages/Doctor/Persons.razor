@@ -268,7 +268,7 @@ else
         }
     }
 
-    private async Task<IndexedSet<Patient>> LoadDataToIndexedDb()
+    private async Task<List<Patient>> LoadDataToIndexedDb()
     {
         try
         {
@@ -283,11 +283,12 @@ else
                 PatientService.AllPersons = new List<Patient>();
                 using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 {
+                    List<Patient> patients = new List<Patient>();
                     db.Patients.Clear();
                     await db.SaveChanges();
                     foreach (PersonDto person in result)
                     {
-                        db.Patients.Add(new Patient
+                        Patient patient = new Patient
                         {
                             PersonID = person.ID,
                             FirstName = person.Firstname,
@@ -310,10 +311,12 @@ else
                             Diagnos = person.Diagnos,
                             SDDepTreatmentCase = person.SDDepTreatmentCase,
                             SDInpatientServiceCase = person.SDInpatientServiceCase
-                        });
+                        };
+                        db.Patients.Add(patient);
+                        patients.Add(patient);
                     }
                     await db.SaveChanges();
-                    return db.Patients;
+                    return patients;
                 }
             }
         }
