@@ -1,0 +1,222 @@
+﻿@page "/testaccordion"
+@using Syncfusion.Blazor.Navigations
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService modal
+@inject IPatientsService PatientService
+<h3>Пациенты</h3>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <span class="btn">ФИО</span>
+            </th>
+            <th>
+                <span class="btn">Возраст</span>
+            </th>
+            <th>
+                <span class="btn">Отделение</span>
+            </th>
+        </tr>
+    </thead>
+</table>
+<SfAccordion Width="500" ExpandMode="ExpandMode.Single" EnableRtl="true">
+    <AccordionItems>
+        @if (PatientService.AllPersons != null)
+        {
+            @foreach (Patient patient in PatientService.AllPersons)
+            {
+                string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
+                <hr size="1" width="100%" color="grey">
+                <AccordionItem>
+                    <HeaderTemplate>
+                        <div id="accordionHeader"><div>@fullName</div><div>@patient.Age </div><div>@patient.StayDep </div></div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div>
+                            @patient.BirthDay @patient.ServiceCaseNumber
+                        </div>
+                        <div style="color: red;">
+                            @patient.Doctor
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+                <hr size="1" width="100%" color="grey">
+            }
+        }
+    </AccordionItems>
+</SfAccordion>
+<style>
+    .e-rtl{
+        text-align: left !important;        
+    }
+    table span{
+        display: inline-block;
+        width: 33%;
+    }
+    #accordionHeader div {
+        display: inline-block;
+        width: 32%;
+        float: left;
+    }
+    .e-accordion .e-acrdn-item .e-acrdn-header > * {
+        display: block;
+    }
+    hr {
+        margin-top: 0rem !important; 
+        margin-bottom: 0rem !important;
+    }
+</style>
+
+    @code{
+        SfAccordion Accordion;
+        [CascadingParameter]
+        Task<AuthenticationState> AuthenticationState { get; set; }
+        public string FullDocName { get; set; }
+        //private long? FilterType = 1;
+        public Info info { get; set; } = new Info();
+        private string GetDataButtonLabel;
+
+        /// <summary>
+        /// Пациенты, отображаемые на странице
+        /// </summary>
+        private Patient[] PersonsOnPage;
+
+        /// <summary>
+        /// Кол-во пациентов, удовлетворяющих поисковому выражению
+        /// </summary>
+        private int PersonsCount;
+
+        /// <summary>
+        /// Номер страницы
+        /// </summary>
+        private int PageNumber = 1;
+
+        /// <summary>
+        /// Кол-во записей на странице
+        /// </summary>
+        private int PageSize = 10;
+
+        /// <summary>
+        /// Кол-во страниц
+        /// </summary>
+        private int PagesCount;
+
+        /// <summary>
+        /// Значение в поисковой строке
+        /// </summary>
+        private string InputSearchValue = "";
+
+        /// <summary>
+        /// Поисковое выражение
+        /// </summary>
+        private string SearchQuery = "";
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
+            {
+                PatientService.FilterType = 1;
+            }
+            string userName = (await AuthenticationState).User.Identity.Name;
+            PatientService.UserName = userName;
+            CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
+            GetDataButtonLabel = custromGroupPerson.NameButtonRu;
+            PatientService.FilterType = custromGroupPerson.Id;
+
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+            {
+                if (!db.Patients.Any())
+                {
+                    PatientService.AllPersons = (await LoadDataToIndexedDb()).ToList();
+                }
+                else
+                {
+                    PatientService.AllPersons = db.Patients.ToList();
+                }
+            }
+            if (PatientService.AllPersons != null)
+            {
+                PersonsCount = PatientService.AllPersons.Count();
+                PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+                UpdatePagePersons();
+            }
+        }
+
+        /// <summary>
+        /// Обновление отображаемых записей
+        /// </summary>
+        protected void UpdatePagePersons()
+        {
+            if (string.IsNullOrEmpty(SearchQuery))
+            {
+                PersonsOnPage = PatientService.AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            }
+            else
+            {
+                PersonsOnPage = PatientService.AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+            }
+        }
+
+        private async Task<List<Patient>> LoadDataToIndexedDb()
+        {
+            try
+            {
+                string userName = (await AuthenticationState).User.Identity.Name;
+                var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
+                request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
+                request.Headers.Add("UserLogin", userName);
+                using var httpResponse = await Http.SendAsync(request);
+                IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+                if (result != null && result.Any())
+                {
+                    PatientService.AllPersons = new List<Patient>();
+                    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                    {
+                        List<Patient> patients = new List<Patient>();
+                        db.Patients.Clear();
+                        await db.SaveChanges();
+                        foreach (PersonDto person in result)
+                        {
+                            Patient patient = new Patient
+                            {
+                                PersonID = person.ID,
+                                FirstName = person.Firstname,
+                                SurName = person.Lastname,
+                                Patronymic = person.Patronymic,
+                                Age = person.Age,
+                                BirthDay = person.Birthday,
+                                Bed = person.Bed,
+                                Room = person.Room,
+                                IsChanged = person.isChanged,
+                                VersionID = person.VersionID,
+                                StayDep = person.StayDep,
+                                ResponsibleDep = person.ResponsibleDep,
+                                InResuscitation = person.InResuscitation,
+                                ObservationMode = person.ObservationMode,
+                                PhysicalRestraint = person.PhysicalRestraint,
+                                ObservationType = person.ObservationType,
+                                ServiceCaseNumber = person.ServiceCaseNumber,
+                                Doctor = person.Doctor,
+                                Diagnos = person.Diagnos,
+                                SDDepTreatmentCase = person.SDDepTreatmentCase,
+                                SDInpatientServiceCase = person.SDInpatientServiceCase
+                            };
+                            db.Patients.Add(patient);
+                            patients.Add(patient);
+                        }
+                        await db.SaveChanges();
+                        return patients;
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return null;
+        }
+    }
