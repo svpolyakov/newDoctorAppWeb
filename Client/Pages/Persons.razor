@@ -1,4 +1,4 @@
-﻿@page "/testaccordion"
+﻿@page "/persons"
 @using Syncfusion.Blazor.Navigations
 @using Microsoft.AspNetCore.Components.Authorization
 @inject HttpClient Http
@@ -6,8 +6,13 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IModalService modal
 @inject IPatientsService PatientService
-<h3>Пациенты</h3>
+<div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg"></div>
 <br />
+<br />
+<br />
+<div style="float: right" id="filter">
+    <span @onclick=FilterMyPatientsClick style="@MyPatientsStyle">Мои</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterToMyDepartmentPatientsClick style="@DepPatientsStyle">Поступившие</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterInEmergencyPatientsClick style="@EmergencyPatientStyle">В приемном</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterAllPatientsClick style="@AllPatientStyle">Все пациенты</span>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -25,22 +30,24 @@
 </table>
 <SfAccordion Width="500" ExpandMode="ExpandMode.Single" EnableRtl="true">
     <AccordionItems>
-        @if (PatientService.AllPersons != null)
+        @if (PersonsOnPage != null)
         {
-            @foreach (Patient patient in PatientService.AllPersons)
+            @foreach (Patient patient in PersonsOnPage)
             {
                 string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
                 <hr size="1" width="100%" color="grey">
                 <AccordionItem>
                     <HeaderTemplate>
-                        <div id="accordionHeader"><div>@fullName</div><div>@patient.Age </div><div>@patient.StayDep </div></div>
+                        <div id="accordionHeader"><div>@fullName</div><div>@patient.Age </div><div>@patient.StayDep <img class="goToPatient" src="ToPatient.svg" /></div></div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div>
-                            @patient.BirthDay @patient.ServiceCaseNumber
-                        </div>
-                        <div style="color: red;">
-                            @patient.Doctor
+                            <div>
+                                @patient.BirthDay @patient.ServiceCaseNumber
+                            </div>
+                            <div style="color: red;">
+                                @patient.Doctor
+                            </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
@@ -49,7 +56,42 @@
         }
     </AccordionItems>
 </SfAccordion>
+<div class="persons-bottom-container">
+    @if (PersonsOnPage?.Count() > 0)
+    {
+        <span style="justify-self: flex-end; margin-left: auto;" class="btn">
+            Показано @((PageNumber-1)*PageSize+1) - @((PageNumber-1)*PageSize+ PersonsOnPage.Count()) из @PersonsCount
+        </span>
+        @if (PageNumber > 1)
+        {
+            <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
+        }
+        @if (PageNumber < PagesCount)
+        {
+            <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
+        }
+    }
+</div>
+
 <style>
+    .goToPatient {
+        float: right;
+        border: 2px solid rgba(0, 150, 136, 0.08);
+        border-radius: 5px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .e-accordion .e-acrdn-item .e-acrdn-panel {
+        background: rgba(0, 150, 136, 0.08);
+    }
+
+    #filter span {
+        color: #757575;
+        cursor: pointer;
+    }
+    .btn{
+        color: #3f51b5;
+    }
     .e-rtl{
         text-align: left !important;        
     }
@@ -69,20 +111,32 @@
         margin-top: 0rem !important; 
         margin-bottom: 0rem !important;
     }
+    .persons-bottom-container {
+        float: right;
+    }
+    thead {
+        background-color: rgba(63, 81, 181, 0.08);
+    }
+    .e-accordion .e-acrdn-item .e-acrdn-header .e-toggle-icon {
+        display: none !important;
+    }
 </style>
 
     @code{
+
+        //Стили
+        private string MyPatientsStyle { get; set; }
+        private string DepPatientsStyle { get; set; }
+        private string EmergencyPatientStyle { get; set; }
+        private string AllPatientStyle { get; set; }
+        private const string StyleForFilter = "text-decoration:underline; color: #3f51b5;";
+        //Конец стилей
+
         SfAccordion Accordion;
         [CascadingParameter]
         Task<AuthenticationState> AuthenticationState { get; set; }
         public string FullDocName { get; set; }
-        //private long? FilterType = 1;
-        public Info info { get; set; } = new Info();
         private string GetDataButtonLabel;
-
-        /// <summary>
-        /// Пациенты, отображаемые на странице
-        /// </summary>
         private Patient[] PersonsOnPage;
 
         /// <summary>
@@ -90,9 +144,6 @@
         /// </summary>
         private int PersonsCount;
 
-        /// <summary>
-        /// Номер страницы
-        /// </summary>
         private int PageNumber = 1;
 
         /// <summary>
@@ -100,9 +151,7 @@
         /// </summary>
         private int PageSize = 10;
 
-        /// <summary>
-        /// Кол-во страниц
-        /// </summary>
+
         private int PagesCount;
 
         /// <summary>
@@ -114,6 +163,43 @@
         /// Поисковое выражение
         /// </summary>
         private string SearchQuery = "";
+
+        protected void OnPrevPageClicked()
+        {
+            this.PageNumber--;
+            this.UpdatePagePersons();
+        }
+
+        protected void OnNextPageClicked()
+        {
+            this.PageNumber++;
+            this.UpdatePagePersons();
+        }
+
+        protected async void OnFilterButtonClicked()
+        {
+            try
+            {
+                var ModalRef = modal.Show<DoctorAppWeb.Client.Pages.Doctor.SelectedType>("Изменить отбор");
+                var SelectionResult = (await ModalRef.Result);
+                PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList() ?? new List<Patient>();
+                object ResultData = SelectionResult.Data;
+                CustomGroupPerson SelectedCustomGroupPerson = (CustomGroupPerson)ResultData;
+                GetDataButtonLabel = SelectedCustomGroupPerson.NameButtonRu;
+                PatientService.FilterType = SelectedCustomGroupPerson.Id;
+                if (PatientService.AllPersons != null)
+                {
+                    PersonsCount = PatientService.AllPersons.Count();
+                    PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+                    UpdatePagePersons();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            StateHasChanged();
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -161,7 +247,51 @@
             }
         }
 
-        private async Task<List<Patient>> LoadDataToIndexedDb()
+        private void FilterMyPatientsClick()
+        {
+            DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
+            MyPatientsStyle = StyleForFilter;
+            PatientService.FilterType = 1;
+            ShowData();
+        }
+
+        private void FilterToMyDepartmentPatientsClick()
+        {
+            MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
+            DepPatientsStyle = StyleForFilter;
+            PatientService.FilterType = 4;
+            ShowData();
+        }
+
+        private void FilterInEmergencyPatientsClick()
+        {
+            DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
+            EmergencyPatientStyle = StyleForFilter;
+            PatientService.FilterType = 2;
+            ShowData();
+        }
+
+        private void FilterAllPatientsClick()
+        {
+            DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
+            AllPatientStyle = StyleForFilter;
+            PatientService.FilterType = 7;
+            ShowData();
+        }
+
+        private async Task ShowData()
+        {
+            PatientService.AllPersons = await LoadDataToIndexedDb(true);
+            if (PatientService.AllPersons != null)
+            {
+                PersonsCount = PatientService.AllPersons.Count();
+                PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
+                UpdatePagePersons();
+            }
+            StateHasChanged();
+        }
+
+        private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
         {
             try
             {
@@ -171,7 +301,7 @@
                 request.Headers.Add("UserLogin", userName);
                 using var httpResponse = await Http.SendAsync(request);
                 IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
-                if (result != null && result.Any())
+                if (result != null && result.Any() || force)
                 {
                     PatientService.AllPersons = new List<Patient>();
                     using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
