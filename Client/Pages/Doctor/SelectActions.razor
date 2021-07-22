@@ -128,17 +128,17 @@
             request.Headers.Add("FilterType", FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
             using var httpResponse = await Http.SendAsync(request);
-            IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+            IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
             if (result != null)
             {
                 using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 {
                     db.Patients.Clear();
-                    foreach (PersonDto person in result)
+                    foreach (PatientDto person in result)
                     {
                         db.Patients.Add(new Patient
                         {
-                            PersonID = person.ID,
+                            PersonID = person.PersonID,
                             FirstName = person.Firstname,
                             SurName = person.Lastname,
                             Patronymic = person.Patronymic,

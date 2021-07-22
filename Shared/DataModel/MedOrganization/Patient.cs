@@ -32,5 +32,7 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public string ObservationType { get; set; }
         public bool? IsChanged { get; set; }
         public Guid? VersionID { get; set; }
+        public string AgeDescription { get; set; }
+        public int Gender { get; set; }
     }
 }

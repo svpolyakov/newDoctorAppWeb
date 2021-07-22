@@ -43,7 +43,21 @@
                     <ContentTemplate>
                         <div>
                             <div>
+                                @if (patient.Gender == 1)
+                                {
+                                    <img class="imgGender" src="Male.svg">
+                                }
+                                else
+                                {
+                                    <img class="imgGender" src="Female.svg">
+                                }
                                 @patient.BirthDay @patient.ServiceCaseNumber
+                            </div>
+                            <div>
+                                <span>Поступил:</span>
+                            </div>
+                            <div>
+                                <span>Врач:</span><span></span><span>Диагноз:</span><span></span><span>Койка:</span><span></span>
                             </div>
                             <div style="color: red;">
                                 @patient.Doctor
@@ -74,6 +88,10 @@
 </div>
 
 <style>
+    .imgGender {
+        float: left;
+        padding-right: 15px;
+    }
     .goToPatient {
         float: right;
         border: 2px solid rgba(0, 150, 136, 0.08);
@@ -92,8 +110,9 @@
     .btn{
         color: #3f51b5;
     }
-    .e-rtl{
-        text-align: left !important;        
+    .e-rtl {
+        text-align: left !important;
+        direction: inherit !important;
     }
     table span{
         display: inline-block;
@@ -217,7 +236,7 @@
             {
                 if (!db.Patients.Any())
                 {
-                    PatientService.AllPersons = (await LoadDataToIndexedDb()).ToList();
+                    PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
                 }
                 else
                 {
@@ -300,7 +319,7 @@
                 request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
                 request.Headers.Add("UserLogin", userName);
                 using var httpResponse = await Http.SendAsync(request);
-                IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+                IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
                 if (result != null && result.Any() || force)
                 {
                     PatientService.AllPersons = new List<Patient>();
@@ -309,11 +328,11 @@
                         List<Patient> patients = new List<Patient>();
                         db.Patients.Clear();
                         await db.SaveChanges();
-                        foreach (PersonDto person in result)
+                        foreach (PatientDto person in result)
                         {
                             Patient patient = new Patient
                             {
-                                PersonID = person.ID,
+                                PersonID = person.PersonID,
                                 FirstName = person.Firstname,
                                 SurName = person.Lastname,
                                 Patronymic = person.Patronymic,
@@ -333,7 +352,9 @@
                                 Doctor = person.Doctor,
                                 Diagnos = person.Diagnos,
                                 SDDepTreatmentCase = person.SDDepTreatmentCase,
-                                SDInpatientServiceCase = person.SDInpatientServiceCase
+                                SDInpatientServiceCase = person.SDInpatientServiceCase,
+                                AgeDescription = person.AgeDescription,
+                                Gender = person.SexEnum                                
                             };
                             db.Patients.Add(patient);
                             patients.Add(patient);

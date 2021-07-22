@@ -32,10 +32,10 @@ namespace DoctorAppWeb.Client.Services
             throw new NotImplementedException($"Метод не определён, ищите его в {nameof(AuthService)}");
         }
 
-        public async Task<List<PersonDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
+        public async Task<List<PatientDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
         {
             _logger.LogDebug("GetPersonsAsync");
-            return await _http.GetFromJsonAsync<List<PersonDto>>("Persons");
+            return await _http.GetFromJsonAsync<List<PatientDto>>("Persons");
         }
 
         public async Task<List<IndicantDto>> GetIndicantAsync(Guid id)

@@ -277,7 +277,7 @@ else
             request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
             using var httpResponse = await Http.SendAsync(request);
-            IEnumerable<PersonDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PersonDto>>();
+            IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
             if (result != null && result.Any())
             {
                 PatientService.AllPersons = new List<Patient>();
@@ -286,11 +286,11 @@ else
                     List<Patient> patients = new List<Patient>();
                     db.Patients.Clear();
                     await db.SaveChanges();
-                    foreach (PersonDto person in result)
+                    foreach (PatientDto person in result)
                     {
                         Patient patient = new Patient
                         {
-                            PersonID = person.ID,
+                            PersonID = person.PersonID,
                             FirstName = person.Firstname,
                             SurName = person.Lastname,
                             Patronymic = person.Patronymic,

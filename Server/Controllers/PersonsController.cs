@@ -21,7 +21,7 @@ namespace DoctorAppWeb.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<PersonDto>> GetAsync()
+        public async Task<IEnumerable<PatientDto>> GetAsync()
         {
             int parseResult;
             int.TryParse(Request.Headers["FilterType"], out parseResult);
@@ -29,7 +29,7 @@ namespace DoctorAppWeb.Server.Controllers
             if(parseResult != 0 && Enum.IsDefined(typeof(FilterPersonTypeDto), parseResult))
             {
                 using InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-                return await inpatientDoctorClient.GetPersonsAsync((FilterPersonTypeDto) parseResult, login);
+                return await inpatientDoctorClient.GetPatientsAsync( new PersonQueryParamsDto { PersonQueryType = (FilterPersonTypeDto)parseResult } , login);
             }
             return null;
         }

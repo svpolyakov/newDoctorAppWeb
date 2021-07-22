@@ -13,7 +13,7 @@ namespace DoctorAppWeb.Shared.SharedServices
     public interface IDataWCFService
     {
         public Task<Guid?> AuthorizeAsync(string login, string password);
-        public Task<List<PatientsWcf.PersonDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login);
+        public Task<List<PatientsWcf.PatientDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login);
         public Task<List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id);
         public Task<List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync();
         public Task<List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync();
