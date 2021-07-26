@@ -105,6 +105,7 @@
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             db.CustomAuthorizations.Clear();
+            db.Webpages.Clear();
             await db.SaveChanges();
             HasDbUserInfo = false;
         }
@@ -118,6 +119,4 @@
     {
         return base.OnParametersSetAsync();
     }
-
-
 }

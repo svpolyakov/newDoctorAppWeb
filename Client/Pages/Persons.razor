@@ -28,48 +28,49 @@
         </tr>
     </thead>
 </table>
-<SfAccordion Width="500" ExpandMode="ExpandMode.Single" EnableRtl="true">
-    <AccordionItems>
-        @if (PersonsOnPage != null)
+
+<MatAccordion Multi="false" HideToggle="true">
+    @if (PersonsOnPage != null)
+    {
+        @foreach (Patient patient in PersonsOnPage)
         {
-            @foreach (Patient patient in PersonsOnPage)
-            {
-                string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
-                <hr size="1" width="100%" color="grey">
-                <AccordionItem>
-                    <HeaderTemplate>
-                        <div id="accordionHeader"><div>@fullName</div><div>@patient.Age </div><div>@patient.StayDep <img class="goToPatient" src="ToPatient.svg" /></div></div>
-                    </HeaderTemplate>
-                    <ContentTemplate>
-                        <div>
-                            <div>
-                                @if (patient.Gender == 1)
-                                {
-                                    <img class="imgGender" src="Male.svg">
-                                }
-                                else
-                                {
-                                    <img class="imgGender" src="Female.svg">
-                                }
-                                @patient.BirthDay @patient.ServiceCaseNumber
-                            </div>
-                            <div>
-                                <span>Поступил:</span>
-                            </div>
-                            <div>
-                                <span>Врач:</span><span></span><span>Диагноз:</span><span></span><span>Койка:</span><span></span>
-                            </div>
-                            <div style="color: red;">
-                                @patient.Doctor
-                            </div>
+            string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
+            <MatExpansionPanel>
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>
+                        <div id="accordionHeader">
+                            <div>@fullName</div><div>@patient.Age</div><div>@patient.StayDep<img class="goToPatient" src="ToPatient.svg" /></div>
                         </div>
-                    </ContentTemplate>
-                </AccordionItem>
-                <hr size="1" width="100%" color="grey">
-            }
+                    </MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <div>
+                        <div>
+                            @if (patient.Gender == 1)
+                            {
+                                <img class="imgGender" src="Male.svg">
+                            }
+                            else
+                            {
+                                <img class="imgGender" src="Female.svg">
+                            }
+                            @patient.BirthDay @patient.ServiceCaseNumber
+                        </div>
+                        <div>
+                            <span>Поступил:</span>
+                        </div>
+                        <div>
+                            <span>Врач:</span><span></span><span>Диагноз:</span><span></span><span>Койка:</span><span></span>
+                        </div>
+                        <div style="color: red;">
+                            @patient.Doctor
+                        </div>
+                    </div>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
         }
-    </AccordionItems>
-</SfAccordion>
+    }
+</MatAccordion>
 <div class="persons-bottom-container">
     @if (PersonsOnPage?.Count() > 0)
     {
@@ -99,7 +100,7 @@
         padding-left: 15px;
         padding-right: 15px;
     }
-    .e-accordion .e-acrdn-item .e-acrdn-panel {
+    .mat-accordion .mat-expansion-panel.mat-expansion-panel--expanded > .mat-expansion-panel__content {
         background: rgba(0, 150, 136, 0.08);
     }
 
@@ -109,11 +110,7 @@
     }
     .btn{
         color: #3f51b5;
-    }
-    .e-rtl {
-        text-align: left !important;
-        direction: inherit !important;
-    }
+    }    
     table span{
         display: inline-block;
         width: 33%;
@@ -122,22 +119,16 @@
         display: inline-block;
         width: 32%;
         float: left;
-    }
-    .e-accordion .e-acrdn-item .e-acrdn-header > * {
-        display: block;
-    }
-    hr {
-        margin-top: 0rem !important; 
-        margin-bottom: 0rem !important;
-    }
+        /*padding-top: 13px;*/
+    }    
     .persons-bottom-container {
         float: right;
     }
     thead {
         background-color: rgba(63, 81, 181, 0.08);
     }
-    .e-accordion .e-acrdn-item .e-acrdn-header .e-toggle-icon {
-        display: none !important;
+    .mat-accordion .mat-expansion-panel__summary {
+        display: block !important;
     }
 </style>
 

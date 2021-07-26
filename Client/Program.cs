@@ -1,7 +1,7 @@
 using Blazored.Modal;
 using DoctorAppWeb.Client.Services;
 using DoctorAppWeb.Shared.SharedServices;
-
+using MatBlazor;
 using IndexedDB.Blazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -38,6 +38,7 @@ namespace DoctorAppWeb.Client
             builder.Services.AddBlazoredModal();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDc0MTA5QDMxMzkyZTMyMmUzMFVra1BsR1FQcjE5NU8yVFJheVNtZE1FandrblZWNTFvTE0xU3VodEVwRU09;NDc0MTEwQDMxMzkyZTMyMmUzMEFQak9zQ3h1RTRuWDRUa3pXaThEYnNxQXlFd1dOT2F2K2FpVllxN0dPbkU9");
             builder.Services.AddSyncfusionBlazor();
+            builder.Services.AddMatBlazor();
             //builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

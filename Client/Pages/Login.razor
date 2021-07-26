@@ -58,10 +58,30 @@
         {
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
+                db.Webpages.Clear();
                 db.CustomAuthorizations.Clear();
                 await db.SaveChanges();
             }
+
             await authStateProvider.Login(loginRequest);
+
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+            {
+                DateTime dt = DateTime.Now;
+                db.Webpages.Add(new Webpages() { FormID = "authorization", FormName = "РАБОЧЕЕ МЕСТО ВРАЧА НА ОБХОДЕ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "patient", FormName = "ПАЦИЕНТЫ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "whatIsNew", FormName = "ЧТО НОВОГО", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "indicant", FormName = "ПОКАЗАТЕЛИ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "labTest", FormName = "АНАЛИЗЫ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "pharmaTherapy", FormName = "МЕДИКАМЕНТЫ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "investigation", FormName = "ОБСЛЕДОВАНИЯ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "consultations", FormName = "КОНСУЛЬТАЦИИ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "procedures", FormName = "ПРОЦЕДУРЫ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "anamnesis", FormName = "АНАМНЕЗ", DateUpdate = dt });
+                db.Webpages.Add(new Webpages() { FormID = "diary", FormName = "ДНЕВНИК", DateUpdate = dt });
+                await db.SaveChanges();
+            }
+
             navigationManager.NavigateTo("");
         }
         catch (Exception ex)
