@@ -58,10 +58,7 @@
         {
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
-                foreach (CustomAuthorization customAuthorization in db.CustomAuthorizations)
-                {
-                    db.CustomAuthorizations.Remove(customAuthorization);
-                }
+                db.CustomAuthorizations.Clear();
                 await db.SaveChanges();
             }
             await authStateProvider.Login(loginRequest);

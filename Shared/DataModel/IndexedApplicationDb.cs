@@ -13,7 +13,8 @@ namespace DoctorAppWeb.Shared.DataModel
         public IndexedSet<CustomGroupPerson> CustomGroupPersons { get; set; }
         public IndexedSet<CustomPerson> CustomPersons { get; set; }
         public IndexedSet<Patient> Patients { get; set; }
-        public IndexedApplicationDb(IJSRuntime jSRuntime, string name, int version) 
-                : base(jSRuntime, name, version) { }
+        public IndexedSet<CustomSettings> CustomSettings { get; set; }
+        public IndexedSet<Webpages> Webpages { get; set; }
+        public IndexedApplicationDb(IJSRuntime jSRuntime, string name, int version) : base(jSRuntime, name, version) { }        
     }
 }

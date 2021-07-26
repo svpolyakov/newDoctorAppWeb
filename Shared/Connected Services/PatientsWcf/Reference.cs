@@ -166,6 +166,8 @@ namespace PatientsWcf
         
         private string FirstnameField;
         
+        private string HelpFormField;
+        
         private bool InResuscitationField;
         
         private string LastnameField;
@@ -187,6 +189,8 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> SDDepTreatmentCaseField;
         
         private System.Nullable<System.DateTime> SDInpatientServiceCaseField;
+        
+        private System.Nullable<System.DateTime> SDReceptionCaseField;
         
         private string ServiceCaseNumberField;
         
@@ -286,6 +290,19 @@ namespace PatientsWcf
             set
             {
                 this.FirstnameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string HelpForm
+        {
+            get
+            {
+                return this.HelpFormField;
+            }
+            set
+            {
+                this.HelpFormField = value;
             }
         }
         
@@ -429,6 +446,19 @@ namespace PatientsWcf
             set
             {
                 this.SDInpatientServiceCaseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> SDReceptionCase
+        {
+            get
+            {
+                return this.SDReceptionCaseField;
+            }
+            set
+            {
+                this.SDReceptionCaseField = value;
             }
         }
         

@@ -37,4 +37,23 @@ namespace DoctorAppWeb.Shared.DataModel.Application
         public bool OrderButton { get; set; }
         public bool Selected { get; set; }
     }
+
+    public class CustomSettings
+    {
+        [Key]
+        public long Id { get; set; }
+        public int MaxPeriodData { get; set; }
+        public int PeriodActive { get; set; }
+        public DateTime? DateUpdate { get; set; }
+        public string FormID { get; set; }
+    }
+
+    public class Webpages
+    {
+        [Key]
+        public long Id { get; set; }
+        public string FormID { get; set; }
+        public string FormName { get; set; }
+        public DateTime? DateUpdate { get; set; }
+    }
 }

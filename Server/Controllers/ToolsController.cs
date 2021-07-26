@@ -14,9 +14,10 @@ namespace DoctorAppWeb.Server.Controllers
     public class ToolsController : Controller
     {
         [HttpGet("{Login}")]
-        public UserInfoDto Get(string Login)
+        public Tuple<UserInfoDto, CustomizationInfoDto> Get(string Login)
         {
-            return new InpatientDoctorClient().GetUserInfoAsync(Login).Result;
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            return new Tuple<UserInfoDto, CustomizationInfoDto>(inpatientDoctorClient.GetUserInfoAsync(Login).Result, inpatientDoctorClient.GetCustomizationAsync(Login).Result);            
         }
 
         [HttpGet]
