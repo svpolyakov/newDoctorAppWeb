@@ -46,10 +46,7 @@ namespace DoctorAppWeb.Server
             });
             services.AddControllers().AddNewtonsoftJson();
             services.AddControllersWithViews();
-            services.AddRazorPages(options => {
-                options.Conventions.AllowAnonymousToPage("/authrequired");
-                options.Conventions.AllowAnonymousToPage("/counter");
-            });
+            services.AddRazorPages();
             services.AddBlazoredModal();
         }        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

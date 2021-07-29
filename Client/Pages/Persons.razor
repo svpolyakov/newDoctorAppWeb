@@ -1,5 +1,4 @@
 ﻿@page "/persons"
-@using Syncfusion.Blazor.Navigations
 @using Microsoft.AspNetCore.Components.Authorization
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
@@ -30,7 +29,7 @@
 </table>
 
 <MatAccordion Multi="false" HideToggle="true">
-    @if (PersonsOnPage != null)
+    @if (PersonsOnPage != null && PersonsOnPage.Any())
     {
         @foreach (Patient patient in PersonsOnPage)
         {
@@ -44,7 +43,7 @@
                     </MatExpansionPanelHeader>
                 </MatExpansionPanelSummary>
                 <MatExpansionPanelDetails>
-                    <div>
+                    <div class="mainInfo">
                         <div>
                             @if (patient.Gender == 1)
                             {
@@ -56,43 +55,36 @@
                             }
                             @patient.BirthDay @patient.ServiceCaseNumber
                         </div>
+                        <br />
                         <div>
-                            <span>Поступил:</span>
+                            <span class="descriptionMainPage">Поступил:&nbsp;</span>
                         </div>
                         <div>
-                            <span>Врач:</span><span></span><span>Диагноз:</span><span></span><span>Койка:</span><span></span>
-                        </div>
-                        <div style="color: red;">
-                            @patient.Doctor
+                            <span class="descriptionMainPage">Врач:&nbsp;</span><span>@patient.Doctor&nbsp;</span><span class="descriptionMainPage">Диагноз:&nbsp;</span><span>&nbsp;</span><span class="descriptionMainPage">Койка:&nbsp;</span><span>&nbsp;</span>
                         </div>
                     </div>
                 </MatExpansionPanelDetails>
             </MatExpansionPanel>
         }
+        <div>
+            <MatPaginator Length="@PersonsCount" PageSize="@PageSize" Page="@OnPage"></MatPaginator>
+        </div>
     }
 </MatAccordion>
-<div class="persons-bottom-container">
-    @if (PersonsOnPage?.Count() > 0)
-    {
-        <span style="justify-self: flex-end; margin-left: auto;" class="btn">
-            Показано @((PageNumber-1)*PageSize+1) - @((PageNumber-1)*PageSize+ PersonsOnPage.Count()) из @PersonsCount
-        </span>
-        @if (PageNumber > 1)
-        {
-            <button class="btn" @onclick="@OnPrevPageClicked">&lt;</button>
-        }
-        @if (PageNumber < PagesCount)
-        {
-            <button class="btn" @onclick="@OnNextPageClicked">&gt;</button>
-        }
-    }
-</div>
 
 <style>
+    .descriptionMainPage {
+        color: #009688;
+        font-weight: bold;
+    }
+    .mainInfo:not(.descriptionMainPage) {
+        color: #757575;
+    }
     .imgGender {
         float: left;
         padding-right: 15px;
     }
+
     .goToPatient {
         float: right;
         border: 2px solid rgba(0, 150, 136, 0.08);
@@ -100,6 +92,7 @@
         padding-left: 15px;
         padding-right: 15px;
     }
+
     .mat-accordion .mat-expansion-panel.mat-expansion-panel--expanded > .mat-expansion-panel__content {
         background: rgba(0, 150, 136, 0.08);
     }
@@ -108,257 +101,240 @@
         color: #757575;
         cursor: pointer;
     }
-    .btn{
+
+    .btn {
         color: #3f51b5;
-    }    
-    table span{
+    }
+
+    table span {
         display: inline-block;
         width: 33%;
     }
+
     #accordionHeader div {
         display: inline-block;
         width: 32%;
         float: left;
         /*padding-top: 13px;*/
-    }    
+    }
+
     .persons-bottom-container {
         float: right;
     }
+
     thead {
         background-color: rgba(63, 81, 181, 0.08);
     }
+
     .mat-accordion .mat-expansion-panel__summary {
         display: block !important;
     }
 </style>
 
-    @code{
+@code{
 
-        //Стили
-        private string MyPatientsStyle { get; set; }
-        private string DepPatientsStyle { get; set; }
-        private string EmergencyPatientStyle { get; set; }
-        private string AllPatientStyle { get; set; }
-        private const string StyleForFilter = "text-decoration:underline; color: #3f51b5;";
-        //Конец стилей
-
-        SfAccordion Accordion;
-        [CascadingParameter]
-        Task<AuthenticationState> AuthenticationState { get; set; }
-        public string FullDocName { get; set; }
-        private string GetDataButtonLabel;
-        private Patient[] PersonsOnPage;
-
-        /// <summary>
-        /// Кол-во пациентов, удовлетворяющих поисковому выражению
-        /// </summary>
-        private int PersonsCount;
-
-        private int PageNumber = 1;
-
-        /// <summary>
-        /// Кол-во записей на странице
-        /// </summary>
-        private int PageSize = 10;
-
-
-        private int PagesCount;
-
-        /// <summary>
-        /// Значение в поисковой строке
-        /// </summary>
-        private string InputSearchValue = "";
-
-        /// <summary>
-        /// Поисковое выражение
-        /// </summary>
-        private string SearchQuery = "";
-
-        protected void OnPrevPageClicked()
+    void OnPage(MatPaginatorPageEvent e)
+    {
+        PageSize = e.PageSize;
+        PageNumber = e.PageIndex;
+        if (PersonsOnPage?.Count() > 0)
         {
-            this.PageNumber--;
-            this.UpdatePagePersons();
+            UpdatePagePersons();
         }
+    }
 
-        protected void OnNextPageClicked()
+    //Стили
+    private string MyPatientsStyle { get; set; }
+    private string DepPatientsStyle { get; set; }
+    private string EmergencyPatientStyle { get; set; }
+    private string AllPatientStyle { get; set; }
+    private const string StyleForFilter = "text-decoration:underline; color: #3f51b5;";
+    //Конец стилей
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+    public string FullDocName { get; set; }
+    private string GetDataButtonLabel;
+    private Patient[] PersonsOnPage;
+
+    /// <summary>
+    /// Кол-во пациентов, удовлетворяющих поисковому выражению
+    /// </summary>
+    private int PersonsCount;
+
+    private int PageNumber = 0;
+
+    /// <summary>
+    /// Кол-во записей на странице
+    /// </summary>
+    private int PageSize = 10;
+
+    /// <summary>
+    /// Значение в поисковой строке
+    /// </summary>
+    private string InputSearchValue = "";
+
+    /// <summary>
+    /// Поисковое выражение
+    /// </summary>
+    private string SearchQuery = "";
+
+    protected void OnPrevPageClicked()
+    {
+        this.PageNumber--;
+        this.UpdatePagePersons();
+    }
+
+    protected void OnNextPageClicked()
+    {
+        this.PageNumber++;
+        this.UpdatePagePersons();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
         {
-            this.PageNumber++;
-            this.UpdatePagePersons();
+            PatientService.FilterType = 1;
         }
+        string userName = (await AuthenticationState).User.Identity.Name;
+        PatientService.UserName = userName;
+        CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
+        GetDataButtonLabel = custromGroupPerson.NameButtonRu;
+        PatientService.FilterType = custromGroupPerson.Id;
 
-        protected async void OnFilterButtonClicked()
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
-            try
+            if (!db.Patients.Any())
             {
-                var ModalRef = modal.Show<DoctorAppWeb.Client.Pages.Doctor.SelectedType>("Изменить отбор");
-                var SelectionResult = (await ModalRef.Result);
-                PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList() ?? new List<Patient>();
-                object ResultData = SelectionResult.Data;
-                CustomGroupPerson SelectedCustomGroupPerson = (CustomGroupPerson)ResultData;
-                GetDataButtonLabel = SelectedCustomGroupPerson.NameButtonRu;
-                PatientService.FilterType = SelectedCustomGroupPerson.Id;
-                if (PatientService.AllPersons != null)
-                {
-                    PersonsCount = PatientService.AllPersons.Count();
-                    PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
-                    UpdatePagePersons();
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            StateHasChanged();
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
-            {
-                PatientService.FilterType = 1;
-            }
-            string userName = (await AuthenticationState).User.Identity.Name;
-            PatientService.UserName = userName;
-            CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
-            GetDataButtonLabel = custromGroupPerson.NameButtonRu;
-            PatientService.FilterType = custromGroupPerson.Id;
-
-            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            {
-                if (!db.Patients.Any())
-                {
-                    PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
-                }
-                else
-                {
-                    PatientService.AllPersons = db.Patients.ToList();
-                }
-            }
-            if (PatientService.AllPersons != null)
-            {
-                PersonsCount = PatientService.AllPersons.Count();
-                PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
-                UpdatePagePersons();
-            }
-        }
-
-        /// <summary>
-        /// Обновление отображаемых записей
-        /// </summary>
-        protected void UpdatePagePersons()
-        {
-            if (string.IsNullOrEmpty(SearchQuery))
-            {
-                PersonsOnPage = PatientService.AllPersons.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+                PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
             }
             else
             {
-                PersonsOnPage = PatientService.AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip((PageNumber - 1) * PageSize).Take(PageSize).ToArray();
+                PatientService.AllPersons = db.Patients.ToList();
             }
         }
-
-        private void FilterMyPatientsClick()
+        if (PatientService.AllPersons != null)
         {
-            DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
-            MyPatientsStyle = StyleForFilter;
-            PatientService.FilterType = 1;
-            ShowData();
-        }
-
-        private void FilterToMyDepartmentPatientsClick()
-        {
-            MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
-            DepPatientsStyle = StyleForFilter;
-            PatientService.FilterType = 4;
-            ShowData();
-        }
-
-        private void FilterInEmergencyPatientsClick()
-        {
-            DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
-            EmergencyPatientStyle = StyleForFilter;
-            PatientService.FilterType = 2;
-            ShowData();
-        }
-
-        private void FilterAllPatientsClick()
-        {
-            DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
-            AllPatientStyle = StyleForFilter;
-            PatientService.FilterType = 7;
-            ShowData();
-        }
-
-        private async Task ShowData()
-        {
-            PatientService.AllPersons = await LoadDataToIndexedDb(true);
-            if (PatientService.AllPersons != null)
-            {
-                PersonsCount = PatientService.AllPersons.Count();
-                PagesCount = PersonsCount % PageSize > 0 ? (int)(1 + Math.Floor((decimal)(PersonsCount / PageSize))) : (int)(PersonsCount / PageSize);
-                UpdatePagePersons();
-            }
-            StateHasChanged();
-        }
-
-        private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
-        {
-            try
-            {
-                string userName = (await AuthenticationState).User.Identity.Name;
-                var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
-                request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
-                request.Headers.Add("UserLogin", userName);
-                using var httpResponse = await Http.SendAsync(request);
-                IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
-                if (result != null && result.Any() || force)
-                {
-                    PatientService.AllPersons = new List<Patient>();
-                    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-                    {
-                        List<Patient> patients = new List<Patient>();
-                        db.Patients.Clear();
-                        await db.SaveChanges();
-                        foreach (PatientDto person in result)
-                        {
-                            Patient patient = new Patient
-                            {
-                                PersonID = person.PersonID,
-                                FirstName = person.Firstname,
-                                SurName = person.Lastname,
-                                Patronymic = person.Patronymic,
-                                Age = person.Age,
-                                BirthDay = person.Birthday,
-                                Bed = person.Bed,
-                                Room = person.Room,
-                                IsChanged = person.isChanged,
-                                VersionID = person.VersionID,
-                                StayDep = person.StayDep,
-                                ResponsibleDep = person.ResponsibleDep,
-                                InResuscitation = person.InResuscitation,
-                                ObservationMode = person.ObservationMode,
-                                PhysicalRestraint = person.PhysicalRestraint,
-                                ObservationType = person.ObservationType,
-                                ServiceCaseNumber = person.ServiceCaseNumber,
-                                Doctor = person.Doctor,
-                                Diagnos = person.Diagnos,
-                                SDDepTreatmentCase = person.SDDepTreatmentCase,
-                                SDInpatientServiceCase = person.SDInpatientServiceCase,
-                                AgeDescription = person.AgeDescription,
-                                Gender = person.SexEnum                                
-                            };
-                            db.Patients.Add(patient);
-                            patients.Add(patient);
-                        }
-                        await db.SaveChanges();
-                        return patients;
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-            return null;
+            PersonsCount = PatientService.AllPersons.Count();
+            UpdatePagePersons();
         }
     }
+
+    protected void UpdatePagePersons(bool resetLastPageNumber = false)
+    {
+        PageNumber = resetLastPageNumber ? 0 : PageNumber;
+        if (string.IsNullOrEmpty(SearchQuery))
+        {
+            PersonsOnPage = PatientService.AllPersons.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+        }
+        else
+        {
+            PersonsOnPage = PatientService.AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+        }
+    }
+
+    private void FilterMyPatientsClick()
+    {
+        DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
+        MyPatientsStyle = StyleForFilter;
+        PatientService.FilterType = 1;
+        ShowData();
+    }
+
+    private void FilterToMyDepartmentPatientsClick()
+    {
+        MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
+        DepPatientsStyle = StyleForFilter;
+        PatientService.FilterType = 4;
+        ShowData();
+    }
+
+    private void FilterInEmergencyPatientsClick()
+    {
+        DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
+        EmergencyPatientStyle = StyleForFilter;
+        PatientService.FilterType = 2;
+        ShowData();
+    }
+
+    private void FilterAllPatientsClick()
+    {
+        DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
+        AllPatientStyle = StyleForFilter;
+        PatientService.FilterType = 7;
+        ShowData();
+    }
+
+    private async Task ShowData()
+    {
+        PatientService.AllPersons = await LoadDataToIndexedDb(true);
+        if (PatientService.AllPersons != null)
+        {
+            PersonsCount = PatientService.AllPersons.Count();
+            UpdatePagePersons(true);
+        }
+        StateHasChanged();
+    }
+
+    private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
+    {
+        try
+        {
+            string userName = (await AuthenticationState).User.Identity.Name;
+            var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
+            request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
+            request.Headers.Add("UserLogin", userName);
+            using var httpResponse = await Http.SendAsync(request);
+            IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
+            if (result != null && result.Any() || force)
+            {
+                PatientService.AllPersons = new List<Patient>();
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    List<Patient> patients = new List<Patient>();
+                    db.Patients.Clear();
+                    await db.SaveChanges();
+                    foreach (PatientDto person in result)
+                    {
+                        Patient patient = new Patient
+                        {
+                            PersonID = person.PersonID,
+                            FirstName = person.Firstname,
+                            SurName = person.Lastname,
+                            Patronymic = person.Patronymic,
+                            Age = person.Age,
+                            BirthDay = person.Birthday,
+                            Bed = person.Bed,
+                            Room = person.Room,
+                            IsChanged = person.isChanged,
+                            VersionID = person.VersionID,
+                            StayDep = person.StayDep,
+                            ResponsibleDep = person.ResponsibleDep,
+                            InResuscitation = person.InResuscitation,
+                            ObservationMode = person.ObservationMode,
+                            PhysicalRestraint = person.PhysicalRestraint,
+                            ObservationType = person.ObservationType,
+                            ServiceCaseNumber = person.ServiceCaseNumber,
+                            Doctor = person.Doctor,
+                            Diagnos = person.Diagnos,
+                            SDDepTreatmentCase = person.SDDepTreatmentCase,
+                            SDInpatientServiceCase = person.SDInpatientServiceCase,
+                            AgeDescription = person.AgeDescription,
+                            Gender = person.SexEnum
+                        };
+                        db.Patients.Add(patient);
+                        patients.Add(patient);
+                    }
+                    await db.SaveChanges();
+                    return patients;
+                }
+            }
+        }
+        catch
+        {
+
+        }
+        return null;
+    }
+}

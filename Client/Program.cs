@@ -14,8 +14,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Syncfusion.Blazor;
-
 namespace DoctorAppWeb.Client
 {
     public class Program
@@ -36,8 +34,6 @@ namespace DoctorAppWeb.Client
             builder.Services.AddScoped<IDataWCFService, HttpDataWCFService>();
             builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDc0MTA5QDMxMzkyZTMyMmUzMFVra1BsR1FQcjE5NU8yVFJheVNtZE1FandrblZWNTFvTE0xU3VodEVwRU09;NDc0MTEwQDMxMzkyZTMyMmUzMEFQak9zQ3h1RTRuWDRUa3pXaThEYnNxQXlFd1dOT2F2K2FpVllxN0dPbkU9");
-            builder.Services.AddSyncfusionBlazor();
             builder.Services.AddMatBlazor();
             //builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
