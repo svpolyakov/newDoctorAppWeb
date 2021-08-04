@@ -21,7 +21,8 @@ namespace DoctorAppWeb.Client.Services
         public Task<CustomGroupPerson[]> GetCustomGroupPersons();
         public List<Patient> AllPersons { get; set; }
         public long? FilterType { get; set; }
-        public string UserName { get; set; }        
+        public string UserName { get; set; }
+        public Guid CurrentPatient { get; set; }
     }
 
 
@@ -31,6 +32,7 @@ namespace DoctorAppWeb.Client.Services
         public List<Patient> AllPersons { get; set; }
         public long? FilterType { get; set; }
         public string UserName { get; set; }
+        public Guid CurrentPatient { get; set; }
         private readonly IIndexedDbFactory _dbFactory;        
         public PatientsService(IIndexedDbFactory dbFactory) {
             _dbFactory = dbFactory;

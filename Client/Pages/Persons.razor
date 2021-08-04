@@ -3,8 +3,9 @@
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IModalService modal
 @inject IPatientsService PatientService
+@inject NavigationManager navigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 <div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg"></div>
 <br />
 <br />
@@ -27,18 +28,18 @@
         </tr>
     </thead>
 </table>
-
 <MatAccordion Multi="false" HideToggle="true">
     @if (PersonsOnPage != null && PersonsOnPage.Any())
     {
         @foreach (Patient patient in PersonsOnPage)
         {
             string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
+            string titleInfo = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic + " " + patient.BirthDay + " (" + patient.Age + ") " + patient.StayDep + " " + patient.ServiceCaseNumber;
             <MatExpansionPanel>
                 <MatExpansionPanelSummary>
                     <MatExpansionPanelHeader>
                         <div id="accordionHeader">
-                            <div>@fullName</div><div>@patient.Age</div><div>@patient.StayDep<img class="goToPatient" src="ToPatient.svg" /></div>
+                            <div>@fullName</div><div>@patient.Age</div><div>@patient.StayDep<img class="goToPatient" src="ToPatient.svg" @onclick="@(x => GoToPatientInfo(patient.PersonID, titleInfo))" /></div>
                         </div>
                     </MatExpansionPanelHeader>
                 </MatExpansionPanelSummary>
@@ -73,13 +74,19 @@
 </MatAccordion>
 
 <style>
+    #mainMenu {
+        display: none;
+    }
+
     .descriptionMainPage {
         color: #009688;
         font-weight: bold;
     }
+
     .mainInfo:not(.descriptionMainPage) {
         color: #757575;
     }
+
     .imgGender {
         float: left;
         padding-right: 15px;
@@ -115,7 +122,6 @@
         display: inline-block;
         width: 32%;
         float: left;
-        /*padding-top: 13px;*/
     }
 
     .persons-bottom-container {
@@ -132,6 +138,14 @@
 </style>
 
 @code{
+
+    async Task GoToPatientInfo(Guid id, string title)
+    {
+        await JSRuntime.InvokeVoidAsync("visibleMenu", true);
+        await JSRuntime.InvokeVoidAsync("titleHeader", title);
+        PatientService.CurrentPatient = id;
+        navigationManager.NavigateTo("whatisnew");
+    }
 
     void OnPage(MatPaginatorPageEvent e)
     {
@@ -156,6 +170,8 @@
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
     private Patient[] PersonsOnPage;
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
 
     /// <summary>
     /// Кол-во пациентов, удовлетворяющих поисковому выражению

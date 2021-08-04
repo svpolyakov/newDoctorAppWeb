@@ -1,0 +1,19 @@
+﻿@page "/whatisnew"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IPatientsService PatientService
+@inject NavigationManager navigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+<h3>WhatIsNew</h3>
+
+@code {
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //PatientService.CurrentPatient;
+        await JSRuntime.InvokeVoidAsync("visibleMenu", true);
+    }
+}

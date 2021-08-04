@@ -4,15 +4,16 @@
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
 <div class="page">
-    @*<div class="sidebar">
-        <NavMenu />
-    </div>*@
+    <div id="mainMenu">        
+            <AuthorizeView>
+                    <NavMenu />
+            </AuthorizeView>       
+    </div>
 
     <div class="main">
         <div class="top-row">
-            <button type="button" class="btn btn-link ml-md-auto" @onclick="@LogoutClick">Выход</button>
+            <span id="titleShortInfo" style="color: white;"></span><button type="button" class="btn btn-link ml-md-auto" @onclick="@LogoutClick">Выход</button>
         </div>
-
         <div class="content px-4">
             @Body
         </div>

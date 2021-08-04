@@ -1,32 +1,83 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">DoctorAppWeb</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@inject NavigationManager navigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+<div class="top-row" style="background-color: #3f51b5;">&nbsp;&nbsp;<img src="BackToPatients.svg" id="backToPatientList" @onclick="GoToPatientList"></div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>        
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="selectactions">
-                <span class="oi oi-home" aria-hidden="true"></span> Выбор действий
+        <li class="navItem  px-3">
+            <NavLink href="whatisnew">
+                <span class="oi oi-home" aria-hidden="true"></span> Что нового
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="personlist">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Пациенты
+        <li class="navItem  px-3">
+            <NavLink href="selectactions">
+                <span class="oi oi-home" aria-hidden="true"></span> Диагноз
             </NavLink>
         </li>
-
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Показатели
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Анализы
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Медикаменты
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Обследования
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Консультации
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Обходы
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Процедуры
+            </NavLink>
+        </li>
+        <li class="navItem  px-3">
+            <NavLink href="personlist">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Операции
+            </NavLink>
+        </li>
     </ul>
 </div>
-
+<style>
+    .navItem {
+        color: #3F51B5;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+    #backToPatientList {
+        width: 60%;
+        height: 60%;
+    }
+</style>
 @code {
+
+    public async Task GoToPatientList()
+    {
+        await JSRuntime.InvokeVoidAsync("visibleMenu", false);
+        navigationManager.NavigateTo("persons");
+    }
+
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
