@@ -107,6 +107,8 @@
         {
             db.CustomAuthorizations.Clear();
             db.Webpages.Clear();
+            db.Departments.Clear();
+            db.Doctors.Clear();
             await db.SaveChanges();
             HasDbUserInfo = false;
         }

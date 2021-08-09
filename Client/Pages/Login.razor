@@ -1,7 +1,9 @@
 ﻿@page "/login"
 
 @using DoctorAppWeb.Client.Services
+@using DoctorAppWeb.Shared.DataModel.MedOrganization
 
+@inject HttpClient Http
 @layout AuthLayout
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
@@ -60,10 +62,15 @@
             {
                 db.Webpages.Clear();
                 db.CustomAuthorizations.Clear();
+                db.Departments.Clear();
+                db.Doctors.Clear();
                 await db.SaveChanges();
             }
 
             await authStateProvider.Login(loginRequest);
+
+
+            Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
 
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
@@ -79,8 +86,20 @@
                 db.Webpages.Add(new Webpages() { FormID = "procedures", FormName = "ПРОЦЕДУРЫ", DateUpdate = dt });
                 db.Webpages.Add(new Webpages() { FormID = "anamnesis", FormName = "АНАМНЕЗ", DateUpdate = dt });
                 db.Webpages.Add(new Webpages() { FormID = "diary", FormName = "ДНЕВНИК", DateUpdate = dt });
+
+                foreach(Department dep in departmentsToDoctors.Item1)
+                {
+                    db.Departments.Add(dep);
+                }
+
+                foreach(DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
+                {
+                    db.Doctors.Add(doc);
+                }
+
                 await db.SaveChanges();
             }
+
 
             navigationManager.NavigateTo("");
         }

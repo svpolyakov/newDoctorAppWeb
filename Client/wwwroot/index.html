@@ -42,6 +42,9 @@
         window.titleHeader = function (title) {
             document.getElementById("titleShortInfo").textContent = title;
         }
+        window.visibleSearchPatientsInput = function (isVisible) {
+            document.getElementById("searchPatients").style.display = isVisible ? 'block' : 'none';
+        }
     </script>
 </body>
 

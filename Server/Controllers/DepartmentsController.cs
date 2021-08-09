@@ -1,4 +1,5 @@
-﻿using DoctorAppWeb.Shared.SharedServices;
+﻿using DoctorAppWeb.Shared.DataModel.MedOrganization;
+using DoctorAppWeb.Shared.SharedServices;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -29,11 +30,15 @@ namespace DoctorAppWeb.Server.Controllers
 
         }
 
-        public async Task<IEnumerable<DepartmentDto>> GetAsync()
+        public async Task<Tuple<IEnumerable<Department>, IEnumerable<Doctor>>> GetAsync()
         {
             _logger.LogDebug("GetAsync");
             IEnumerable<DepartmentDto> departments = await _dataWCFService.GetAllDepartmentsAsync();
-            return departments;
+            IEnumerable<ActualDoctorDto> doctors = await _dataWCFService.GetAllActualDoctorsAsync();
+            IEnumerable<Department> deps = departments.Select(x => new Department { BusinessElementID = x.BusinessElementID.ToString(), BusinessElementShortName = x.BusinessElementShortName, DateUpdate = x.DateUpdate });
+            IEnumerable<Doctor> docs = doctors.Select(x => new Doctor { DateUpdate = x.DateUpdate, PersonFirstName = x.FirstName, PersonSurname = x.SurName, PersonPatronymic = x.Patronymic, PersonID = x.Id.ToString(), PersonnelID = x.PersonnelId.ToString(), PersonnelName = x.PersonnelName });
+            return new Tuple<IEnumerable<Department>, IEnumerable<Doctor>>(deps, docs);
+            
         }
     }
 }

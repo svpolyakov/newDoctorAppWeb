@@ -13,6 +13,36 @@
 <div style="float: right" id="filter">
     <span @onclick=FilterMyPatientsClick style="@MyPatientsStyle">Мои</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterToMyDepartmentPatientsClick style="@DepPatientsStyle">Поступившие</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterInEmergencyPatientsClick style="@EmergencyPatientStyle">В приемном</span>&nbsp;&nbsp;&nbsp;<span @onclick=FilterAllPatientsClick style="@AllPatientStyle">Все пациенты</span>
 </div>
+<div id="searchPatients" style="display: none;">
+    <br />
+    <input type="search" style="width: 96%;" @oninput="@(x => SearchQuery = x.Value.ToString())">
+    <button style="background-color:#3F51B5;" @onclick="FindPatients"><img src="Search.svg" width="50" height="24"></button>
+    <div>
+        <MatSelect Label="Отделение" @bind-Value="@SelectedDepartment">
+            <MatOption TValue="Guid?" Value="@(new Guid())">Не выбрано</MatOption>
+            @if (Departments != null)
+            {
+                @foreach (Department dep in Departments)
+                {
+                    <MatOption TValue="Guid?" Value="@(new Guid(dep.BusinessElementID))">@dep.BusinessElementShortName</MatOption>
+                }
+            }
+        </MatSelect>
+    </div>
+    <div>
+        <MatSelect Label="Врач" @bind-Value="@SelectedDoctor">
+            <MatOption TValue="Guid?" Value="@(new Guid())">Не выбран</MatOption>
+            @if (Doctors != null)
+            {
+                @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
+                {
+                    <MatOption TValue="Guid?" Value="@(new Guid(doctor.PersonnelID))">@(doctor.PersonSurname + " " + doctor.PersonFirstName + " " + doctor.PersonPatronymic)</MatOption>
+                }
+            }
+        </MatSelect>
+    </div>
+    <br />
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -30,7 +60,7 @@
 </table>
 <MatAccordion Multi="false" HideToggle="true">
     @if (PersonsOnPage != null && PersonsOnPage.Any())
-    {
+    {        
         @foreach (Patient patient in PersonsOnPage)
         {
             string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
@@ -151,9 +181,30 @@
     {
         PageSize = e.PageSize;
         PageNumber = e.PageIndex;
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            FindPatients();
+            return;
+        }
         if (PersonsOnPage?.Count() > 0)
         {
             UpdatePagePersons();
+        }
+    }
+
+    void FindPatients()
+    {
+        if (string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            UpdatePagePersons();
+            PersonsCount = PatientService.AllPersons.Count;
+        }
+        else
+        {
+            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.SurName?.ToLower() + x.FirstName?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+            Patient[] patientSearchResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery?.ToLower())).Select(x => x.Item1).ToArray();
+            PersonsOnPage = patientSearchResult.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+            PersonsCount = patientSearchResult.Count();
         }
     }
 
@@ -170,8 +221,11 @@
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
     private Patient[] PersonsOnPage;
-    [CascadingParameter]
-    public MainLayout Layout { get; set; }
+    public Guid? SelectedDepartment = new Guid();
+    public Guid? SelectedDoctor = new Guid();
+    public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
+    public IEnumerable<Department> Departments { get; set; }
+
 
     /// <summary>
     /// Кол-во пациентов, удовлетворяющих поисковому выражению
@@ -185,15 +239,7 @@
     /// </summary>
     private int PageSize = 10;
 
-    /// <summary>
-    /// Значение в поисковой строке
-    /// </summary>
-    private string InputSearchValue = "";
-
-    /// <summary>
-    /// Поисковое выражение
-    /// </summary>
-    private string SearchQuery = "";
+    private string SearchQuery { get; set; }
 
     protected void OnPrevPageClicked()
     {
@@ -221,6 +267,8 @@
 
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
+            Departments = db.Departments;
+            Doctors = db.Doctors;
             if (!db.Patients.Any())
             {
                 PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
@@ -252,6 +300,8 @@
 
     private void FilterMyPatientsClick()
     {
+        SearchQuery = string.Empty;
+        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         MyPatientsStyle = StyleForFilter;
         PatientService.FilterType = 1;
@@ -260,6 +310,8 @@
 
     private void FilterToMyDepartmentPatientsClick()
     {
+        SearchQuery = string.Empty;
+        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         DepPatientsStyle = StyleForFilter;
         PatientService.FilterType = 4;
@@ -268,6 +320,8 @@
 
     private void FilterInEmergencyPatientsClick()
     {
+        SearchQuery = string.Empty;
+        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
@@ -279,10 +333,10 @@
         DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
         AllPatientStyle = StyleForFilter;
         PatientService.FilterType = 7;
-        ShowData();
+        ShowData(true);
     }
 
-    private async Task ShowData()
+    private async Task ShowData(bool isAllPatients = false)
     {
         PatientService.AllPersons = await LoadDataToIndexedDb(true);
         if (PatientService.AllPersons != null)
@@ -290,6 +344,8 @@
             PersonsCount = PatientService.AllPersons.Count();
             UpdatePagePersons(true);
         }
+        if(isAllPatients)
+            JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", true);
         StateHasChanged();
     }
 
