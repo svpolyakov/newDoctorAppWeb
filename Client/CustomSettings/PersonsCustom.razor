@@ -1,0 +1,23 @@
+﻿@page "/personsCustom"
+@inject IIndexedDbFactory DbFactory
+<h4>Настройка списка пациентов</h4>
+<div>
+    <MatH6>Вкладка по умолчанию</MatH6>
+    <MatRadioGroup @bind-Value="@Current" TValue="string">
+        <MatRadioButton Value="@("My")" TValue="string">Мои пациенты</MatRadioButton>
+        <MatRadioButton Value="@("New")" Label="Female" TValue="string">Поступившие</MatRadioButton>
+        <MatRadioButton Value="@("Emergency")" TValue="string">В приемном</MatRadioButton>
+        <MatRadioButton Value="@("All")" Disabled="true" TValue="string">Все пациенты</MatRadioButton>
+    </MatRadioGroup>
+</div>
+
+@code {
+    protected string Current;
+    protected override async Task OnInitializedAsync()
+    {
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            
+        }
+    }
+}

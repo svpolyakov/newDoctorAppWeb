@@ -23,6 +23,7 @@ namespace DoctorAppWeb.Client.Services
         public long? FilterType { get; set; }
         public string UserName { get; set; }
         public Guid CurrentPatient { get; set; }
+        public string CurrentPage { get; set; }
     }
 
 
@@ -37,6 +38,7 @@ namespace DoctorAppWeb.Client.Services
         public PatientsService(IIndexedDbFactory dbFactory) {
             _dbFactory = dbFactory;
         }
+        public string CurrentPage { get; set; }
 
         public async Task<CustomPerson> GetCustomPerson()
         {

@@ -6,7 +6,7 @@
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
-<div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg"></div>
+<div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg" @onclick="GoToCustomizationPersons"></div>
 <br />
 <br />
 <br />
@@ -17,26 +17,27 @@
     <br />
     <input type="search" style="width: 96%;" @oninput="@(x => SearchQuery = x.Value.ToString())">
     <button style="background-color:#3F51B5;" @onclick="FindPatients"><img src="Search.svg" width="50" height="24"></button>
-    <div>
+    <div style="float: left">
         <MatSelect Label="Отделение" @bind-Value="@SelectedDepartment">
-            <MatOption TValue="Guid?" Value="@(new Guid())">Не выбрано</MatOption>
+            <MatOption TValue="string" Value="@(string.Format(" "))">Не выбрано</MatOption>
             @if (Departments != null)
             {
                 @foreach (Department dep in Departments)
                 {
-                    <MatOption TValue="Guid?" Value="@(new Guid(dep.BusinessElementID))">@dep.BusinessElementShortName</MatOption>
+                    <MatOption TValue="string" Value="@dep.BusinessElementShortName">@dep.BusinessElementShortName</MatOption>
                 }
             }
         </MatSelect>
     </div>
-    <div>
+    <div style="float: right">
         <MatSelect Label="Врач" @bind-Value="@SelectedDoctor">
-            <MatOption TValue="Guid?" Value="@(new Guid())">Не выбран</MatOption>
+            <MatOption TValue="string" Value="@(string.Format(" "))">Не выбран</MatOption>
             @if (Doctors != null)
             {
                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                 {
-                    <MatOption TValue="Guid?" Value="@(new Guid(doctor.PersonnelID))">@(doctor.PersonSurname + " " + doctor.PersonFirstName + " " + doctor.PersonPatronymic)</MatOption>
+                    string doc = doctor.PersonSurname + " " + doctor.PersonFirstName + " " + doctor.PersonPatronymic;
+                    <MatOption TValue="string" Value="@doc">@doc</MatOption>
                 }
             }
         </MatSelect>
@@ -169,6 +170,12 @@
 
 @code{
 
+    async Task GoToCustomizationPersons()
+    {
+        await JSRuntime.InvokeVoidAsync("visibleMenu", false);
+        navigationManager.NavigateTo(PatientService.CurrentPage + "Custom");
+    }
+
     async Task GoToPatientInfo(Guid id, string title)
     {
         await JSRuntime.InvokeVoidAsync("visibleMenu", true);
@@ -181,7 +188,7 @@
     {
         PageSize = e.PageSize;
         PageNumber = e.PageIndex;
-        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        if (!string.IsNullOrWhiteSpace(SearchQuery) || !string.IsNullOrWhiteSpace(SelectedDoctor) || !string.IsNullOrWhiteSpace(SelectedDepartment))
         {
             FindPatients();
             return;
@@ -194,7 +201,7 @@
 
     void FindPatients()
     {
-        if (string.IsNullOrWhiteSpace(SearchQuery))
+        if (string.IsNullOrWhiteSpace(SearchQuery) && !string.IsNullOrWhiteSpace(SelectedDepartment) && !string.IsNullOrWhiteSpace(SelectedDoctor))
         {
             UpdatePagePersons();
             PersonsCount = PatientService.AllPersons.Count;
@@ -202,9 +209,28 @@
         else
         {
             List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.SurName?.ToLower() + x.FirstName?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-            Patient[] patientSearchResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery?.ToLower())).Select(x => x.Item1).ToArray();
-            PersonsOnPage = patientSearchResult.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
-            PersonsCount = patientSearchResult.Count();
+
+            List<Patient> tempPatientsResult = null;
+
+            if (!string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
+            }
+
+            if(!string.IsNullOrWhiteSpace(SelectedDepartment))
+            {
+                tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+            }
+
+            if(!string.IsNullOrWhiteSpace(SelectedDoctor))
+            {
+                tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
+            }
+
+            tempPatientsResult = tempPatientsResult ?? new List<Patient>();
+
+            PersonsOnPage = tempPatientsResult.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+            PersonsCount = tempPatientsResult.Count();
         }
     }
 
@@ -221,10 +247,12 @@
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
     private Patient[] PersonsOnPage;
-    public Guid? SelectedDepartment = new Guid();
-    public Guid? SelectedDoctor = new Guid();
+    public string SelectedDepartment = " ";
+    public string SelectedDoctor = " ";
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
     public IEnumerable<Department> Departments { get; set; }
+    private int PageSize = 10;
+    private string SearchQuery { get; set; }
 
 
     /// <summary>
@@ -233,13 +261,6 @@
     private int PersonsCount;
 
     private int PageNumber = 0;
-
-    /// <summary>
-    /// Кол-во записей на странице
-    /// </summary>
-    private int PageSize = 10;
-
-    private string SearchQuery { get; set; }
 
     protected void OnPrevPageClicked()
     {
@@ -255,6 +276,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        PatientService.CurrentPage = "persons";
         if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
         {
             PatientService.FilterType = 1;
