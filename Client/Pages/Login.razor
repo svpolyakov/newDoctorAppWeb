@@ -64,6 +64,11 @@
                 db.CustomAuthorizations.Clear();
                 db.Departments.Clear();
                 db.Doctors.Clear();
+                db.CustomSettings.Clear();
+                db.CustomGroupPersons.Clear();
+                db.CustomGridPersons.Clear();
+                db.CustomPersons.Clear();
+                db.ReplacementDoctors.Clear();
                 await db.SaveChanges();
             }
 
@@ -71,6 +76,12 @@
 
 
             Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
+            var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
+            request.Headers.Add("UserLogin", loginRequest.UserName);
+            using var httpResponse = await Http.SendAsync(request);
+            CustomizationInfoDto result = await httpResponse.Content.ReadFromJsonAsync<CustomizationInfoDto>();
+
+
 
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
@@ -96,6 +107,42 @@
                 {
                     db.Doctors.Add(doc);
                 }
+
+                CustomSettings customSettings = new CustomSettings()
+                {
+                    DateUpdate = result.CustomSettings.DateUpdate,
+                    MaxPeriodData = result.CustomSettings.MaxPeriodData,
+                    PeriodActive = result.CustomSettings.PeriodActive,
+                    OnlineMode = result.CustomSettings.OnlineMode
+                };
+                db.CustomSettings.Add(customSettings);
+
+                List<CustomGroupPerson> customGroupPersons = new List<CustomGroupPerson>();
+                foreach(CustomGroupPersonsDto customGroupPersonsDto in result.WebPages.CustomPerson.CustomGroupPersons)
+                {
+                    customGroupPersons.Add(new CustomGroupPerson { NameButtonEn = customGroupPersonsDto.nameButtonEn, NameButtonRu = customGroupPersonsDto.nameButtonRu, OrderButton = customGroupPersonsDto.OrderButton, Selected = customGroupPersonsDto.Selected });
+                }
+
+                List<CustomGridPerson> customGridPersons = new List<CustomGridPerson>();
+                foreach(CustomGridPersonDto customGridPersonDto in result.WebPages.CustomPerson.CustomGridPerson)
+                {
+                    customGridPersons.Add(new CustomGridPerson { AvailableGroupings = customGridPersonDto.AvailableGroupings, IsGrouping = customGridPersonDto.isGrouping, NameColumnEn = customGridPersonDto.NameColumnEn, NameColumnRu = customGridPersonDto.NameColumnRu, OrderColumn = customGridPersonDto.OrderColumn, VisibilityColumn = customGridPersonDto.VisibilityColumn });
+                }
+
+                CustomPerson customPerson = new CustomPerson { CustomGridPerson = customGridPersons, CustomGroupPersons = customGroupPersons, DateUpdate = result.WebPages.CustomPerson.DateUpdate };
+                db.CustomPersons.Add(customPerson);
+
+                foreach(CustomReplacementDoctorDto customReplacementDoctorDto in result.ReplacementDoctor)
+                {
+                    db.ReplacementDoctors.Add(new ReplacementDoctor { DateUpdate = customReplacementDoctorDto.DateUpdate, PersonId = customReplacementDoctorDto.PersonId, PositionTypeID = customReplacementDoctorDto.PositionTypeID, Selected = customReplacementDoctorDto.Selected });
+                }
+
+                foreach(CustomFromDepartmentDto customFromDepartmentDto in result.FromDepartments)
+                {
+                    db.FromDepartments.Add(new FromDepartments { BusinessElementID = customFromDepartmentDto.BusinessElementID, DateUpdate = customFromDepartmentDto.DateUpdate, Selected = customFromDepartmentDto.Selected });
+                }
+
+
 
                 await db.SaveChanges();
             }

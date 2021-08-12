@@ -276,6 +276,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            Departments = db.Departments;
+            Doctors = db.Doctors;
+            string filterName = db.CustomPersons.FirstOrDefault()?.CustomGroupPersons.FirstOrDefault(x => x.Selected)?.NameButtonEn;
+            switch (filterName)
+            {
+                case "MyPatient": PatientService.FilterType = 1; break;
+                case "InEmergencyRoom": PatientService.FilterType = 2; break;
+                case "ToMyDepartments": PatientService.FilterType = 4; break;
+                case "AllPatients": PatientService.FilterType = 7; break;
+                default: PatientService.FilterType = 1; break;
+            }
+        }
         PatientService.CurrentPage = "persons";
         if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
         {
@@ -283,23 +297,7 @@
         }
         string userName = (await AuthenticationState).User.Identity.Name;
         PatientService.UserName = userName;
-        CustomGroupPerson custromGroupPerson = await PatientService.GetCustomGroupPerson();
-        GetDataButtonLabel = custromGroupPerson.NameButtonRu;
-        PatientService.FilterType = custromGroupPerson.Id;
-
-        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-        {
-            Departments = db.Departments;
-            Doctors = db.Doctors;
-            if (!db.Patients.Any())
-            {
-                PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
-            }
-            else
-            {
-                PatientService.AllPersons = db.Patients.ToList();
-            }
-        }
+        PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
         if (PatientService.AllPersons != null)
         {
             PersonsCount = PatientService.AllPersons.Count();

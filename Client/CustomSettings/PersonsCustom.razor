@@ -1,23 +1,37 @@
 ﻿@page "/personsCustom"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IPatientsService PatientService
 <h4>Настройка списка пациентов</h4>
 <div>
     <MatH6>Вкладка по умолчанию</MatH6>
-    <MatRadioGroup @bind-Value="@Current" TValue="string">
-        <MatRadioButton Value="@("My")" TValue="string">Мои пациенты</MatRadioButton>
-        <MatRadioButton Value="@("New")" Label="Female" TValue="string">Поступившие</MatRadioButton>
-        <MatRadioButton Value="@("Emergency")" TValue="string">В приемном</MatRadioButton>
-        <MatRadioButton Value="@("All")" Disabled="true" TValue="string">Все пациенты</MatRadioButton>
+    <MatRadioGroup @bind-Value="@CurrentFilter" TValue="string">
+        <MatRadioButton Value="@("1")" TValue="string">Мои пациенты</MatRadioButton>
+        <MatRadioButton Value="@("4")" TValue="string">Поступившие</MatRadioButton>
+        <MatRadioButton Value="@("2")" TValue="string">В приемном</MatRadioButton>
+        <MatRadioButton Value="@("7")" TValue="string">Все пациенты</MatRadioButton>
     </MatRadioGroup>
 </div>
 
 @code {
-    protected string Current;
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+    protected string CurrentFilter { get; set; }
     protected override async Task OnInitializedAsync()
     {
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-        {
-            
+        {            
+            string filterName = db.CustomPersons.FirstOrDefault()?.CustomGroupPersons.FirstOrDefault(x => x.Selected)?.NameButtonEn;
+            switch (filterName)
+            {
+                case "MyPatient": CurrentFilter = "1"; break;
+                case "InEmergencyRoom": CurrentFilter = "2"; break;
+                case "ToMyDepartments": CurrentFilter = "4"; break;
+                case "AllPatients": CurrentFilter = "7"; break;
+                default: CurrentFilter = "1"; break;
+            }
         }
     }
 }

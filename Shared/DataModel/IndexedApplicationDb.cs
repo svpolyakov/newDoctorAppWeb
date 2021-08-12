@@ -17,6 +17,8 @@ namespace DoctorAppWeb.Shared.DataModel
         public IndexedSet<Webpages> Webpages { get; set; }
         public IndexedSet<Doctor> Doctors { get; set; }
         public IndexedSet<Department> Departments { get; set; }
+        public IndexedSet<FromDepartments> FromDepartments { get; set; }
+        public IndexedSet<ReplacementDoctor> ReplacementDoctors { get; set; }
         public IndexedApplicationDb(IJSRuntime jSRuntime, string name, int version) : base(jSRuntime, name, version) { }        
     }
 }

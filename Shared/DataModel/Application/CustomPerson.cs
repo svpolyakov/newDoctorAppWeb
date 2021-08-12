@@ -45,6 +45,7 @@ namespace DoctorAppWeb.Shared.DataModel.Application
         public int MaxPeriodData { get; set; }
         public int PeriodActive { get; set; }
         public DateTime? DateUpdate { get; set; }
+        public bool OnlineMode { get; set; }
         public string FormID { get; set; }
     }
 
