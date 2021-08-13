@@ -1,14 +1,16 @@
 ﻿@page "/"
 
-<AuthorizeView>
-    <Authorized>
+    <AuthorizeView>
 
-        <DoctorAppWeb.Client.Pages.Persons />
-              
-    </Authorized>
-    <Authorizing>
+        <Authorized>
 
-        <h1>Загрузка ...</h1>
+            <DoctorAppWeb.Client.Pages.Persons />
 
-    </Authorizing>
-</AuthorizeView>
+        </Authorized>
+        <Authorizing>
+
+            <h1>Загрузка ...</h1>
+
+        </Authorizing>
+
+    </AuthorizeView>

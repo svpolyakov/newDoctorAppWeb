@@ -10,102 +10,129 @@
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
 
-<br />
-<br />
-<br />
-<div class="main-logon">
-    <h1>
-        Рабочее место врача на обходе
-    </h1>
-    <br />
-    <div class="authForm">
-        <br />
-        <br />
 
-        <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
-            <DataAnnotationsValidator />
+    <MudCard Class="loginBlock">
+        <MudCardContent>
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <div class="cardTitle">
+                    <MudText Typo="Typo.h5" Class="mdc-theme--primary">
+                        Рабочее место врача на обходе
+                    </MudText>
+                </div>
+                <div id="form">
+                    <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+                        <DataAnnotationsValidator />
+                        <div>
+                            <MudTextField Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
+                        </div>
+                        <div>
+                            <MudTextField Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
+                        </div>
+                        <div class="buttonWrapper">
+                            <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                        </div>
+                        <div class="forgotPwdWrapper">
+                            <MudButton Color="Color.Secondary" href="counter">Не помню пароль</MudButton>
+                        </div>
+                        <NavLink href="register">
+                            <h6 class="font-weight-normal text-center">Create account</h6>
+                        </NavLink>
+                    </EditForm>
 
-            <label for="inputUsername" class="sr-only">User Name</label>
-            <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.UserName" autofocus placeholder="Username" />
-            <ValidationMessage For="@(() => loginRequest.UserName)" />
-            <br />
-            <label for="inputPassword" class="sr-only">Password</label>
-            <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
-            <ValidationMessage For="@(() => loginRequest.Password)" />
-            <br />
+                </div>
+            </MudForm>
+        </MudCardContent>
+        
+        </MudCard>
 
-            <div class="flexContainer">
-                <button class="btn btn-lg btn-primary" type="submit">Войти</button> <NavLink href="counter">Забыли пароль?</NavLink>
-            </div>
-            <label class="text-danger">@error</label>
-
-            <br />
-            <NavLink href="register">
-                <h6 class="font-weight-normal text-center">Create account</h6>
-            </NavLink>
-        </EditForm>
-
-    </div>
-</div>
-
-@code{
-    LoginRequest loginRequest { get; set; } = new LoginRequest();
-    string error { get; set; }
-
-
-    async Task OnSubmit()
-    {
-        error = null;
-        try
-        {
-            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            {
-                db.Webpages.Clear();
-                db.CustomAuthorizations.Clear();
-                db.Departments.Clear();
-                db.Doctors.Clear();
-                await db.SaveChanges();
-            }
-
-            await authStateProvider.Login(loginRequest);
-
-
-            Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
-
-            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            {
-                DateTime dt = DateTime.Now;
-                db.Webpages.Add(new Webpages() { FormID = "authorization", FormName = "РАБОЧЕЕ МЕСТО ВРАЧА НА ОБХОДЕ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "patient", FormName = "ПАЦИЕНТЫ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "whatIsNew", FormName = "ЧТО НОВОГО", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "indicant", FormName = "ПОКАЗАТЕЛИ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "labTest", FormName = "АНАЛИЗЫ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "pharmaTherapy", FormName = "МЕДИКАМЕНТЫ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "investigation", FormName = "ОБСЛЕДОВАНИЯ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "consultations", FormName = "КОНСУЛЬТАЦИИ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "procedures", FormName = "ПРОЦЕДУРЫ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "anamnesis", FormName = "АНАМНЕЗ", DateUpdate = dt });
-                db.Webpages.Add(new Webpages() { FormID = "diary", FormName = "ДНЕВНИК", DateUpdate = dt });
-
-                foreach(Department dep in departmentsToDoctors.Item1)
-                {
-                    db.Departments.Add(dep);
-                }
-
-                foreach(DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
-                {
-                    db.Doctors.Add(doc);
-                }
-
-                await db.SaveChanges();
-            }
-
-
-            navigationManager.NavigateTo("");
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
+<style>
+    .loginBlock {
+        position:absolute;
+        left:50%;
+        top: 50%;
+        transform:translate(-50%, -50%);
     }
-}
+    .fullWidth {
+        width: 100%
+    }
+    .cardTitle {
+        padding-left:120px;
+        padding-right:120px;
+        padding-top:60px;
+        margin-bottom:60px;
+    }
+    .buttonWrapper {
+        margin-top:60px
+    }
+    .forgotPwdWrapper {
+        display: flex;
+        flex-direction: row-reverse;
+        margin-top: 10px
+    }
+
+</style>
+
+        @code{
+            LoginRequest loginRequest { get; set; } = new LoginRequest();
+            string error { get; set; }
+            MudForm form;
+            bool success;
+            string[] errors = { };
+
+
+            async Task OnSubmit()
+            {
+                error = null;
+                try
+                {
+                    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                    {
+                        db.Webpages.Clear();
+                        db.CustomAuthorizations.Clear();
+                        db.Departments.Clear();
+                        db.Doctors.Clear();
+                        await db.SaveChanges();
+                    }
+
+                    await authStateProvider.Login(loginRequest);
+
+
+                    Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
+
+                    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                    {
+                        DateTime dt = DateTime.Now;
+                        db.Webpages.Add(new Webpages() { FormID = "authorization", FormName = "РАБОЧЕЕ МЕСТО ВРАЧА НА ОБХОДЕ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "patient", FormName = "ПАЦИЕНТЫ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "whatIsNew", FormName = "ЧТО НОВОГО", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "indicant", FormName = "ПОКАЗАТЕЛИ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "labTest", FormName = "АНАЛИЗЫ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "pharmaTherapy", FormName = "МЕДИКАМЕНТЫ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "investigation", FormName = "ОБСЛЕДОВАНИЯ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "consultations", FormName = "КОНСУЛЬТАЦИИ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "procedures", FormName = "ПРОЦЕДУРЫ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "anamnesis", FormName = "АНАМНЕЗ", DateUpdate = dt });
+                        db.Webpages.Add(new Webpages() { FormID = "diary", FormName = "ДНЕВНИК", DateUpdate = dt });
+
+                        foreach (Department dep in departmentsToDoctors.Item1)
+                        {
+                            db.Departments.Add(dep);
+                        }
+
+                        foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
+                        {
+                            db.Doctors.Add(doc);
+                        }
+
+                        await db.SaveChanges();
+                    }
+
+
+                    navigationManager.NavigateTo("");
+                }
+                catch (Exception ex)
+                {
+                    error = ex.Message;
+                }
+            }
+        }
