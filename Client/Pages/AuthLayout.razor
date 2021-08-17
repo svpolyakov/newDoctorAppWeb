@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider  Theme="@theme1"/>
     <div class="main">
         <div class="content px-4">
             @Body
@@ -7,14 +6,3 @@
     </div>
 
 
-@code {
-    MudTheme theme1 = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Primary = "#3F51B5",
-            Secondary = "#40B0A6",
-        }
-
-    };
-}

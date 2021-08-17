@@ -6,7 +6,7 @@
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
-<div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg" @onclick="GoToCustomizationPersons"></div>
+<!--<div style="float: left"><h3>Пациенты</h3></div><div style="float: right"><img src="refresh.svg" />&nbsp;&nbsp;&nbsp;<img src="settings.svg" @onclick="GoToCustomizationPersons"></div>
 <br />
 <br />
 <br />
@@ -61,7 +61,7 @@
 </table>
 <MatAccordion Multi="false" HideToggle="true">
     @if (PersonsOnPage != null && PersonsOnPage.Any())
-    {        
+    {
         @foreach (Patient patient in PersonsOnPage)
         {
             string fullName = patient.SurName + " " + patient.FirstName + " " + patient.Patronymic;
@@ -102,69 +102,104 @@
             <MatPaginator Length="@PersonsCount" PageSize="@PageSize" Page="@OnPage"></MatPaginator>
         </div>
     }
-</MatAccordion>
+</MatAccordion> -->
+
+<div class="pageHeader">
+    <MudText Typo="Typo.h3">
+        Пациенты
+    </MudText>
+
+    <div class="flexSpacer" />
+
+    <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
+    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
+</div>
+
+<div class="tabWrapper">
+
+</div>
+
+<MudTable Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
+    <ColGroup>
+        <col style="width:300px;" />
+        <col style="width:100px;" />
+        <col />
+        <col style="width:100px;" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh></MudTh>
+        <MudTh>ФИО</MudTh>
+        <MudTh>Возраст</MudTh>
+        <MudTh>Отделение</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.ID))" Size="Size.Small" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+        <MudTd DataLabel="fio">@context.FirstName</MudTd>
+        <MudTd DataLabel="age">@context.Age</MudTd>
+        <MudTd DataLabel="place"></MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (context.ShowDetails)
+        {
+            string fullName = context.SurName + " " + context.FirstName + " " + context.Patronymic;
+            string titleInfo = context.SurName + " " + context.FirstName + " " + context.Patronymic + " " + context.BirthDay + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+
+            <MudTr>
+                <td colspan="4">
+                    <MudCard class="descriprion" Elevation="0">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.body1">Details for <strong>@fullName</strong></MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Class="pa-0">
+                            <div style="display:flex">
+                                @if (context.Gender == 1)
+                                {
+                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
+                                }
+                                else
+                                {
+                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
+                                }
+                                <MudText>@context.BirthDay</MudText>
+                                <MudText>@context.ServiceCaseNumber</MudText>
+                            </div>
+                            <div>
+
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
+                </td>
+            </MudTr>
+        }
+    </ChildRowContent>
+</MudTable>
+
 
 <style>
     #mainMenu {
         display: none;
     }
 
-    .descriptionMainPage {
-        color: #009688;
-        font-weight: bold;
+    .pageHeader {
+        display: flex;
+        align-items: baseline;
     }
 
-    .mainInfo:not(.descriptionMainPage) {
-        color: #757575;
+    .flexSpacer {
+        flex: 1;
     }
 
-    .imgGender {
-        float: left;
-        padding-right: 15px;
+    .tabWrapper {
+        display: flex;
+        flex-direction: row-reverse;
     }
-
-    .goToPatient {
-        float: right;
-        border: 2px solid rgba(0, 150, 136, 0.08);
-        border-radius: 5px;
-        padding-left: 15px;
-        padding-right: 15px;
+    .arrowDown {
+        transform: rotate(90deg);
     }
-
-    .mat-accordion .mat-expansion-panel.mat-expansion-panel--expanded > .mat-expansion-panel__content {
-        background: rgba(0, 150, 136, 0.08);
-    }
-
-    #filter span {
-        color: #757575;
-        cursor: pointer;
-    }
-
-    .btn {
-        color: #3f51b5;
-    }
-
-    table span {
-        display: inline-block;
-        width: 33%;
-    }
-
-    #accordionHeader div {
-        display: inline-block;
-        width: 32%;
-        float: left;
-    }
-
-    .persons-bottom-container {
-        float: right;
-    }
-
-    thead {
-        background-color: rgba(63, 81, 181, 0.08);
-    }
-
-    .mat-accordion .mat-expansion-panel__summary {
-        display: block !important;
+    .descriprion {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.LightGreen
     }
 </style>
 
@@ -184,19 +219,9 @@
         navigationManager.NavigateTo("whatisnew");
     }
 
-    void OnPage(MatPaginatorPageEvent e)
+    void OnPage()
     {
-        PageSize = e.PageSize;
-        PageNumber = e.PageIndex;
-        if (!string.IsNullOrWhiteSpace(SearchQuery) || !string.IsNullOrWhiteSpace(SelectedDoctor) || !string.IsNullOrWhiteSpace(SelectedDepartment))
-        {
-            FindPatients();
-            return;
-        }
-        if (PersonsOnPage?.Count() > 0)
-        {
-            UpdatePagePersons();
-        }
+
     }
 
     void FindPatients()
@@ -217,12 +242,12 @@
                 tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
             }
 
-            if(!string.IsNullOrWhiteSpace(SelectedDepartment))
+            if (!string.IsNullOrWhiteSpace(SelectedDepartment))
             {
                 tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
             }
 
-            if(!string.IsNullOrWhiteSpace(SelectedDoctor))
+            if (!string.IsNullOrWhiteSpace(SelectedDoctor))
             {
                 tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
             }
@@ -232,6 +257,12 @@
             PersonsOnPage = tempPatientsResult.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
             PersonsCount = tempPatientsResult.Count();
         }
+    }
+
+    private void ShowBtnPress(int id)
+    {
+        Patient tmpPerson = PersonsOnPage.First(f => f.ID == id);
+        tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
     }
 
     //Стили
@@ -366,7 +397,7 @@
             PersonsCount = PatientService.AllPersons.Count();
             UpdatePagePersons(true);
         }
-        if(isAllPatients)
+        if (isAllPatients)
             JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", true);
         StateHasChanged();
     }

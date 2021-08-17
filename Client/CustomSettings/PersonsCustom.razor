@@ -2,13 +2,13 @@
 @inject IIndexedDbFactory DbFactory
 <h4>Настройка списка пациентов</h4>
 <div>
-    <MatH6>Вкладка по умолчанию</MatH6>
-    <MatRadioGroup @bind-Value="@Current" TValue="string">
-        <MatRadioButton Value="@("My")" TValue="string">Мои пациенты</MatRadioButton>
-        <MatRadioButton Value="@("New")" Label="Female" TValue="string">Поступившие</MatRadioButton>
-        <MatRadioButton Value="@("Emergency")" TValue="string">В приемном</MatRadioButton>
-        <MatRadioButton Value="@("All")" Disabled="true" TValue="string">Все пациенты</MatRadioButton>
-    </MatRadioGroup>
+    <MudText Typo="Typo.h6">Вкладка по умолчанию</MudText>
+    <MudRadioGroup @bind-SelectedOption="@Current" TValue="string">
+        <MudRadio  Option="@("My")" TValue="string">Мои пациенты</MudRadio>
+        <MudRadio  Option="@("New")" Label="Female" TValue="string">Поступившие</MudRadio>
+        <MudRadio  Option="@("Emergency")" TValue="string">В приемном</MudRadio>
+        <MudRadio  Option="@("All")" Disabled="true" TValue="string">Все пациенты</MudRadio>
+    </MudRadioGroup>
 </div>
 
 @code {
