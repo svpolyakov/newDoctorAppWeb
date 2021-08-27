@@ -7,35 +7,23 @@ using System.Threading.Tasks;
 
 namespace DoctorAppWeb.Shared.DataModel.Application
 {
-    public class CustomPerson
+    public class CustomGroupPerson
     {
-        [Key]
-        public long Id { get; set; }
-        public List<CustomGridPerson> CustomGridPerson { get; set; }
-        public List<CustomGroupPerson> CustomGroupPersons { get; set; }
+        public string NameButtonEn { get; set; }
+        public string NameButtonRu { get; set; }
+        public bool Selected { get; set; }
         public DateTime? DateUpdate { get; set; }
     }
-
     public class CustomGridPerson
     {
-        [Key]
-        public long Id { get; set; }
         public string NameColumnEn { get; set; }
         public string NameColumnRu { get; set; }
-        public bool OrderColumn { get; set; }
+        public int OrderColumn { get; set; }
         public bool VisibilityColumn { get; set; }
         public bool AvailableGroupings { get; set; }
         public bool IsGrouping { get; set; }
-    }
-
-    public class CustomGroupPerson
-    {
-        [Key]
-        public long Id { get; set; }
-        public string NameButtonEn { get; set; }
-        public string NameButtonRu { get; set; }
-        public bool OrderButton { get; set; }
-        public bool Selected { get; set; }
+        public bool WhereToDisplay { get; set; }
+        public DateTime? DateUpdate { get; set; }
     }
 
     public class CustomSettings
@@ -49,12 +37,11 @@ namespace DoctorAppWeb.Shared.DataModel.Application
         public string FormID { get; set; }
     }
 
-    public class Webpages
+    public class PagesSettings
     {
         [Key]
         public long Id { get; set; }
         public string FormID { get; set; }
-        public string FormName { get; set; }
-        public DateTime? DateUpdate { get; set; }
+        public string FormSettings { get; set; }
     }
 }

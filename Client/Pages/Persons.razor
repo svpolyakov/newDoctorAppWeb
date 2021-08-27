@@ -1,5 +1,6 @@
 ﻿@page "/persons"
 @using Microsoft.AspNetCore.Components.Authorization
+@using Newtonsoft.Json
 @inject HttpClient Http
 @inject IIndexedDbFactory DbFactory
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -209,7 +210,6 @@
         else
         {
             List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.SurName?.ToLower() + x.FirstName?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-
             List<Patient> tempPatientsResult = null;
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -253,6 +253,8 @@
     public IEnumerable<Department> Departments { get; set; }
     private int PageSize = 10;
     private string SearchQuery { get; set; }
+    private List<CustomGridPerson> CustomGridPerson { get; set; }
+    private List<CustomGroupPerson> CustomGroupPerson { get; set; }
 
 
     /// <summary>
@@ -280,7 +282,10 @@
         {
             Departments = db.Departments;
             Doctors = db.Doctors;
-            string filterName = db.CustomPersons.FirstOrDefault()?.CustomGroupPersons.FirstOrDefault(x => x.Selected)?.NameButtonEn;
+            string temp = db.PagesSettings.FirstOrDefault().FormSettings;
+            CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
+            CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
+            string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
             switch (filterName)
             {
                 case "MyPatient": PatientService.FilterType = 1; break;
@@ -428,5 +433,76 @@
 
         }
         return null;
+    }
+
+    private async Task<List<CustomGridPerson>> ConvertJsonToObjPersonCustomization(string json)
+    {
+        List<CustomGridPerson> gridCustomization = new List<CustomGridPerson>();
+        foreach (List<object> customization in string.IsNullOrWhiteSpace(json) ? DefaultGridPersonCustomization.GetDefaults() : JsonConvert.DeserializeObject<GridPersonCustomization>(json).customGridPerson)
+        {
+            CustomGridPerson customGridPerson = new CustomGridPerson();
+            customGridPerson.NameColumnEn = customization.ElementAtOrDefault(0)?.ToString();
+            customGridPerson.NameColumnRu = customization.ElementAtOrDefault(1)?.ToString();
+            customGridPerson.OrderColumn = int.Parse(customization.ElementAtOrDefault(2)?.ToString() ?? int.MaxValue.ToString());
+            customGridPerson.VisibilityColumn = bool.Parse(customization.ElementAtOrDefault(3)?.ToString() ?? false.ToString());
+            customGridPerson.AvailableGroupings = bool.Parse(customization.ElementAtOrDefault(4)?.ToString() ?? false.ToString());
+            customGridPerson.IsGrouping = bool.Parse(customization.ElementAtOrDefault(5)?.ToString() ?? false.ToString());
+            customGridPerson.WhereToDisplay = bool.Parse(customization.ElementAtOrDefault(6)?.ToString() ?? false.ToString());
+            customGridPerson.DateUpdate = customization.ElementAtOrDefault(7) as DateTime?;
+            gridCustomization.Add(customGridPerson);
+        }
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+            {
+                PagesSettings pagesSetting = db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson");
+                if(pagesSetting == null)
+                {
+                    pagesSetting = new PagesSettings { FormID = "customGridPerson" };
+                    db.PagesSettings.Add(pagesSetting);
+                }
+                if (string.IsNullOrWhiteSpace(pagesSetting.FormSettings))
+                {
+                    pagesSetting.FormSettings = JsonConvert.SerializeObject(new GridPersonCustomization { customGridPerson = DefaultGridPersonCustomization.GetDefaults() });
+                }
+
+                await db.SaveChanges();
+            }
+        }
+        return gridCustomization;
+    }
+
+    private async Task<List<CustomGroupPerson>> ConvertToObjCustomGroup(string json)
+    {
+        List<CustomGroupPerson> customGroupPersons = new List<CustomGroupPerson>();
+        foreach (List<object> customization in string.IsNullOrWhiteSpace(json) ? DefaultGroupPersonCustomization.GetDefaults() : JsonConvert.DeserializeObject<GroupPersonCustomization>(json).customGroupPerson)
+        {
+            CustomGroupPerson customGroupPerson = new CustomGroupPerson();
+            customGroupPerson.NameButtonEn = customization.ElementAtOrDefault(0)?.ToString();
+            customGroupPerson.NameButtonRu = customization.ElementAtOrDefault(1)?.ToString();
+            customGroupPerson.Selected = bool.Parse(customization.ElementAtOrDefault(2)?.ToString() ?? false.ToString());
+            customGroupPerson.DateUpdate = customization.ElementAtOrDefault(3) as DateTime?;
+            customGroupPersons.Add(customGroupPerson);
+        }
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+            {
+                PagesSettings pagesSetting = db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson");
+                if (pagesSetting == null)
+                {
+                    pagesSetting = new PagesSettings { FormID = "customGroupPerson" };
+                    db.PagesSettings.Add(pagesSetting);
+                }
+                if (string.IsNullOrWhiteSpace(pagesSetting.FormSettings))
+                {
+                    pagesSetting.FormSettings = JsonConvert.SerializeObject(new GroupPersonCustomization { customGroupPerson = DefaultGroupPersonCustomization.GetDefaults() });
+                }
+
+                await db.SaveChanges();
+            }
+        }
+        return customGroupPersons;
     }
 }

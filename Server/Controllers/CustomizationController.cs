@@ -15,7 +15,7 @@ namespace DoctorAppWeb.Server.Controllers
         public async Task<CustomizationInfoDto> GetAsync()
         {
             string login = Request.Headers["UserLogin"].ToString();
-            return  await new InpatientDoctorClient().GetCustomizationAsync(login);
+            return  await new InpatientDoctorClient().GetCustomizationAsync(login, null);
         }
 
         [HttpPost]

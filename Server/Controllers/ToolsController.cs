@@ -17,7 +17,7 @@ namespace DoctorAppWeb.Server.Controllers
         public Tuple<UserInfoDto, CustomizationInfoDto> Get(string Login)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            return new Tuple<UserInfoDto, CustomizationInfoDto>(inpatientDoctorClient.GetUserInfoAsync(Login).Result, inpatientDoctorClient.GetCustomizationAsync(Login).Result);            
+            return new Tuple<UserInfoDto, CustomizationInfoDto>(inpatientDoctorClient.GetUserInfoAsync(Login).Result, inpatientDoctorClient.GetCustomizationAsync(Login, null).Result);            
         }
 
         [HttpGet]

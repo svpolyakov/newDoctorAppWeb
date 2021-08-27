@@ -22,8 +22,8 @@
     protected override async Task OnInitializedAsync()
     {
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-        {            
-            string filterName = db.CustomPersons.FirstOrDefault()?.CustomGroupPersons.FirstOrDefault(x => x.Selected)?.NameButtonEn;
+        {
+            string filterName = null;// db.CustomPersons.FirstOrDefault()?.CustomGroupPersons.FirstOrDefault(x => x.Selected)?.NameButtonEn;
             switch (filterName)
             {
                 case "MyPatient": CurrentFilter = "1"; break;

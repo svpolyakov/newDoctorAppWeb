@@ -106,7 +106,7 @@
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             db.CustomAuthorizations.Clear();
-            db.Webpages.Clear();
+            db.PagesSettings.Clear();
             db.Departments.Clear();
             db.Doctors.Clear();
             await db.SaveChanges();
