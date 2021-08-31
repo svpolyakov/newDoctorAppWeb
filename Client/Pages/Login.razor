@@ -9,75 +9,85 @@
 @inject CustomStateProvider authStateProvider
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
+@inject IDialogService Dialog
+    <MudDialogProvider />
+<MudCard Class="loginBlock">
+    <MudCardContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <div class="cardTitle">
+                <MudText Typo="Typo.h5" Color="Color.Primary">
+                    Рабочее место врача на обходе
+                </MudText>
+            </div>
+            <div id="form">
+                <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+                    <DataAnnotationsValidator />
+                    <div>
+                        <MudTextField Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
+                    </div>
+                    <div>
+                        <MudTextField Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
+                    </div>
+                    <div class="buttonWrapper">
+                        <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                    </div>
+                    <div class="forgotPwdWrapper">
+                        <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
+                    </div>
+                    <!--<NavLink href="register">
+                        <h6 class="font-weight-normal text-center">Create account</h6>
+                    </NavLink>-->
+                </EditForm>
 
+            </div>
+        </MudForm>
+    </MudCardContent>
 
-    <MudCard Class="loginBlock">
-        <MudCardContent>
-            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <div class="cardTitle">
-                    <MudText Typo="Typo.h5" Color="Color.Primary">
-                        Рабочее место врача на обходе
-                    </MudText>
-                </div>
-                <div id="form">
-                    <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
-                        <DataAnnotationsValidator />
-                        <div>
-                            <MudTextField Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
-                        </div>
-                        <div>
-                            <MudTextField Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
-                        </div>
-                        <div class="buttonWrapper">
-                            <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
-                        </div>
-                        <div class="forgotPwdWrapper">
-                            <MudButton Color="Color.Secondary" href="counter">Не помню пароль</MudButton>
-                        </div>
-                        <NavLink href="register">
-                            <h6 class="font-weight-normal text-center">Create account</h6>
-                        </NavLink>
-                    </EditForm>
-
-                </div>
-            </MudForm>
-        </MudCardContent>
-        
-        </MudCard>
+</MudCard>
 
 <style>
     .loginBlock {
-        position:absolute;
-        left:50%;
+        position: absolute;
+        left: 50%;
         top: 50%;
-        transform:translate(-50%, -50%);
+        transform: translate(-50%, -50%);
     }
+
     .fullWidth {
         width: 100%
     }
+
     .cardTitle {
-        padding-left:120px;
-        padding-right:120px;
-        padding-top:60px;
-        margin-bottom:60px;
+        padding-left: 120px;
+        padding-right: 120px;
+        padding-top: 60px;
+        margin-bottom: 60px;
     }
+
     .buttonWrapper {
-        margin-top:60px
+        margin-top: 60px
     }
+
     .forgotPwdWrapper {
         display: flex;
         flex-direction: row-reverse;
         margin-top: 10px
     }
-
 </style>
 
-        @code{
-            LoginRequest loginRequest { get; set; } = new LoginRequest();
-            string error { get; set; }
-            MudForm form;
-            bool success;
-            string[] errors = { };
+@code{
+    LoginRequest loginRequest { get; set; } = new LoginRequest();
+    string error { get; set; }
+    MudForm form;
+    bool success;
+    string[] errors = { };
+    bool isResetDlgVisible = false;
+
+    private void OpenDialog()
+    {
+        DialogOptions options = new DialogOptions() { CloseButton = true };
+        Dialog.Show<LostPassword>("Сброс пароля", options);
+    }
 
 
     async Task OnSubmit()
@@ -95,14 +105,14 @@
                 await db.SaveChanges();
             }
 
-                    await authStateProvider.Login(loginRequest);
+            await authStateProvider.Login(loginRequest);
 
             Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
             var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
             request.Headers.Add("UserLogin", loginRequest.UserName);
             using var httpResponse = await Http.SendAsync(request);
             CustomizationInfoDto result = await httpResponse.Content.ReadFromJsonAsync<CustomizationInfoDto>();
-            
+
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
                 if (result != null && result.PagesSettings as Dictionary<string, string> != null)
@@ -119,8 +129,8 @@
                 foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
                     db.Doctors.Add(doc);
 
-                        await db.SaveChanges();
-                    }
+                await db.SaveChanges();
+            }
 
             //    CustomSettings customSettings = new CustomSettings()
             //    {
@@ -134,11 +144,11 @@
             //    await db.SaveChanges();
             //}
 
-                    navigationManager.NavigateTo("");
-                }
-                catch (Exception ex)
-                {
-                    error = ex.Message;
-                }
-            }
+            navigationManager.NavigateTo("");
         }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

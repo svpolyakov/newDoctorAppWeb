@@ -313,7 +313,6 @@
         {
             Departments = db.Departments;
             Doctors = db.Doctors;
-            string temp = db.PagesSettings.FirstOrDefault().FormSettings;
             CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
             CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
             string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
