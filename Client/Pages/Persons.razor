@@ -316,7 +316,8 @@
             CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
             CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
             string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
-            switch (filterName)
+            PatientService.FilterType = 7; //УДАЛИТЬ
+            switch ("AllPatients") //ИСПРАВИТЬ НА ФИЛЬТРТАЙП
             {
                 case "MyPatient": PatientService.FilterType = 1; break;
                 case "InEmergencyRoom": PatientService.FilterType = 2; break;
