@@ -34,5 +34,6 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public Guid? VersionID { get; set; }
         public string AgeDescription { get; set; }
         public int Gender { get; set; }
+        public bool ShowDetails { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 using Blazored.Modal;
 using DoctorAppWeb.Client.Services;
 using DoctorAppWeb.Shared.SharedServices;
-using MatBlazor;
+using MudBlazor.Services;
 using IndexedDB.Blazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -34,7 +34,7 @@ namespace DoctorAppWeb.Client
             builder.Services.AddScoped<IDataWCFService, HttpDataWCFService>();
             builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
-            builder.Services.AddMatBlazor();
+            builder.Services.AddMudServices();
             //builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

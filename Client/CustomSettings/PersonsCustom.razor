@@ -6,13 +6,13 @@
 @inject IPatientsService PatientService
 <h4>Настройка списка пациентов</h4>
 <div>
-    <MatH6>Вкладка по умолчанию</MatH6>
-    <MatRadioGroup @bind-Value="@CurrentFilter" TValue="string">
-        <MatRadioButton Value="@("1")" TValue="string">Мои пациенты</MatRadioButton>
-        <MatRadioButton Value="@("4")" TValue="string">Поступившие</MatRadioButton>
-        <MatRadioButton Value="@("2")" TValue="string">В приемном</MatRadioButton>
-        <MatRadioButton Value="@("7")" TValue="string">Все пациенты</MatRadioButton>
-    </MatRadioGroup>
+    <MudText Typo="Typo.h6">Вкладка по умолчанию</MudText>
+    <MudRadioGroup @bind-SelectedOption="@Current" TValue="string">
+        <MudRadio  Option="@("My")" TValue="string">Мои пациенты</MudRadio>
+        <MudRadio  Option="@("New")" Label="Female" TValue="string">Поступившие</MudRadio>
+        <MudRadio  Option="@("Emergency")" TValue="string">В приемном</MudRadio>
+        <MudRadio  Option="@("All")" Disabled="true" TValue="string">Все пациенты</MudRadio>
+    </MudRadioGroup>
 </div>
 
 @code {

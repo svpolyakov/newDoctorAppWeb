@@ -3,11 +3,12 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
+<MudThemeProvider Theme="theme1" />
 <div class="page">
-    <div id="mainMenu">        
-            <AuthorizeView>
-                    <NavMenu />
-            </AuthorizeView>       
+    <div id="mainMenu">
+        <AuthorizeView>
+            <NavMenu />
+        </AuthorizeView>
     </div>
 
     <div class="main">
@@ -20,12 +21,34 @@
     </div>
 </div>
 
+@code {
+    MudTheme theme1 = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = DoctorAppWeb.Client.Shared.Colors.Blue,
+            Secondary = DoctorAppWeb.Client.Shared.Colors.Green,
+        }
+
+    };
+}
 
 @functions{
 
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; }
     public static bool HasDbUserInfo = false;
+
+    bool open = false;
+    bool dense = false;
+    bool preserveOpenState = false;
+    Breakpoint breakpoint = Breakpoint.Lg;
+    DrawerClipMode clipMode = DrawerClipMode.Never;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,7 +116,7 @@
                     });
                     HasDbUserInfo = true;
                 }
-                else if(HasDbUserInfo && authorization != null)
+                else if (HasDbUserInfo && authorization != null)
                 {
                     authorization.DateActual = DateTime.Now;
                 }
