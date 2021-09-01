@@ -35,5 +35,13 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public string AgeDescription { get; set; }
         public int Gender { get; set; }
         public bool ShowDetails { get; set; }
+        public string GetPropertyValue(string propertyName)
+        {
+            try
+            {
+                return this.GetType().GetProperty(propertyName).GetValue(this, null) as string;
+            }
+            catch { return null; }
+        }
     }
 }

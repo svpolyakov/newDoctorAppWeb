@@ -120,7 +120,7 @@
 
 </div>
 
-<MudTable Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
+<MudTable Class="fullWidth" Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
     <ColGroup>
         <col style="width:300px;" />
         <col style="width:100px;" />
@@ -129,15 +129,22 @@
     </ColGroup>
     <HeaderContent>
         <MudTh></MudTh>
-        <MudTh>ФИО</MudTh>
-        <MudTh>Возраст</MudTh>
-        <MudTh>Отделение</MudTh>
+        @foreach (var field in CustomGridPerson)
+        {
+            <MudTh>@field.NameColumnRu</MudTh>
+        }
     </HeaderContent>
     <RowTemplate>
-        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.ID))" Size="Size.Small" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
-        <MudTd DataLabel="fio">@context.FirstName</MudTd>
-        <MudTd DataLabel="age">@context.Age</MudTd>
-        <MudTd DataLabel="place"></MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.ID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+
+
+        @foreach (var field in CustomGridPerson)
+        {
+            <MudTd>
+                @context.GetPropertyValue(field.NameColumnEn)
+            </MudTd>
+        }
+
     </RowTemplate>
     <ChildRowContent>
         @if (context.ShowDetails)
@@ -146,37 +153,46 @@
             string titleInfo = context.SurName + " " + context.FirstName + " " + context.Patronymic + " " + context.BirthDay + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
 
             <MudTr>
-                <td colspan="4">
-                    <MudCard class="descriprion" Elevation="0">
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.body1">Details for <strong>@fullName</strong></MudText>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                        <MudCardContent Class="pa-0">
-                            <div style="display:flex">
-                                @if (context.Gender == 1)
-                                {
-                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
-                                }
-                                else
-                                {
-                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
-                                }
-                                <MudText>@context.BirthDay</MudText>
-                                <MudText>@context.ServiceCaseNumber</MudText>
-                            </div>
-                            <div>
+                <td class="green"></td>
+                <td class="green" colspan="@CustomGridPerson.Count">
+                    <div class="descriprion">
+                            <MudGrid>
+                                <MudItem xs="1">
+                                    @if (context.Gender == 1)
+                                    {
+                                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
+                                    }
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <span class="descriprion-content">@context.BirthDay</span>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <span class="descriprion-content">ИБ @context.ServiceCaseNumber</span>
+                                </MudItem>
+                            </MudGrid>
 
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
+                            <MudGrid>
+                                <MudItem xs="4">
+                                    <span class="descriprion-title" Color="Color.Secondary">Врач:</span><span class="descriprion-content">@context.Doctor</span>
+                                </MudItem>
+                                <MudItem xs="4">
+                                    <span class="descriprion-title">Диагноз:</span><span class="descriprion-content">@context.Diagnos</span>
+                                </MudItem>
+                                <MudItem xs="4">
+                                    <span class="descriprion-title">Койка:</span><span class="descriprion-content">@context.Bed</span>
+                                </MudItem>
+                            </MudGrid>
+                    </div>
                 </td>
             </MudTr>
         }
     </ChildRowContent>
 </MudTable>
-
+@CustomGridPerson
 
 <style>
     #mainMenu {
@@ -199,12 +215,29 @@
     .arrowDown {
         transform: rotate(90deg);
     }
+    .green {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.LightGreen;
+    }
     .descriprion {
-        background-color: @DoctorAppWeb.Client.Shared.Colors.LightGreen
+        width: calc(100vw - 163px);
+        padding: 12px;
+    }
+    .descriprion-title {
+        color:  @DoctorAppWeb.Client.Shared.Colors.Green;
+        font-size:34px;
+    }
+    .descriprion-content {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray;
+        font-size: 34px;
+    }
+    .fullWidth {
+        width: calc(100vw - 70px);
     }
 </style>
 
 @code{
+
+
 
     async Task GoToCustomizationPersons()
     {

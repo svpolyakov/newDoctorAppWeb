@@ -84,3 +84,6 @@ a, .btn-link {
     align-items: baseline;
 }
 
+.mud-table-cell {
+    font-size: 34px;
+}
