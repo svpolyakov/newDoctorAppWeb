@@ -135,7 +135,7 @@
         }
     </HeaderContent>
     <RowTemplate>
-        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.ID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
 
 
         @foreach (var field in CustomGridPerson)
@@ -292,9 +292,10 @@
         }
     }
 
-    private void ShowBtnPress(int id)
+    private void ShowBtnPress(Guid id)
     {
-        Patient tmpPerson = PersonsOnPage.First(f => f.ID == id);
+        Console.WriteLine(id);
+        Patient tmpPerson = PersonsOnPage.First(f => f.PersonID == id);
         tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
     }
 
