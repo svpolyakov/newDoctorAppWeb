@@ -11,29 +11,72 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
     {
         [Key]
         public int ID { get; set; }
+        
         public Guid PersonID { get; set; }
-        public string SurName { get; set; }
-        public string FirstName { get; set; }
+        
+        public string Firstname { get; set; }
+        
+        public string Lastname { get; set; }
+        
         public string Patronymic { get; set; }
-        public int? Age { get; set; }
-        public DateTime? BirthDay { get; set; }
-        public string ResponsibleDep { get; set; }
-        public string StayDep { get; set; }
-        public string Diagnos { get; set; }
-        public string Doctor { get; set; }
-        public string Room { get; set; }
-        public string Bed { get; set; }
-        public string ServiceCaseNumber { get; set; }
-        public DateTime? SDDepTreatmentCase { get; set; }
-        public DateTime? SDInpatientServiceCase { get; set; }
-        public bool? InResuscitation { get; set; }
-        public string PhysicalRestraint { get; set; }
-        public string ObservationMode { get; set; }
-        public string ObservationType { get; set; }
-        public bool? IsChanged { get; set; }
-        public Guid? VersionID { get; set; }
+        
+        public int SexEnum { get; set; }
+        
+        public DateTime? Birthday { get; set; }
+        
+        public int Age { get; set; }
+        
         public string AgeDescription { get; set; }
-        public int Gender { get; set; }
+        
+        public string ResponsibleDep { get; set; }
+        
+        public string StayDep { get; set; }
+        
+        public string Diagnos { get; set; }
+        
+        public string Doctor { get; set; }
+        
+        public string Room { get; set; }
+        
+        public string Bed { get; set; }
+        
+        public string ServiceCaseNumber { get; set; }
+        
+        public DateTime? SDDepTreatmentCase { get; set; }
+        
+        public DateTime? SDInpatientServiceCase { get; set; }
+        
+        public bool InResuscitation { get; set; }
+        
+        public string PhysicalRestraint { get; set; }
+        
+        public string ObservationMode { get; set; }
+        
+        public string ObservationType { get; set; }
+        
+        public bool isChanged { get; set; }
+        
+        public Guid? VersionID { get; set; }
+        
+        public string HelpForm { get; set; }
+        
+        public DateTime? SDReceptionCase { get; set; }
+        
+        public AdmissionInfo AdmissionInfo { get; set; }
+        
+        public Guid HealthcareServiceId { get; set; }
+        
+        public bool IsWorking { get; set; }
+        
+        public string Benefits { get; set; }
+        
+        public Guid DiagnosAnamnesisID { get; set; }
+        
+        public Guid PathologyАnamnesisID { get; set; }
+        
+        public Guid LifeAnamnesisID { get; set; }
+        
+        public Guid PersonnelID { get; set; }
         public bool ShowDetails { get; set; }
         public string GetPropertyValue(string propertyName)
         {
@@ -43,5 +86,12 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
             }
             catch { return null; }
         }
+    }
+
+    public class AdmissionInfo
+    {
+        public string InpatientSrv { get; set; }
+        public string Dtc { get; set; }
+        public string ReceptCase { get; set; }
     }
 }

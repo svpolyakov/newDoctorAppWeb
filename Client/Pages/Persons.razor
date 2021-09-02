@@ -149,8 +149,8 @@
     <ChildRowContent>
         @if (context.ShowDetails)
         {
-            string fullName = context.SurName + " " + context.FirstName + " " + context.Patronymic;
-            string titleInfo = context.SurName + " " + context.FirstName + " " + context.Patronymic + " " + context.BirthDay + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
+            string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
 
             <MudTr>
                 <td class="green"></td>
@@ -158,7 +158,7 @@
                     <div class="descriprion">
                             <MudGrid>
                                 <MudItem xs="1">
-                                    @if (context.Gender == 1)
+                                    @if (context.SexEnum == 1)
                                     {
                                         <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
                                     }
@@ -168,7 +168,7 @@
                                     }
                                 </MudItem>
                                 <MudItem xs="3">
-                                    <span class="descriprion-content">@context.BirthDay</span>
+                                    <span class="descriprion-content">@context.Birthday</span>
                                 </MudItem>
                                 <MudItem xs="3">
                                     <span class="descriprion-content">ИБ @context.ServiceCaseNumber</span>
@@ -267,7 +267,7 @@
         }
         else
         {
-            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.SurName?.ToLower() + x.FirstName?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
             List<Patient> tempPatientsResult = null;
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -384,7 +384,7 @@
         }
         else
         {
-            PersonsOnPage = PatientService.AllPersons.Where(p => (p.SurName + " " + p.FirstName + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+            PersonsOnPage = PatientService.AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip(PageNumber * PageSize).Take(PageSize).ToArray();
         }
     }
 
@@ -462,14 +462,14 @@
                         Patient patient = new Patient
                         {
                             PersonID = person.PersonID,
-                            FirstName = person.Firstname,
-                            SurName = person.Lastname,
+                            Firstname = person.Firstname,
+                            Lastname = person.Lastname,
                             Patronymic = person.Patronymic,
                             Age = person.Age,
-                            BirthDay = person.Birthday,
+                            Birthday = person.Birthday,
                             Bed = person.Bed,
                             Room = person.Room,
-                            IsChanged = person.isChanged,
+                            isChanged = person.isChanged,
                             VersionID = person.VersionID,
                             StayDep = person.StayDep,
                             ResponsibleDep = person.ResponsibleDep,
@@ -483,7 +483,17 @@
                             SDDepTreatmentCase = person.SDDepTreatmentCase,
                             SDInpatientServiceCase = person.SDInpatientServiceCase,
                             AgeDescription = person.AgeDescription,
-                            Gender = person.SexEnum
+                            SexEnum = person.SexEnum,
+                            DiagnosAnamnesisID = person.DiagnosAnamnesisID,
+                            LifeAnamnesisID = person.LifeAnamnesisID,
+                            Benefits = person.Benefits,
+                            HealthcareServiceId = person.HealthcareServiceId,
+                            HelpForm = person.HelpForm,
+                            IsWorking = person.IsWorking,
+                            PathologyАnamnesisID = person.PathologyАnamnesisID,
+                            SDReceptionCase = person.SDReceptionCase,
+                            PersonnelID = person.PersonnelID,
+                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?.Dtc, InpatientSrv = person.AdmissionInfo?.InpatientSrv, ReceptCase = person.AdmissionInfo?.ReceptCase }
                         };
                         db.Patients.Add(patient);
                         patients.Add(patient);
