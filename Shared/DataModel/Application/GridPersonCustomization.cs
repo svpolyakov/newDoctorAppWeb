@@ -17,7 +17,7 @@ namespace DoctorAppWeb.Shared.DataModel.Application
         {
             DateTime dtUpdate = DateTime.Now;
             List<List<object>> defaults = new List<List<object>>();
-            defaults.Add(new List<object>() { "Surname", "Фамилия", 0, true, false, false, true, dtUpdate });
+            defaults.Add(new List<object>() { "Lastname", "Фамилия", 0, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Firstname", "Имя", 1, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Patronymic", "Отчество", 2, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Age", "Возраст", 3, true, false, false, true, dtUpdate });

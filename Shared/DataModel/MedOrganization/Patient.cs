@@ -82,7 +82,7 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         {
             try
             {
-                return this.GetType().GetProperty(propertyName).GetValue(this, null) as string;
+                return this.GetType().GetProperty(propertyName)?.GetValue(this, null)?.ToString();
             }
             catch { return null; }
         }
