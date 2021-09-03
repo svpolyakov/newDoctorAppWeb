@@ -104,99 +104,117 @@
         </div>
     }
 </MatAccordion> -->
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper>
+  <div class="pageWrapper">
+                <div class="pageHeader">
+                    <MudText Typo="Typo.h3">
+                        Пациенты
+                    </MudText>
 
-<div class="pageHeader">
-    <MudText Typo="Typo.h3">
-        Пациенты
-    </MudText>
+                    <div class="flexSpacer" />
 
-    <div class="flexSpacer" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
+                </div>
 
-    <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
-    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
-</div>
+                <div class="tabWrapper">
+                    <MudTabs>
+                        <MudTabPanel OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
+                        </MudTabPanel>
+                        <MudTabPanel OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
+                        </MudTabPanel>
+                        <MudTabPanel OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
+                        </MudTabPanel>
+                        <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
+                        </MudTabPanel>
+                    </MudTabs>
+                </div>
 
-<div class="tabWrapper">
+                <MudTable Virtualize="true" Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
+                    <HeaderContent>
+                        <MudTh></MudTh>
+                        @foreach (var field in CustomGridPerson)
+                        {
+                            if (field.WhereToDisplay)
+                            {
+                                <MudTh><span class="tableHeader">@field.NameColumnRu</span></MudTh>
+                            }
 
-</div>
-
-<MudTable Class="fullWidth" Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
-    <ColGroup>
-        <col style="width:300px;" />
-        <col style="width:100px;" />
-        <col />
-        <col style="width:100px;" />
-    </ColGroup>
-    <HeaderContent>
-        <MudTh></MudTh>
-        @foreach (var field in CustomGridPerson)
-        {
-            <MudTh>@field.NameColumnRu</MudTh>
-        }
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+                        }
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
 
 
-        @foreach (var field in CustomGridPerson)
-        {
-            <MudTd>
-                @context.GetPropertyValue(field.NameColumnEn)
-            </MudTd>
-        }
+                        @foreach (var field in CustomGridPerson)
+                        {
+                            if (field.WhereToDisplay)
+                            {
+                                <MudTd>
+                                    @context.GetPropertyValue(field.NameColumnEn)
+                                </MudTd>
+                            }
+                        }
+                    </RowTemplate>
+                    <ChildRowContent>
+                        @if (context.ShowDetails)
+                        {
+                            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
+                            string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
 
-    </RowTemplate>
-    <ChildRowContent>
-        @if (context.ShowDetails)
-        {
-            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
-            string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+                            <MudTr>
+                                <td class="green"></td>
+                                <td class="green" colspan="@CustomGridPerson.Count">
+                                    <div class="descriprion">
+                                        <MudGrid>
+                                            <MudItem xs="1">
+                                                @if (context.SexEnum == 1)
+                                                {
+                                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
+                                                }
+                                                else
+                                                {
+                                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
+                                                }
+                                            </MudItem>
+                                            <MudItem xs="3">
+                                                <span class="descriprion-content">@context.Birthday</span>
+                                            </MudItem>
+                                            <MudItem xs="3">
+                                                <span class="descriprion-content">ИБ @context.ServiceCaseNumber</span>
+                                            </MudItem>
+                                        </MudGrid>
 
-            <MudTr>
-                <td class="green"></td>
-                <td class="green" colspan="@CustomGridPerson.Count">
-                    <div class="descriprion">
-                            <MudGrid>
-                                <MudItem xs="1">
-                                    @if (context.SexEnum == 1)
-                                    {
-                                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
-                                    }
-                                    else
-                                    {
-                                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
-                                    }
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <span class="descriprion-content">@context.Birthday</span>
-                                </MudItem>
-                                <MudItem xs="3">
-                                    <span class="descriprion-content">ИБ @context.ServiceCaseNumber</span>
-                                </MudItem>
-                            </MudGrid>
-
-                            <MudGrid>
-                                <MudItem xs="4">
-                                    <span class="descriprion-title" Color="Color.Secondary">Врач:</span><span class="descriprion-content">@context.Doctor</span>
-                                </MudItem>
-                                <MudItem xs="4">
-                                    <span class="descriprion-title">Диагноз:</span><span class="descriprion-content">@context.Diagnos</span>
-                                </MudItem>
-                                <MudItem xs="4">
-                                    <span class="descriprion-title">Койка:</span><span class="descriprion-content">@context.Bed</span>
-                                </MudItem>
-                            </MudGrid>
-                    </div>
-                </td>
-            </MudTr>
-        }
-    </ChildRowContent>
-</MudTable>
-@CustomGridPerson
+                                        <MudGrid>
+                                            <MudItem xs="4">
+                                                <span class="descriprion-title" Color="Color.Secondary">Врач:</span><span class="descriprion-content">@context.Doctor</span>
+                                            </MudItem>
+                                            <MudItem xs="4">
+                                                <span class="descriprion-title">Диагноз:</span><span class="descriprion-content">@context.Diagnos</span>
+                                            </MudItem>
+                                            <MudItem xs="4">
+                                                <span class="descriprion-title">Койка:</span><span class="descriprion-content">@context.Bed</span>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </div>
+                                </td>
+                            </MudTr>
+                        }
+                    </ChildRowContent>
+                </MudTable>
+            </div>
+</MudPaper>
 
 <style>
     #mainMenu {
         display: none;
+    }
+
+    .pageWrapper {
+        padding-top: 63px;
+        max-width: 95vw;
+        margin: 0 auto;
     }
 
     .pageHeader {
@@ -211,6 +229,8 @@
     .tabWrapper {
         display: flex;
         flex-direction: row-reverse;
+        padding-top: 54px;
+        padding-bottom: 38px;
     }
     .arrowDown {
         transform: rotate(90deg);
@@ -230,8 +250,12 @@
         color: @DoctorAppWeb.Client.Shared.Colors.Gray;
         font-size: 34px;
     }
-    .fullWidth {
-        width: calc(100vw - 70px);
+    .tableHeader {
+        color: @DoctorAppWeb.Client.Shared.Colors.Blue;
+    }
+    .tabWrapper {
+        display: flex;
+        flex-direction: row-reverse;
     }
 </style>
 
@@ -320,6 +344,7 @@
     private string SearchQuery { get; set; }
     private List<CustomGridPerson> CustomGridPerson { get; set; }
     private List<CustomGroupPerson> CustomGroupPerson { get; set; }
+    public bool showProgress = true;
 
 
     /// <summary>
@@ -343,6 +368,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        showProgress = true;
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             Departments = db.Departments;
@@ -373,6 +399,7 @@
             PersonsCount = PatientService.AllPersons.Count();
             UpdatePagePersons();
         }
+        showProgress = false;
     }
 
     protected void UpdatePagePersons(bool resetLastPageNumber = false)

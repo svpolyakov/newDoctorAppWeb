@@ -1,5 +1,12 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+/*variables*/
+:root {
+    --fs-lg: 34px;
+    --fs-md: 24px;
+}
+/*end*/
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #E5E5E5;
@@ -85,5 +92,9 @@ a, .btn-link {
 }
 
 .mud-table-cell {
-    font-size: 34px;
+    font-size: var(--fs-lg);
+}
+
+.mud-tab {
+    font-size: var(--fs-md);
 }
