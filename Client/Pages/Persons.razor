@@ -131,7 +131,7 @@
                     </MudTabs>
                 </div>
 
-                <MudTable Virtualize="true" Items="@PersonsOnPage" Hover="true" Breakpoint="Breakpoint.Sm">
+                <MudTable Items="@PersonsOnPage" Hover="false" Breakpoint="Breakpoint.Sm">
                     <HeaderContent>
                         <MudTh></MudTh>
                         @foreach (var field in CustomGridPerson)
@@ -142,6 +142,7 @@
                             }
 
                         }
+                    <MudTh Class="stickyCell"></MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
@@ -156,6 +157,10 @@
                                 </MudTd>
                             }
                         }
+                        <MudTd Class="stickyCell">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary"><DoctorAppWeb.Client.Pages.IconComponents.ArrowRight/></MudButton>
+                        
+                        </MudTd>
                     </RowTemplate>
                     <ChildRowContent>
                         @if (context.ShowDetails)
@@ -168,34 +173,27 @@
                                 <td class="green" colspan="@CustomGridPerson.Count">
                                     <div class="descriprion">
                                         <MudGrid>
-                                            <MudItem xs="1">
-                                                @if (context.SexEnum == 1)
+                                            @foreach (var field in CustomGridPerson)
+                                            {
+                                                if (!field.WhereToDisplay)
                                                 {
-                                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Male" />
-                                                }
-                                                else
-                                                {
-                                                    <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.Female" />
-                                                }
-                                            </MudItem>
-                                            <MudItem xs="3">
-                                                <span class="descriprion-content">@context.Birthday</span>
-                                            </MudItem>
-                                            <MudItem xs="3">
-                                                <span class="descriprion-content">ИБ @context.ServiceCaseNumber</span>
-                                            </MudItem>
-                                        </MudGrid>
+                                                    string value = context.GetPropertyValue(field.NameColumnEn);
+                                                    int xs;
+                                                    int threshold = 20;
+                                                    if (value?.Length > threshold)
+                                                    {
+                                                        xs = 12; // full line
+                                                    }
+                                                    else
+                                                    {
+                                                        xs = 6; // half line
+                                                    }
+                                                    <MudItem xs="@xs">
+                                                        <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
+                                                    </MudItem>
 
-                                        <MudGrid>
-                                            <MudItem xs="4">
-                                                <span class="descriprion-title" Color="Color.Secondary">Врач:</span><span class="descriprion-content">@context.Doctor</span>
-                                            </MudItem>
-                                            <MudItem xs="4">
-                                                <span class="descriprion-title">Диагноз:</span><span class="descriprion-content">@context.Diagnos</span>
-                                            </MudItem>
-                                            <MudItem xs="4">
-                                                <span class="descriprion-title">Койка:</span><span class="descriprion-content">@context.Bed</span>
-                                            </MudItem>
+                                                }
+                                            }
                                         </MudGrid>
                                     </div>
                                 </td>
@@ -256,6 +254,11 @@
     .tabWrapper {
         display: flex;
         flex-direction: row-reverse;
+    }
+    .stickyCell {
+        position: sticky;
+        right: 0;
+        background: white;
     }
 </style>
 
