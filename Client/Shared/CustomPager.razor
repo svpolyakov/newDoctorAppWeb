@@ -1,0 +1,89 @@
+﻿<div class="pagerWrapper">
+    <span>Строк:&nbsp;</span>
+    <MudSelect SelectedValuesChanged="@onSelectChanged" Dense="true" DisableUnderLine="true" @bind-Value="@rowsOnPage" T="int">
+        <MudSelectItem Value="10">10</MudSelectItem>
+        <MudSelectItem Value="25">25</MudSelectItem>
+        <MudSelectItem Value="50">50</MudSelectItem>
+    </MudSelect>
+    <span>@showStr из @totalRows</span>
+    <MudIconButton Disabled="@prevDisabled" OnClick="onPrev" Icon="@Icons.Material.Filled.ChevronLeft" />
+    <MudIconButton Disabled="@nextDisabled" OnClick="onNext" Icon="@Icons.Material.Filled.ChevronRight" />
+</div>
+
+<style>
+    .pagerWrapper {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 0;
+        width: 400px;
+    }
+</style>
+@code {
+    [Parameter]
+    public int totalRows { get; set; }
+    [Parameter]
+    public Action NextPage { get; set; }
+    [Parameter]
+    public Action PrevPage { get; set; }
+
+    int rowsOnPage = 10;
+    int currentPage = 1;
+    double maxPage;
+    string showStr = "";
+
+    bool prevDisabled = true;
+    bool nextDisabled = false;
+
+    void onNext()
+    {
+        if (currentPage <= maxPage)
+        {
+            currentPage++;
+            updateShowStr();
+            updateDisabled();
+            NextPage.Invoke();
+        }
+    }
+
+    void onPrev()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            updateShowStr();
+            updateDisabled();
+            PrevPage.Invoke();
+        }
+    }
+
+    void onSelectChanged()
+    {
+        updateShowStr();
+    }
+
+    void updateShowStr()
+    {
+        int from = (1 + rowsOnPage * (currentPage - 1));
+        int to = (rowsOnPage * (currentPage - 1) + rowsOnPage);
+        if (to > totalRows)
+        {
+            to = totalRows;
+        }
+        showStr = from.ToString() +  "-" + to.ToString();
+    }
+
+    void updateDisabled()
+    {
+        prevDisabled = currentPage == 1;
+        nextDisabled = currentPage == maxPage;
+    }
+
+    protected override void OnInitialized()
+    {
+        updateShowStr();
+        double maxPageDouble = totalRows / rowsOnPage;
+        maxPage = Math.Floor(maxPageDouble);
+        updateDisabled();
+    }
+}

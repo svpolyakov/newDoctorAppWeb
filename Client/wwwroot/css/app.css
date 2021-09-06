@@ -10,6 +10,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #E5E5E5;
+    font-size: 24px
 }
 
 a, .btn-link {
@@ -91,10 +92,6 @@ a, .btn-link {
     align-items: baseline;
 }
 
-.mud-table-cell {
-    font-size: var(--fs-lg);
-}
-
-.mud-tab {
-    font-size: var(--fs-md);
+.mud-tabs-toolbar-content .mud-tabs-toolbar-wrapper {
+    float:right
 }

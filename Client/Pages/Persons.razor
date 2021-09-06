@@ -107,101 +107,130 @@
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper>
   <div class="pageWrapper">
-                <div class="pageHeader">
-                    <MudText Typo="Typo.h3">
-                        Пациенты
-                    </MudText>
+    <div class="pageHeader">
+        <MudText Typo="Typo.h5">
+            Пациенты
+        </MudText>
 
-                    <div class="flexSpacer" />
+        <div class="flexSpacer" />
 
-                    <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
-                </div>
+        <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
+    </div>
 
-                <div class="tabWrapper">
-                    <MudTabs>
-                        <MudTabPanel OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
-                        </MudTabPanel>
-                        <MudTabPanel OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
-                        </MudTabPanel>
-                        <MudTabPanel OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
-                        </MudTabPanel>
-                        <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
-                        </MudTabPanel>
-                    </MudTabs>
-                </div>
-
-                <MudTable Items="@PersonsOnPage" Hover="false" Breakpoint="Breakpoint.Sm">
-                    <HeaderContent>
-                        <MudTh></MudTh>
-                        @foreach (var field in CustomGridPerson)
-                        {
-                            if (field.WhereToDisplay)
+    <div class="tabWrapper">
+        <MudTabs>
+            <MudTabPanel OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
+            </MudTabPanel>
+            <MudTabPanel OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
+            </MudTabPanel>
+            <MudTabPanel OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
+            </MudTabPanel>
+            <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
+                <MudGrid Class="filtersWrapper">
+                    <MudItem xs="10">
+                        <MudTextField FullWidth="true" @bind-Value="SearchQuery" Label="ФИО или номер ИБ" Variant="Variant.Outlined"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="2">
+                        <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
+                            @foreach (Department dep in Departments)
                             {
-                                <MudTh><span class="tableHeader">@field.NameColumnRu</span></MudTh>
+                                <MudSelectItem T="string" Value="@dep.BusinessElementShortName">@dep.BusinessElementShortName</MudSelectItem>
                             }
-
-                        }
-                    <MudTh Class="stickyCell"></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
-
-
-                        @foreach (var field in CustomGridPerson)
-                        {
-                            if (field.WhereToDisplay)
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect @bind-Value="@SelectedDoctor" T="string" Label="Лечащий врач" Variant="Variant.Outlined">
+                            @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                             {
-                                <MudTd>
-                                    @context.GetPropertyValue(field.NameColumnEn)
-                                </MudTd>
+                                string doc = doctor.PersonSurname + " " + doctor.PersonFirstName + " " + doctor.PersonPatronymic;
+                                <MudSelectItem T="string" Value="@doc">@doc</MudSelectItem>
                             }
-                        }
-                        <MudTd Class="stickyCell">
-                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary"><DoctorAppWeb.Client.Pages.IconComponents.ArrowRight/></MudButton>
-                        
-                        </MudTd>
-                    </RowTemplate>
-                    <ChildRowContent>
-                        @if (context.ShowDetails)
-                        {
-                            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
-                            string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+                            
+            </MudTabPanel>
+        </MudTabs>
+    </div>
 
-                            <MudTr>
-                                <td class="green"></td>
-                                <td class="green" colspan="@CustomGridPerson.Count">
-                                    <div class="descriprion">
-                                        <MudGrid>
-                                            @foreach (var field in CustomGridPerson)
-                                            {
-                                                if (!field.WhereToDisplay)
-                                                {
-                                                    string value = context.GetPropertyValue(field.NameColumnEn);
-                                                    int xs;
-                                                    int threshold = 20;
-                                                    if (value?.Length > threshold)
-                                                    {
-                                                        xs = 12; // full line
-                                                    }
-                                                    else
-                                                    {
-                                                        xs = 6; // half line
-                                                    }
-                                                    <MudItem xs="@xs">
-                                                        <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
-                                                    </MudItem>
+    <MudTable Items="@PersonsOnPage" Hover="false" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh></MudTh>
+            @foreach (var field in CustomGridPerson)
+            {
+                if (field.WhereToDisplay)
+                {
+                    <MudTh><span class="tableHeader">@field.NameColumnRu</span></MudTh>
+                }
 
-                                                }
-                                            }
-                                        </MudGrid>
-                                    </div>
-                                </td>
-                            </MudTr>
-                        }
-                    </ChildRowContent>
-                </MudTable>
-            </div>
+            }
+            <MudTh Class="stickyCell"></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+
+
+            @foreach (var field in CustomGridPerson)
+            {
+                if (field.WhereToDisplay)
+                {
+                    <MudTd>
+                        @context.GetPropertyValue(field.NameColumnEn)
+                    </MudTd>
+                }
+            }
+            <MudTd Class="stickyCell">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"><DoctorAppWeb.Client.Pages.IconComponents.ArrowRight /></MudButton>
+
+            </MudTd>
+        </RowTemplate>
+        <ChildRowContent>
+            @if (context.ShowDetails)
+            {
+                string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
+                string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+
+                <MudTr>
+                    <td class="green"></td>
+                    <td class="green" colspan="@CustomGridPerson.Count">
+                        <div class="descriprion">
+                            <MudGrid>
+                                @foreach (var field in CustomGridPerson)
+                                {
+                                    if (!field.WhereToDisplay)
+                                    {
+                                        string value = context.GetPropertyValue(field.NameColumnEn);
+                                        int xs;
+                                        int threshold = 20;
+                                        if (value?.Length > threshold)
+                                        {
+                                            xs = 12; // full line
+                                        }
+                                        else
+                                        {
+                                            xs = 6; // half line
+                                        }
+                                        <MudItem xs="@xs">
+                                            <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
+                                        </MudItem>
+
+                                    }
+                                }
+                            </MudGrid>
+                        </div>
+                    </td>
+                </MudTr>
+            }
+        </ChildRowContent>
+        <PagerContent>
+            <CustomPager NextPage="@OnNextPageClicked" PrevPage="@OnPrevPageClicked" totalRows="@PersonsCount"></CustomPager>
+        </PagerContent>
+    </MudTable>
+</div>
 </MudPaper>
 
 <style>
@@ -225,8 +254,6 @@
     }
 
     .tabWrapper {
-        display: flex;
-        flex-direction: row-reverse;
         padding-top: 54px;
         padding-bottom: 38px;
     }
@@ -251,14 +278,18 @@
     .tableHeader {
         color: @DoctorAppWeb.Client.Shared.Colors.Blue;
     }
-    .tabWrapper {
-        display: flex;
-        flex-direction: row-reverse;
-    }
     .stickyCell {
         position: sticky;
         right: 0;
         background: white;
+    }
+    .searchButton {
+        width: 100%;
+        height: 2.7rem;
+        margin-top: 6px;
+    }
+    .filtersWrapper {
+        margin-top: 2rem;
     }
 </style>
 
@@ -408,6 +439,7 @@
     protected void UpdatePagePersons(bool resetLastPageNumber = false)
     {
         PageNumber = resetLastPageNumber ? 0 : PageNumber;
+        Console.WriteLine("on page " + PageNumber.ToString());
         if (string.IsNullOrEmpty(SearchQuery))
         {
             PersonsOnPage = PatientService.AllPersons.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
