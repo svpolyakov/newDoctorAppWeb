@@ -35,6 +35,7 @@ namespace DoctorAppWeb.Client
             builder.Services.AddSingleton<IIndexedDbFactory, IndexedDbFactory>();
             builder.Services.AddBlazoredModal();
             builder.Services.AddMudServices();
+            builder.Services.AddSingleton<StateContainer>();
             //builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

@@ -31,22 +31,6 @@
     <script src="_content/TG.Blazor.IndexedDB/indexedDb.Blazor.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
-
-
-
-    <script>
-        window.visibleMenu = function (isVisible) {
-            if (!isVisible)
-                //document.getElementById("titleShortInfo").textContent = "";
-            document.getElementById("mainMenu").style.display = isVisible ? 'block' : 'none';
-        }
-        window.titleHeader = function (title) {
-           // document.getElementById("titleShortInfo").textContent = title;
-        }
-        window.visibleSearchPatientsInput = function (isVisible) {
-            document.getElementById("searchPatients").style.display = isVisible ? 'block' : 'none';
-        }
-    </script>
 </body>
 
 </html>

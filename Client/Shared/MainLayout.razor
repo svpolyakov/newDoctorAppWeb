@@ -3,12 +3,17 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
+@inject StateContainer StateContainer
+
 <MudThemeProvider Theme="theme1" />
+
 <MudLayout>
     <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton>
+        <MudText>@StateContainer.AppTitle</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="@LogoutClick">Выход</MudButton>
     </MudAppBar>
-    <MudDrawer id="mainMenu">
+    <MudDrawer ClipMode="@DrawerClipMode.Always" @bind-Open="@StateContainer.ShowDrawer">
         <AuthorizeView>
             <NavMenu />
         </AuthorizeView>
@@ -18,128 +23,145 @@
     </MudMainContent>
 </MudLayout>
 
-    @code {
-        MudTheme theme1 = new MudTheme()
+@code {
+    MudTheme theme1 = new MudTheme()
+    {
+        Palette = new Palette()
         {
-            Palette = new Palette()
-            {
-                Primary = DoctorAppWeb.Client.Shared.Colors.Blue,
-                Secondary = DoctorAppWeb.Client.Shared.Colors.Green,
-            },
+            Primary = DoctorAppWeb.Client.Shared.Colors.Blue,
+            Secondary = DoctorAppWeb.Client.Shared.Colors.Green,
+        },
 
-        };
+    };
+
+    bool isDrawerOpen = false;
+
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
     }
 
-    @functions{
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
 
-        [CascadingParameter]
-        Task<AuthenticationState> AuthenticationState { get; set; }
-        public static bool HasDbUserInfo = false;
+    public async Task GoToPatientList()
+    {
+        navigationManager.NavigateTo("persons");
+    }
+}
 
-        bool open = false;
-        bool dense = false;
-        bool preserveOpenState = false;
-        Breakpoint breakpoint = Breakpoint.Lg;
-        DrawerClipMode clipMode = DrawerClipMode.Never;
+@functions{
 
-        void ToggleDrawer()
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+    public static bool HasDbUserInfo = false;
+
+    bool open = false;
+    bool dense = false;
+    bool preserveOpenState = false;
+    Breakpoint breakpoint = Breakpoint.Lg;
+    DrawerClipMode clipMode = DrawerClipMode.Never;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        bool isAuthUser = (await AuthenticationState).User.Identity.IsAuthenticated;
+        string userName = (await AuthenticationState).User.Identity.Name;
+        //КОД ДЛЯ РАБОТЫ С ОФЛАЙН - ПОКА НЕ ИСПОЛЬЗУЕМ (ПРИ НЕОБХОДИМОСТИ УБРАТЬ КОММЕНТАРИИ)
+        //try
+        //{
+        //    ConnectionStatus result = null;
+        //    result = await Http.GetFromJsonAsync<ConnectionStatus>("Tools");
+
+        //    if (result == null)
+        //    {
+        //        throw new Exception();
+        //    }
+        //}
+        //catch (Exception) //Если офлайн
+        //{
+        //    CustomAuthorization customAuthorization = null;
+        //    DateTime? maxDate = null;
+        //    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        //    {
+        //        maxDate = db.CustomAuthorizations.Max(x => x.DateActual);
+        //        customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.DateActual.HasValue && x.DateActual == maxDate);
+        //        if (customAuthorization == null || (customAuthorization != null && maxDate.Value.AddDays(1) < DateTime.Now))
+        //        {
+        //            navigationManager.NavigateTo("/authrequired");
+        //        }
+        //        else
+        //        {
+        //            customAuthorization.DateActual = DateTime.Now;
+        //            await db.SaveChanges();
+        //        }
+        //    }
+        //    return;
+        //}
+
+        if (!isAuthUser)
         {
-            open = !open;
+            navigationManager.NavigateTo("/login");
         }
-
-        protected override async Task OnInitializedAsync()
-        {
-            bool isAuthUser = (await AuthenticationState).User.Identity.IsAuthenticated;
-            string userName = (await AuthenticationState).User.Identity.Name;
-            //КОД ДЛЯ РАБОТЫ С ОФЛАЙН - ПОКА НЕ ИСПОЛЬЗУЕМ (ПРИ НЕОБХОДИМОСТИ УБРАТЬ КОММЕНТАРИИ)
-            //try
-            //{
-            //    ConnectionStatus result = null;
-            //    result = await Http.GetFromJsonAsync<ConnectionStatus>("Tools");
-
-            //    if (result == null)
-            //    {
-            //        throw new Exception();
-            //    }
-            //}
-            //catch (Exception) //Если офлайн
-            //{
-            //    CustomAuthorization customAuthorization = null;
-            //    DateTime? maxDate = null;
-            //    using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            //    {
-            //        maxDate = db.CustomAuthorizations.Max(x => x.DateActual);
-            //        customAuthorization = db.CustomAuthorizations.FirstOrDefault(x => x.DateActual.HasValue && x.DateActual == maxDate);
-            //        if (customAuthorization == null || (customAuthorization != null && maxDate.Value.AddDays(1) < DateTime.Now))
-            //        {
-            //            navigationManager.NavigateTo("/authrequired");
-            //        }
-            //        else
-            //        {
-            //            customAuthorization.DateActual = DateTime.Now;
-            //            await db.SaveChanges();
-            //        }
-            //    }
-            //    return;
-            //}
-
-            if (!isAuthUser)
-            {
-                navigationManager.NavigateTo("/login");
-            }
-            else
-            {
-                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-                {
-                    CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
-                    if (authorization == null && !HasDbUserInfo)
-                    {
-                        Tuple<UserInfoDto, CustomizationInfoDto> userInfo = await Http.GetFromJsonAsync<Tuple<UserInfoDto, CustomizationInfoDto>>("Tools/" + userName);
-                        db.CustomAuthorizations.Add(new CustomAuthorization
-                        {
-                            Login = userName,
-                            Password = "Hash",
-                            DateActual = DateTime.Now,
-                            DateUpdate = null,
-                            FirstName = userInfo.Item1.FirstName,
-                            LastName = userInfo.Item1.LastName,
-                            MiddleName = userInfo.Item1.MiddleName,
-                            Availability_265 = userInfo.Item1.Permissions.Contains("285"),
-                            Availability_283 = userInfo.Item1.Permissions.Contains("283"),
-                            Availability_5 = userInfo.Item1.Permissions.Contains("5"),
-                            Availability_751 = userInfo.Item1.Permissions.Contains("751"),
-                            Snils = userInfo.Item1.Snils,
-                            UserId = userInfo.Item1.UserIdAV
-                        });
-                        HasDbUserInfo = true;
-                    }
-                    else if (HasDbUserInfo && authorization != null)
-                    {
-                        authorization.DateActual = DateTime.Now;
-                    }
-                    await db.SaveChanges();
-                }
-            }
-        }
-        async Task LogoutClick()
+        else
         {
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
-                db.CustomAuthorizations.Clear();
-                db.PagesSettings.Clear();
-                db.Departments.Clear();
-                db.Doctors.Clear();
+                CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
+                if (authorization == null && !HasDbUserInfo)
+                {
+                    Tuple<UserInfoDto, CustomizationInfoDto> userInfo = await Http.GetFromJsonAsync<Tuple<UserInfoDto, CustomizationInfoDto>>("Tools/" + userName);
+                    db.CustomAuthorizations.Add(new CustomAuthorization
+                    {
+                        Login = userName,
+                        Password = "Hash",
+                        DateActual = DateTime.Now,
+                        DateUpdate = null,
+                        FirstName = userInfo.Item1.FirstName,
+                        LastName = userInfo.Item1.LastName,
+                        MiddleName = userInfo.Item1.MiddleName,
+                        Availability_265 = userInfo.Item1.Permissions.Contains("285"),
+                        Availability_283 = userInfo.Item1.Permissions.Contains("283"),
+                        Availability_5 = userInfo.Item1.Permissions.Contains("5"),
+                        Availability_751 = userInfo.Item1.Permissions.Contains("751"),
+                        Snils = userInfo.Item1.Snils,
+                        UserId = userInfo.Item1.UserIdAV
+                    });
+                    HasDbUserInfo = true;
+                }
+                else if (HasDbUserInfo && authorization != null)
+                {
+                    authorization.DateActual = DateTime.Now;
+                }
                 await db.SaveChanges();
-                HasDbUserInfo = false;
             }
-            await authStateProvider.Logout();
-            navigationManager.NavigateTo("/login");
-        }
-
-
-        //ДЛЯ РЕГУЛЯРНОЙ ПРОВЕРКИ АВТОРИЗАЦИИ И РАБОТЫ С ОФЛАЙН
-        protected override Task OnParametersSetAsync()
-        {
-            return base.OnParametersSetAsync();
         }
     }
+    async Task LogoutClick()
+    {
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            db.CustomAuthorizations.Clear();
+            db.PagesSettings.Clear();
+            db.Departments.Clear();
+            db.Doctors.Clear();
+            await db.SaveChanges();
+            HasDbUserInfo = false;
+        }
+        await authStateProvider.Logout();
+        navigationManager.NavigateTo("/login");
+    }
+
+
+    //ДЛЯ РЕГУЛЯРНОЙ ПРОВЕРКИ АВТОРИЗАЦИИ И РАБОТЫ С ОФЛАЙН
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+}
