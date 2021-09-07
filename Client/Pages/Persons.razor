@@ -303,6 +303,7 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = false;
+        StateContainer.AppTitle = "";
         showProgress = true;
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
