@@ -37,10 +37,10 @@ namespace DoctorAppWeb.Shared.DataModel.Application
             defaults.Add(new List<object>() { "AgeDescription", "Описание возраста", 17, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "Birthday", "Дата рождения", 18, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "Sex", "Пол", 19, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "IsWorking", "Занятость", 20, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "IsWorking", "Занятость", 20, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "HelpForm", "Форма помощи", 21, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "AdmissionInfo", "Где и как", 22, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "IsDocsExist", "Отсутствие документов", 23, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "IsDocsExist", "Отсутствие документов", 23, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "Benefits", "Льготы", 24, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "PatientCondition", "Состояние пациента", 25, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "BloodGroup", "Группа крови", 26, false, false, false, false, dtUpdate });
@@ -49,10 +49,10 @@ namespace DoctorAppWeb.Shared.DataModel.Application
             defaults.Add(new List<object>() { "Syphilis", "Сифилис", 29, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "HepatitisB", "Гепатит B", 30, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "HepatitisC", "Гепатит C", 31, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "Allergic", "Аллергия", 32, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "DiagnosAnamnesisID", "Анамнез заболевания", 33, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "PathologyАnamnesisID", "Анамнез заболевания пациента", 34, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "LifeAnamnesisID", "Анамнез жизни", 35, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "Allergic", "Аллергия", 32, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "DiagnosAnamnesisID", "Анамнез заболевания", 33, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "PathologyАnamnesisID", "Анамнез заболевания пациента", 34, false, false, false, false, dtUpdate });
+            //defaults.Add(new List<object>() { "LifeAnamnesisID", "Анамнез жизни", 35, false, false, false, false, dtUpdate });
             return defaults;
         }
     }
