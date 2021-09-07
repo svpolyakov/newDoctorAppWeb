@@ -37,11 +37,11 @@
     <script>
         window.visibleMenu = function (isVisible) {
             if (!isVisible)
-                document.getElementById("titleShortInfo").textContent = "";
+                //document.getElementById("titleShortInfo").textContent = "";
             document.getElementById("mainMenu").style.display = isVisible ? 'block' : 'none';
         }
         window.titleHeader = function (title) {
-            document.getElementById("titleShortInfo").textContent = title;
+           // document.getElementById("titleShortInfo").textContent = title;
         }
         window.visibleSearchPatientsInput = function (isVisible) {
             document.getElementById("searchPatients").style.display = isVisible ? 'block' : 'none';

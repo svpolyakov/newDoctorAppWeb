@@ -157,21 +157,27 @@
         </MudTabs>
     </div>
 
-    <MudTable Items="@PersonsOnPage" Hover="false" Breakpoint="Breakpoint.Sm">
+    <MudTable Items="@AllPersons" Hover="false" Breakpoint="Breakpoint.Sm">
         <HeaderContent>
-            <MudTh></MudTh>
+            <MudTh Class="tableHeader"></MudTh>
             @foreach (var field in CustomGridPerson)
             {
                 if (field.WhereToDisplay)
                 {
-                    <MudTh><span class="tableHeader">@field.NameColumnRu</span></MudTh>
+                    <MudTh Class="tableHeader">
+                        <MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.GetPropertyValue(field.NameColumnEn))">
+                        <span class="tableHeaderText">@field.NameColumnRu</span>
+                        </MudTableSortLabel>
+                    </MudTh>
                 }
 
             }
-            <MudTh Class="stickyCell"></MudTh>
+            <MudTh Class="stickyCell tableHeader"></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton></MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton>
+            </MudTd>
 
 
             @foreach (var field in CustomGridPerson)
@@ -183,9 +189,8 @@
                     </MudTd>
                 }
             }
-            <MudTd Class="stickyCell">
-                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"><DoctorAppWeb.Client.Pages.IconComponents.ArrowRight /></MudButton>
-
+            <MudTd Class="stickyCell stickyWhiteBg">
+                <MudButton OnClick="@(() => GoToPatientInfo(context.PersonID, context.Firstname))" Variant="Variant.Outlined" Color="Color.Secondary"><DoctorAppWeb.Client.Pages.IconComponents.ArrowRight /></MudButton>
             </MudTd>
         </RowTemplate>
         <ChildRowContent>
@@ -227,7 +232,7 @@
             }
         </ChildRowContent>
         <PagerContent>
-            <CustomPager NextPage="@OnNextPageClicked" PrevPage="@OnPrevPageClicked" totalRows="@PersonsCount"></CustomPager>
+            <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:"/>
         </PagerContent>
     </MudTable>
 </div>
@@ -258,7 +263,7 @@
         padding-bottom: 38px;
     }
     .arrowDown {
-        transform: rotate(90deg);
+        transform: rotate(180deg);
     }
     .green {
         background-color: @DoctorAppWeb.Client.Shared.Colors.LightGreen;
@@ -276,12 +281,19 @@
         font-size: 34px;
     }
     .tableHeader {
-        color: @DoctorAppWeb.Client.Shared.Colors.Blue;
+        background-color: @DoctorAppWeb.Client.Shared.Colors.LightBlue;
+    }
+    .stickyWhiteBg {
+        background: white;
+    }
+    .tableHeaderText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray;
+        font-weight: 600;
+        line-height: 1rem;
     }
     .stickyCell {
         position: sticky;
         right: 0;
-        background: white;
     }
     .searchButton {
         width: 100%;
@@ -309,11 +321,6 @@
         await JSRuntime.InvokeVoidAsync("titleHeader", title);
         PatientService.CurrentPatient = id;
         navigationManager.NavigateTo("whatisnew");
-    }
-
-    void OnPage()
-    {
-
     }
 
     void FindPatients()
@@ -344,16 +351,15 @@
             }
 
             tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-
-            PersonsOnPage = tempPatientsResult.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
             PersonsCount = tempPatientsResult.Count();
+            UpdatePagePersons();
         }
     }
 
     private void ShowBtnPress(Guid id)
     {
         Console.WriteLine(id);
-        Patient tmpPerson = PersonsOnPage.First(f => f.PersonID == id);
+        Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
         tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
     }
 
@@ -369,7 +375,7 @@
     Task<AuthenticationState> AuthenticationState { get; set; }
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
-    private Patient[] PersonsOnPage;
+    private Patient[] AllPersons;
     public string SelectedDepartment = " ";
     public string SelectedDoctor = " ";
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
@@ -385,20 +391,6 @@
     /// Кол-во пациентов, удовлетворяющих поисковому выражению
     /// </summary>
     private int PersonsCount;
-
-    private int PageNumber = 0;
-
-    protected void OnPrevPageClicked()
-    {
-        this.PageNumber--;
-        this.UpdatePagePersons();
-    }
-
-    protected void OnNextPageClicked()
-    {
-        this.PageNumber++;
-        this.UpdatePagePersons();
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -438,15 +430,13 @@
 
     protected void UpdatePagePersons(bool resetLastPageNumber = false)
     {
-        PageNumber = resetLastPageNumber ? 0 : PageNumber;
-        Console.WriteLine("on page " + PageNumber.ToString());
         if (string.IsNullOrEmpty(SearchQuery))
         {
-            PersonsOnPage = PatientService.AllPersons.Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+            AllPersons = PatientService.AllPersons.ToArray();
         }
         else
         {
-            PersonsOnPage = PatientService.AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).Skip(PageNumber * PageSize).Take(PageSize).ToArray();
+            AllPersons = PatientService.AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).ToArray();
         }
     }
 
