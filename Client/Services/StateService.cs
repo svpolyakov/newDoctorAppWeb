@@ -4,6 +4,7 @@ public class StateContainer
 {
     private bool showDrawer;
     private string appTitle;
+    private string currentPage;
 
     public Boolean ShowDrawer
     {
@@ -21,6 +22,16 @@ public class StateContainer
         set
         {
             appTitle = value;
+            NotifyStateChanged();
+        }
+    }
+
+    public String CurrentPage
+    {
+        get => currentPage;
+        set
+        {
+            currentPage = value;
             NotifyStateChanged();
         }
     }

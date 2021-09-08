@@ -228,7 +228,8 @@
     {
         StateContainer.AppTitle = title;
         PatientService.CurrentPatient = id;
-        navigationManager.NavigateTo("whatisnew");
+        StateContainer.CurrentPage = Pages.WhatsNew;
+        navigationManager.NavigateTo(Pages.WhatsNew);
     }
 
     void FindPatients()

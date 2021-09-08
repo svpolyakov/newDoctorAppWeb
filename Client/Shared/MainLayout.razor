@@ -9,19 +9,34 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton>
+        @if (StateContainer.AppTitle?.Length > 0)
+        {
+            <MudIconButton Class="backButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton>
+        }
         <MudText>@StateContainer.AppTitle</MudText>
+        <div class="flexSpacer" />
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="@LogoutClick">Выход</MudButton>
     </MudAppBar>
-    <MudDrawer ClipMode="@DrawerClipMode.Always" @bind-Open="@StateContainer.ShowDrawer">
+        <!-- for mini variant: Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" -->
+    <MudDrawer ClipMode="@DrawerClipMode.Docked" @bind-Open="@StateContainer.ShowDrawer">
         <AuthorizeView>
             <NavMenu />
         </AuthorizeView>
     </MudDrawer>
+
     <MudMainContent Style="min-height: 100vh">
         @Body
     </MudMainContent>
 </MudLayout>
+
+<style>
+    .backButton {
+        color: white;
+    }
+    .flexSpacer {
+        flex: 1;
+    }
+</style>
 
 @code {
     MudTheme theme1 = new MudTheme()
