@@ -1,3 +1,4 @@
+<MudThemeProvider Theme="theme" />
 <CascadingBlazoredModal>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
@@ -12,3 +13,64 @@
         </NotFound>
     </Router>
 </CascadingBlazoredModal>
+
+@code {
+    MudTheme theme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = DoctorAppWeb.Client.Shared.Colors.Blue,
+            Secondary = DoctorAppWeb.Client.Shared.Colors.Green,
+        },
+
+        Typography = new Typography()
+        {
+
+            H3 = new H3()
+            {
+                FontFamily = new[] { "Poppins", "Roboto", "Helvetica", "Arial", "sans-serif" },
+                FontSize = "3rem",
+                FontWeight = 300,
+                LineHeight = 1.16,
+                LetterSpacing = "-1.5px"
+            },
+
+            H4 = new H4()
+            {
+                FontFamily = new[] { "Poppins", "Roboto", "Helvetica", "Arial", "sans-serif" },
+                FontSize = "2.125rem",
+                FontWeight = 300,
+                LineHeight = 1.2,
+                LetterSpacing = "-0.5px"
+            },
+
+            H5 = new H5()
+            {
+                FontFamily = new[] { "Poppins", "Roboto", "Helvetica", "Arial", "sans-serif" },
+                FontSize = "1.5rem",
+                FontWeight = 400,
+                LineHeight = 1.16,
+                LetterSpacing = "-1.5px"
+            },
+
+            Body1 = new Body1()
+            {
+                FontFamily = new[] { "Poppins", "Roboto", "Helvetica", "Arial", "sans-serif" },
+                FontSize = "1rem",
+                FontWeight = 400,
+                LineHeight = 1.23,
+                LetterSpacing = "0.25px"
+            },
+
+            Caption = new Caption()
+            {
+                FontFamily = new[] { "Poppins", "Roboto", "Helvetica", "Arial", "sans-serif" },
+                FontSize = "0.75rem",
+                FontWeight = 400,
+                LineHeight = 1.33,
+                LetterSpacing = "0.25px"
+            }
+        }
+
+    };
+}

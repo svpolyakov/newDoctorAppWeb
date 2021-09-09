@@ -57,7 +57,7 @@
         </li>
     </ul>
 </div>-->
-<MudPaper Class="d-inline-flex py-3" Square="true">
+<MudPaper  Width="300px" Class="d-inline-flex py-3" Square="true">
     <MudNavMenu Class="mud-width-full navMenu">
         <MudNavLink
                     Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
@@ -107,8 +107,6 @@
         color: @DoctorAppWeb.Client.Shared.Colors.Green;
     }
     .navMenu {
-        padding-left:5px;
-        padding-right:5px;
         color: @DoctorAppWeb.Client.Shared.Colors.Blue;
     }
     .navItem {

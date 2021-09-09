@@ -5,8 +5,6 @@
 @inject IIndexedDbFactory DbFactory
 @inject StateContainer StateContainer
 
-<MudThemeProvider Theme="theme1" />
-
 <MudLayout>
     <MudAppBar>
         @if (StateContainer.AppTitle?.Length > 0)
@@ -39,16 +37,6 @@
 </style>
 
 @code {
-    MudTheme theme1 = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Primary = DoctorAppWeb.Client.Shared.Colors.Blue,
-            Secondary = DoctorAppWeb.Client.Shared.Colors.Green,
-        },
-
-    };
-
     bool isDrawerOpen = false;
 
     protected override void OnInitialized()

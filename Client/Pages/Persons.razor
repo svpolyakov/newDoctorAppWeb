@@ -90,12 +90,12 @@
                     if (field.WhereToDisplay)
                     {
                         <MudTd>
-                            @context.GetPropertyValue(field.NameColumnEn)
+                            <MudText Typo="Typo.body1">@context.GetPropertyValue(field.NameColumnEn)</MudText>
                         </MudTd>
                     }
                 }
                 <MudTd Class="stickyCell stickyWhiteBg">
-                    <MudIconButton Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
+                    <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
                                                                                  string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
@@ -207,11 +207,14 @@
     }
     .searchButton {
         width: 100%;
-        height: 2.7rem;
+        height: 2.3rem;
         margin-top: 6px;
     }
     .filtersWrapper {
         margin-top: 2rem;
+    }
+    .goToPatientBtn {
+        width: 80px;
     }
 </style>
 

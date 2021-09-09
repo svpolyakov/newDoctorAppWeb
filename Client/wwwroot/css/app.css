@@ -2,15 +2,16 @@
 
 /*variables*/
 :root {
-    --fs-lg: 34px;
-    --fs-md: 24px;
+    --base-font-size: 32px;
+    --mud-drawer-width: 300px;
+    --mud-drawer-width-left: 300px;
 }
 /*end*/
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #E5E5E5;
-    font-size: 24px
+    font-size: var(--base-font-size)
 }
 
 a, .btn-link {
@@ -94,4 +95,12 @@ a, .btn-link {
 
 .mud-tabs-toolbar-content .mud-tabs-toolbar-wrapper {
     float:right
+}
+
+.mud-input-label-outlined {
+    transform: translate(14px,29px) scale(1);
+}
+
+.mud-drawer-open-responsive-md-left .mud-main-content {
+    margin-left: 300px;
 }
