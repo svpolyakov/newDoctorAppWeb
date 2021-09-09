@@ -1,0 +1,28 @@
+﻿<div @ondragstart="@(() => handleDrag())" draggable="true" class="item">@title</div>
+
+<style>
+    .item {
+        padding-left: 0.5rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        border-radius: 4px;
+        border: 1px solid @DoctorAppWeb.Client.Shared.Colors.BorderGray;
+        box-shadow: 0px 2px 1px rgb(0 0 0 / 20%);
+        margin-bottom: 0.5rem;
+    }
+        
+   .item:active {
+            cursor: grabbing;
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string title { get; set; }
+
+
+    private void handleDrag()
+        {
+
+        }
+}

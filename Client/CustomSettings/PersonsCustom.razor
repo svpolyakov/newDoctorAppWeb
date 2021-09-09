@@ -4,16 +4,78 @@
 @inject IIndexedDbFactory DbFactory
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPatientsService PatientService
-<h4>Настройка списка пациентов</h4>
-<div>
-    <MudText Typo="Typo.h6">Вкладка по умолчанию</MudText>
-    <MudRadioGroup @bind-SelectedOption="@CurrentFilter" TValue="string">
-        <MudRadio  Option="@("1")" TValue="string">Мои пациенты</MudRadio>
-        <MudRadio  Option="@("4")" TValue="string">Поступившие</MudRadio>
-        <MudRadio  Option="@("2")" TValue="string">В приемном</MudRadio>
-        <MudRadio  Option="@("7")" TValue="string">Все пациенты</MudRadio>
+
+<MudCard>
+    <MudText Typo="Typo.h5">
+        Настройка списка пациентовнты
+    </MudText>
+
+    <MudText Color="@Color.Primary" Typo="Typo.h6">Вкладка по умолчанию:</MudText>
+    <MudRadioGroup @bind-SelectedOption="@CurrentFilter" T="string">
+        <MudRadio Option="@("1")" TValue="string">Мои пациенты</MudRadio>
+        <MudRadio Option="@("4")" TValue="string">Поступившие</MudRadio>
+        <MudRadio Option="@("2")" TValue="string">В приемном</MudRadio>
+        <MudRadio Option="@("7")" TValue="string">Все пациенты</MudRadio>
     </MudRadioGroup>
-</div>
+
+    <MudText Color="@Color.Primary" Typo="Typo.h6">Настройки отображения:</MudText>
+
+    <MudCard>
+        <MudGrid>
+            <MudItem xs="4">
+                <MudText Color="@Color.Secondary" Typo="Typo.body1">Список колонок</MudText>
+                <div 
+                     ondragstart="event.dataTransfer.setData('', event.target.id);"
+                     dropzone="move"
+                     ondragover="event.preventDefault();"
+                     @ondragenter="HandleDragEnter"
+                     @ondragleave="HandleDragLeave"
+                     class="itemsContainer @dropClass">
+                    <DraggableItem title="то" />
+                    <DraggableItem title="сё" />
+                    <DraggableItem title="5" />
+                    <DraggableItem title="10" />
+                </div>
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Color="@Color.Secondary" Typo="Typo.body1">Все данные</MudText>
+                <div
+                     ondragstart="event.dataTransfer.setData('', event.target.id);"
+                     dropzone="move"
+                     ondragover="event.preventDefault();"
+                     @ondragenter="HandleDragEnter"
+                     @ondragleave="HandleDragLeave"
+                     class="itemsContainer @dropClass"></div>
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Color="@Color.Secondary" Typo="Typo.body1">Данные пациента</MudText>
+                <div
+                     ondragstart="event.dataTransfer.setData('', event.target.id);"
+                     dropzone="move"
+                     ondragover="event.preventDefault();"
+                     @ondragenter="HandleDragEnter"
+                     @ondragleave="HandleDragLeave"
+                     class="itemsContainer @dropClass"></div>
+            </MudItem>
+        </MudGrid>
+    </MudCard>
+</MudCard>
+
+<style>
+    .itemsContainer {
+        border: 1px dashed @DoctorAppWeb.Client.Shared.Colors.BorderGray;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.25rem;
+
+        min-height: 500px;
+    }
+
+    .can-drop {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.BorderGray;
+    }
+</style>
+
 
 @code {
     [CascadingParameter]
@@ -33,5 +95,18 @@
                 default: CurrentFilter = "1"; break;
             }
         }
+    }
+
+    string dropClass = "";
+
+    private void HandleDragEnter()
+    {
+        dropClass = "can-drop";
+
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
     }
 }
