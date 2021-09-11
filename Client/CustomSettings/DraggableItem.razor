@@ -1,4 +1,9 @@
-﻿<div @ondragstart="@(() => handleDrag())" draggable="true" class="item">@title</div>
+﻿<div @ondragover="@OnOver"
+     @ondrop="@OnDrop"
+     @ondragstart="@OnDragStartHandler"
+     style="top: @top" draggable="true" class="item">
+    @(title)
+</div>
 
 <style>
     .item {
@@ -9,6 +14,8 @@
         border: 1px solid @DoctorAppWeb.Client.Shared.Colors.BorderGray;
         box-shadow: 0px 2px 1px rgb(0 0 0 / 20%);
         margin-bottom: 0.5rem;
+        position: absolute;
+        width: 300px;
     }
         
    .item:active {
@@ -19,10 +26,20 @@
 @code {
     [Parameter]
     public string title { get; set; }
+    [Parameter]
+    public string top { get; set; }
+    [Parameter]
+    public EventCallback<DragEventArgs> OnDragStart { get; set; }
+    [Parameter]
+    public EventCallback<DragEventArgs> OnDrop { get; set; }
+    [Parameter]
+    public EventCallback<DragEventArgs> OnOver { get; set; }
 
+    private void OnDragStartHandler(DragEventArgs args)
+    {
+        isDragged = true;
+        OnDragStart.InvokeAsync(args);
+    }
 
-    private void handleDrag()
-        {
-
-        }
+    bool isDragged = false;
 }

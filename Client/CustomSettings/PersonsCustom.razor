@@ -23,18 +23,26 @@
     <MudCard>
         <MudGrid>
             <MudItem xs="4">
+                <!-- @ondrag="HandleDrag"-->
                 <MudText Color="@Color.Secondary" Typo="Typo.body1">Список колонок</MudText>
-                <div 
-                     ondragstart="event.dataTransfer.setData('', event.target.id);"
+                <div ondragstart="event.dataTransfer.setData('', event.target.id);"
                      dropzone="move"
                      ondragover="event.preventDefault();"
                      @ondragenter="HandleDragEnter"
                      @ondragleave="HandleDragLeave"
+                     @ondrop="()=> HandleDrop()"
                      class="itemsContainer @dropClass">
-                    <DraggableItem title="то" />
-                    <DraggableItem title="сё" />
-                    <DraggableItem title="5" />
-                    <DraggableItem title="10" />
+                    @foreach (var item in CustomizationItems.Select((value, i) => new { i, value }))
+                    {
+                        var value = item.value;
+                        var index = item.i;
+                        <DraggableItem 
+                                       OnDrop="@(()=> HandleDrop(value))"
+                                       OnDragStart="@((DragEventArgs args) => OnDragStart(args, value))"
+                                       OnOver="@(() => HandleOver(value))"
+                                       top="@IndexToOffsetStr(index)"
+                                       title="@value.Text" />
+                    }
                 </div>
             </MudItem>
             <MudItem xs="4">
@@ -67,12 +75,13 @@
         padding-left: 1rem;
         padding-right: 1rem;
         padding-top: 0.25rem;
+        position: relative;
 
         min-height: 500px;
     }
 
     .can-drop {
-        background-color: @DoctorAppWeb.Client.Shared.Colors.BorderGray;
+        border: 1px solid @DoctorAppWeb.Client.Shared.Colors.BorderGray;
     }
 </style>
 
@@ -97,16 +106,127 @@
         }
     }
 
+    public class CustomizationItem
+    {
+        public string ID { get; set; }
+        public string Text { get; set; }
+        public override string ToString()
+        {
+            return Text;
+        }
+    }
+
+    int currentIndex;
+    int currentOverIndex = -1;
+
+    List<CustomizationItem> CustomizationItems = new List<CustomizationItem> {
+        new CustomizationItem() { ID= "i1", Text= "Фамилия"},
+        new CustomizationItem() { ID= "i2", Text= "Имя"},
+        new CustomizationItem() { ID= "i3", Text= "Отчество"},
+        new CustomizationItem() { ID= "i4", Text= "Воруй"},
+        new CustomizationItem() { ID= "i5", Text= "Убивай"},
+    };
+
     string dropClass = "";
+    private double startX, startY, offsetX, offsetY;
+
+    String[] Items = new String[] { "1", "2", "3", "4" };
+
+    private const int itemHeight = 80;
+    private const int topOffset = 16;
+    private double draggedOverIndex = -1;
+
+    int GetIndex(CustomizationItem item)
+    {
+        return CustomizationItems.FindIndex(a => a.ID == item.ID);
+    }
+
+    private void OnDragStart(DragEventArgs args, CustomizationItem item)
+    {
+        currentIndex = GetIndex(item);
+        startX = args.ClientX;
+        startY = args.ClientY - IndexToOffset(GetIndex(item));
+    }
 
     private void HandleDragEnter()
     {
         dropClass = "can-drop";
-
     }
 
     private void HandleDragLeave()
     {
         dropClass = "";
+    }
+
+    private void HandleDrag(DragEventArgs args) {
+        double offset = args.ClientY - startY;
+        double position = OffsetToIndex(offset);
+        draggedOverIndex = position;
+        Console.WriteLine(offset);
+        Console.WriteLine(position);
+    }
+
+    private void HandleDrop(CustomizationItem item = null)
+    {
+        int index;
+        if (item != null)
+        {
+            index = GetIndex(item);
+            Console.WriteLine($"Drop item {item.Text} ({item.ID})");
+        } else
+        {
+            index = currentOverIndex;
+        }
+
+        var current = CustomizationItems[currentIndex];
+
+        if (index == -1)
+        {
+            return;
+        }
+
+        Console.WriteLine($"Drop index is {index}, move from {currentIndex}");
+
+        // remove game from current index
+        CustomizationItems.RemoveAt(currentIndex);
+        CustomizationItems.Insert(index, current);
+
+        // update current selection
+        currentIndex = index;
+        currentOverIndex = -1;
+    }
+
+    private void HandleOver(CustomizationItem item)
+    {
+
+        var current = CustomizationItems[currentIndex];
+        if (current != item)
+        {
+           currentOverIndex = GetIndex(item);
+        }
+
+    }
+
+    public string IndexToOffsetStr(int index)
+    {
+        return IndexToOffset(index) + "px";
+    }
+
+    public int IndexToOffset(int index)
+    {
+        if (index > currentOverIndex && currentOverIndex >= 0)
+        {
+            return (index + 1) * itemHeight + topOffset;
+        }
+        else
+        {
+            return index * itemHeight + topOffset;
+        }
+    }
+
+    public double OffsetToIndex(double offset)
+    {
+        double position = offset / itemHeight;
+        return Math.Floor(position);
     }
 }
