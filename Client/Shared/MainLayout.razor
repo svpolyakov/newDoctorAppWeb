@@ -9,7 +9,7 @@
     <MudAppBar>
         @if (StateContainer.AppTitle?.Length > 0)
         {
-            <MudIconButton Class="backButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton>
+            <MudIconButton Class="backButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton><div class="flexSpacer" />
         }
         <MudText>@StateContainer.AppTitle</MudText>
         <div class="flexSpacer" />

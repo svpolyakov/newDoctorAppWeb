@@ -19,8 +19,8 @@
 
             <div class="flexSpacer" />
 
-            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Size="Size.Large" aria-label="refresh"></MudIconButton>
-            <MudIconButton OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" Size="Size.Large" aria-label="settings"></MudIconButton>
+            <MudIconButton Class="pale-icon" Icon="@Icons.Material.Outlined.Refresh"aria-label="refresh"></MudIconButton>
+            <MudIconButton Class="pale-icon" OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" aria-label="settings"></MudIconButton>
         </div>
 
         <div class="tabWrapper">
@@ -153,12 +153,6 @@
         display: none;
     }
 
-    .pageWrapper {
-        padding-top: 63px;
-        max-width: 95vw;
-        margin: 0 auto;
-    }
-
     .pageHeader {
         display: flex;
         align-items: baseline;
@@ -215,6 +209,11 @@
     }
     .goToPatientBtn {
         width: 80px;
+    }
+    .pale-icon {
+        color: @DoctorAppWeb.Client.Shared.Colors.BorderGray;
+        width: 1.5rem;
+        height: 1.5rem;
     }
 </style>
 

@@ -104,3 +104,9 @@ a, .btn-link {
 .mud-drawer-open-responsive-md-left .mud-main-content {
     margin-left: 300px;
 }
+
+.pageWrapper {
+    padding-top: 1rem;
+    max-width: 95vw;
+    margin: 0 auto;
+}
