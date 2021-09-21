@@ -51,7 +51,7 @@
                             <MudSelect @bind-Value="@SelectedDoctor" T="string" Label="Лечащий врач" Variant="Variant.Outlined">
                                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                                 {
-                                    string doc = doctor.PersonSurname + " " + doctor.PersonFirstName + " " + doctor.PersonPatronymic;
+                                    string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
                                     <MudSelectItem T="string" Value="@doc">@doc</MudSelectItem>
                                 }
                             </MudSelect>

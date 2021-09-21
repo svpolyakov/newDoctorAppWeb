@@ -115,33 +115,33 @@ namespace PatientsWcf
     public partial class PersonnelParamDto : object
     {
         
-        private System.Guid PersonIdField;
+        private bool IsPersonnelField;
         
-        private System.Guid PositionTypeIdField;
+        private System.Guid ParamIdField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid PersonId
+        public bool IsPersonnel
         {
             get
             {
-                return this.PersonIdField;
+                return this.IsPersonnelField;
             }
             set
             {
-                this.PersonIdField = value;
+                this.IsPersonnelField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid PositionTypeId
+        public System.Guid ParamId
         {
             get
             {
-                return this.PositionTypeIdField;
+                return this.ParamIdField;
             }
             set
             {
-                this.PositionTypeIdField = value;
+                this.ParamIdField = value;
             }
         }
     }
@@ -200,6 +200,8 @@ namespace PatientsWcf
         
         private string ResponsibleDepField;
         
+        private System.Guid ResponsibleDepIDField;
+        
         private string RoomField;
         
         private System.Nullable<System.DateTime> SDDepTreatmentCaseField;
@@ -213,6 +215,8 @@ namespace PatientsWcf
         private int SexEnumField;
         
         private string StayDepField;
+        
+        private System.Guid StayDepIDField;
         
         private System.Nullable<System.Guid> VersionIDField;
         
@@ -531,6 +535,19 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid ResponsibleDepID
+        {
+            get
+            {
+                return this.ResponsibleDepIDField;
+            }
+            set
+            {
+                this.ResponsibleDepIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string Room
         {
             get
@@ -618,6 +635,19 @@ namespace PatientsWcf
             set
             {
                 this.StayDepField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid StayDepID
+        {
+            get
+            {
+                return this.StayDepIDField;
+            }
+            set
+            {
+                this.StayDepIDField = value;
             }
         }
         
@@ -715,9 +745,9 @@ namespace PatientsWcf
         
         private string FirstNameField;
         
-        private System.Guid IdField;
-        
         private string PatronymicField;
+        
+        private System.Guid PersonIdField;
         
         private System.Collections.Generic.List<PatientsWcf.PersonnelPositionDto> PersonnelPositionListField;
         
@@ -737,19 +767,6 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid Id
-        {
-            get
-            {
-                return this.IdField;
-            }
-            set
-            {
-                this.IdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public string Patronymic
         {
             get
@@ -759,6 +776,19 @@ namespace PatientsWcf
             set
             {
                 this.PatronymicField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid PersonId
+        {
+            get
+            {
+                return this.PersonIdField;
+            }
+            set
+            {
+                this.PersonIdField = value;
             }
         }
         
@@ -795,9 +825,37 @@ namespace PatientsWcf
     public partial class PersonnelPositionDto : object
     {
         
+        private string DepartmentField;
+        
+        private System.Guid IdPersonnelField;
+        
         private string PositionTypeField;
         
-        private System.Guid PositionTypeIdField;
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Department
+        {
+            get
+            {
+                return this.DepartmentField;
+            }
+            set
+            {
+                this.DepartmentField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid IdPersonnel
+        {
+            get
+            {
+                return this.IdPersonnelField;
+            }
+            set
+            {
+                this.IdPersonnelField = value;
+            }
+        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string PositionType
@@ -809,19 +867,6 @@ namespace PatientsWcf
             set
             {
                 this.PositionTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid PositionTypeId
-        {
-            get
-            {
-                return this.PositionTypeIdField;
-            }
-            set
-            {
-                this.PositionTypeIdField = value;
             }
         }
     }

@@ -11,19 +11,17 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
     {
         [Key]
         public int ID { get; set; }
-        public string PersonID { get; set; }
-        public string PersonnelID { get; set; }
-        public string PersonSurname { get; set; }
-        public string PersonFirstName { get; set; }
-        public string PersonPatronymic { get; set; }
-        public string PersonnelName { get; set; }
-        public DateTime? DateUpdate { get; set; }
-        public List<PersonnelPositionDto> PersonnelPositionList { get; set; }
+        public Guid PersonId { get; set; }
+        public string SurName { get; set; }
+        public string FirstName { get; set; }
+        public string Patronymic { get; set; }
+        public List<PersonnelPosition> PersonnelPositionList { get; set; }
     }
 
-    public class PersonnelPositionDto
+    public class PersonnelPosition
     {
-        public Guid PositionTypeId { get; set; }
+        public Guid IdPersonnel { get; set; }
         public string PositionType { get; set; }
+        public string Department { get; set; }
     }
 }
