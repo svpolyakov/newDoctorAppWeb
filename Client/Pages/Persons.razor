@@ -400,7 +400,7 @@
             UpdatePagePersons(true);
         }
         if (isAllPatients)
-            JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", true);
+            await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", true);
         StateHasChanged();
     }
 

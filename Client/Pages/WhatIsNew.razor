@@ -9,7 +9,7 @@
 @inject StateContainer StateContainer
 
 
-<div><MatButton Style="background-color: #3F51B5; float: right; color: white;">Добавить комментарий</MatButton></div>
+<div>Добавить комментарий</div>
 <br />
 <br />
 <div><h4>Что нового</h4></div>
@@ -17,20 +17,7 @@
 <div><input type="search" style="width: 96%;"><button style="background-color:#3F51B5;"><img src="Search.svg" width="50" height="24"></button></div>
 <br />
 <div>
-    <MatAccordion Multi="true">
-        @for (var i = 0; i < 10; i++)
-        {
-            var ii = i; // capture variable
-            <MatExpansionPanel>
-                <MatExpansionPanelSummary>
-                    <MatExpansionPanelHeader>Panel @ii</MatExpansionPanelHeader>
-                </MatExpansionPanelSummary>
-                <MatExpansionPanelDetails>
-                    <p>Content of panel @ii</p>
-                </MatExpansionPanelDetails>
-            </MatExpansionPanel>
-        }
-    </MatAccordion>
+    
 </div>
 
 
