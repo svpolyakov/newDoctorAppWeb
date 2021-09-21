@@ -353,42 +353,42 @@
         }
     }
 
-    private void FilterMyPatientsClick()
+    private async Task FilterMyPatientsClick()
     {
         SearchQuery = string.Empty;
-        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
+        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         MyPatientsStyle = StyleForFilter;
         PatientService.FilterType = 1;
-        ShowData();
+        await ShowData();
     }
 
-    private void FilterToMyDepartmentPatientsClick()
+    private async Task FilterToMyDepartmentPatientsClick()
     {
         SearchQuery = string.Empty;
-        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
+        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         DepPatientsStyle = StyleForFilter;
         PatientService.FilterType = 4;
-        ShowData();
+        await ShowData();
     }
 
-    private void FilterInEmergencyPatientsClick()
+    private async Task FilterInEmergencyPatientsClick()
     {
         SearchQuery = string.Empty;
-        JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
+        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
-        ShowData();
+        await ShowData();
     }
 
-    private void FilterAllPatientsClick()
+    private async Task FilterAllPatientsClick()
     {
         DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
         AllPatientStyle = StyleForFilter;
         PatientService.FilterType = 7;
-        ShowData(true);
+        await ShowData(true);
     }
 
     private async Task ShowData(bool isAllPatients = false)
@@ -458,7 +458,7 @@
                             PathologyАnamnesisID = person.PathologyАnamnesisID,
                             SDReceptionCase = person.SDReceptionCase,
                             PersonnelID = person.PersonnelID,
-                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?.Dtc, InpatientSrv = person.AdmissionInfo?.InpatientSrv, ReceptCase = person.AdmissionInfo?.ReceptCase }
+                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] }
                         };
                         db.Patients.Add(patient);
                         patients.Add(patient);
