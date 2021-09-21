@@ -18,5 +18,12 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public string PersonPatronymic { get; set; }
         public string PersonnelName { get; set; }
         public DateTime? DateUpdate { get; set; }
+        public List<PersonnelPositionDto> PersonnelPositionList { get; set; }
+    }
+
+    public class PersonnelPositionDto
+    {
+        public Guid PositionTypeId { get; set; }
+        public string PositionType { get; set; }
     }
 }
