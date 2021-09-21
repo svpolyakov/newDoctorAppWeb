@@ -34,13 +34,13 @@
                 <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Class="filtersWrapper">
                         <MudItem xs="10">
-                            <MudTextField FullWidth="true" @bind-Value="SearchQuery" Label="ФИО или номер ИБ" Variant="Variant.Outlined"></MudTextField>
+                            <MudTextField OnClearButtonClick="FindPatients" Clearable="true" FullWidth="true" @bind-Value="SearchQuery" Label="ФИО или номер ИБ" Variant="Variant.Outlined"></MudTextField>
                         </MudItem>
                         <MudItem xs="2">
                             <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
+                            <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
                                 @foreach (Department dep in Departments)
                                 {
                                     <MudSelectItem T="string" Value="@dep.BusinessElementShortName">@dep.BusinessElementShortName</MudSelectItem>
@@ -48,7 +48,7 @@
                             </MudSelect>
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect @bind-Value="@SelectedDoctor" T="string" Label="Лечащий врач" Variant="Variant.Outlined">
+                            <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDoctor" T="string" Label="Лечащий врач" Variant="Variant.Outlined">
                                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                                 {
                                     string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
@@ -244,7 +244,7 @@
         else
         {
             List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-            List<Patient> tempPatientsResult = null;
+            List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
             {
@@ -253,17 +253,17 @@
 
             if (!string.IsNullOrWhiteSpace(SelectedDepartment))
             {
-                tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+                tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+                Console.WriteLine(tempPatientsResult.Count());
             }
 
             if (!string.IsNullOrWhiteSpace(SelectedDoctor))
             {
-                tempPatientsResult = (tempPatientsResult != null ? tempPatientsResult : searchIndex.Select(x => x.Item1)).Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
+                tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
             }
 
             tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-            PersonsCount = tempPatientsResult.Count();
-            UpdatePagePersons();
+            AllPersons = tempPatientsResult.ToArray();
         }
     }
 
@@ -378,7 +378,7 @@
     private async Task FilterInEmergencyPatientsClick()
     {
         showProgress = true;
-        SearchQuery = string.Empty;        
+        SearchQuery = string.Empty;
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
