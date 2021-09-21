@@ -357,7 +357,6 @@
     {
         showProgress = true;
         SearchQuery = string.Empty;
-        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         MyPatientsStyle = StyleForFilter;
         PatientService.FilterType = 1;
@@ -369,7 +368,6 @@
     {
         showProgress = true;
         SearchQuery = string.Empty;
-        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         DepPatientsStyle = StyleForFilter;
         PatientService.FilterType = 4;
@@ -380,8 +378,7 @@
     private async Task FilterInEmergencyPatientsClick()
     {
         showProgress = true;
-        SearchQuery = string.Empty;
-        await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
+        SearchQuery = string.Empty;        
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
@@ -395,11 +392,11 @@
         DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
         AllPatientStyle = StyleForFilter;
         PatientService.FilterType = 7;
-        await ShowData(true);
+        await ShowData();
         showProgress = false;
     }
 
-    private async Task ShowData(bool isAllPatients = false)
+    private async Task ShowData()
     {
         PatientService.AllPersons = await LoadDataToIndexedDb(true);
         if (PatientService.AllPersons != null)
@@ -407,8 +404,6 @@
             PersonsCount = PatientService.AllPersons.Count();
             UpdatePagePersons(true);
         }
-        if (isAllPatients)
-            await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", true);
         StateHasChanged();
     }
 
