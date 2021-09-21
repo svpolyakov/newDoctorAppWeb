@@ -355,40 +355,48 @@
 
     private async Task FilterMyPatientsClick()
     {
+        showProgress = true;
         SearchQuery = string.Empty;
         await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         MyPatientsStyle = StyleForFilter;
         PatientService.FilterType = 1;
         await ShowData();
+        showProgress = false;
     }
 
     private async Task FilterToMyDepartmentPatientsClick()
     {
+        showProgress = true;
         SearchQuery = string.Empty;
         await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         DepPatientsStyle = StyleForFilter;
         PatientService.FilterType = 4;
         await ShowData();
+        showProgress = false;
     }
 
     private async Task FilterInEmergencyPatientsClick()
     {
+        showProgress = true;
         SearchQuery = string.Empty;
         await JSRuntime.InvokeVoidAsync("visibleSearchPatientsInput", false);
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
         await ShowData();
+        showProgress = false;
     }
 
     private async Task FilterAllPatientsClick()
     {
+        showProgress = true;
         DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
         AllPatientStyle = StyleForFilter;
         PatientService.FilterType = 7;
         await ShowData(true);
+        showProgress = false;
     }
 
     private async Task ShowData(bool isAllPatients = false)
