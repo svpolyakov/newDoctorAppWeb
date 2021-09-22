@@ -110,3 +110,9 @@ a, .btn-link {
     max-width: 95vw;
     margin: 0 auto;
 }
+
+.innerPageWrapper {
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 1.25rem;
+}

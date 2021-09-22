@@ -6,23 +6,84 @@
 @inject NavigationManager navigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @inject StateContainer StateContainer
-<h3>Диагнозы</h3>
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Диагнозы
+        </MudText>
 
-@code {
-    public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
-    protected override async Task OnInitializedAsync()
-    {
-        diagnosis = await GetDiagnoses();
-    }
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ТЕКУЩИЕ">
+                </MudTabPanel>
+                <MudTabPanel Text="АРХИВ">
+                </MudTabPanel>
+                
+            </MudTabs>
+        </div>
 
-    protected async Task<IEnumerable<DepartmentPatientDiagnosInfoDto>> GetDiagnoses(bool Archive = false)
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get, "Diagnosis");
-        request.Headers.Add("PersonId", PatientService.CurrentPatient.ToString());
-        request.Headers.Add("Archive", Archive.ToString());
-        request.Headers.Add("HealthcareServiceId", PatientService.HealthcareServiceId.ToString());
-        HttpResponseMessage httpResponse = await Http.SendAsync(request);
-        IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
-        return result;
+        @if (diagnosis != null)
+        {
+            foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
+            {
+                <div class="infoBlock">
+                    <MudText Class="infoTitle" Color="Color.Secondary">@diag.Department</MudText>
+                    <div class="infoWrapper">
+                        @foreach (PatientDiagnosInfoDto info in diag.PatientDiagnosInfoList)
+                        {
+                            <MudGrid>
+                                <MudItem xs="2"><MudText Class="grayText" Typo="Typo.subtitle1">@info.WhenStartedDate.ToString().Split(' ')[0]</MudText></MudItem>
+                                <MudItem xs="10">
+                                    <div><MudText Class="blueText">@info.MKBDiagnosisCode @info.DiagnosText</MudText></div>
+                                    <div><MudText Class="grayText">@info.DiagnosisImportance @info.IllnessType @info.CureStagesDiagnos @info.DiagnosisAccuracy</MudText></div>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</MudPaper>
+
+
+<style>
+    .infoBlock {
+        margin-bottom: 1.5rem;
     }
-}
+    .infoTitle {
+        margin-bottom: 0.25rem;
+    }
+    .infoWrapper {
+        margin-top: 0.75rem;
+    }
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .blueText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Blue
+    }
+</style>
+
+        @code {
+            public bool showProgress = true;
+            public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
+            protected override async Task OnInitializedAsync()
+            {
+                showProgress = true;
+                diagnosis = await GetDiagnoses();
+                showProgress = false;
+            }
+
+            protected async Task<IEnumerable<DepartmentPatientDiagnosInfoDto>> GetDiagnoses(bool Archive = false)
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "Diagnosis");
+                request.Headers.Add("PersonId", PatientService.CurrentPatient.ToString());
+                request.Headers.Add("Archive", Archive.ToString());
+                request.Headers.Add("HealthcareServiceId", PatientService.HealthcareServiceId.ToString());
+                HttpResponseMessage httpResponse = await Http.SendAsync(request);
+                IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
+                return result;
+            }
+        }
