@@ -97,7 +97,7 @@
                 <MudTd Class="stickyCell stickyWhiteBg">
                     <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
                                                                                  string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
-                                                                                 GoToPatientInfo(context.PersonID, titleInfo);
+                                                                                 GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
                     <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
                     </MudIconButton>
@@ -226,10 +226,11 @@
         navigationManager.NavigateTo(PatientService.CurrentPage + "Custom");
     }
 
-    async Task GoToPatientInfo(Guid id, string title)
+    async Task GoToPatientInfo(Guid id, string title, Guid hcsId)
     {
         StateContainer.AppTitle = title;
         PatientService.CurrentPatient = id;
+        PatientService.HealthcareServiceId = hcsId;
         StateContainer.CurrentPage = Pages.WhatsNew;
         navigationManager.NavigateTo(Pages.WhatsNew);
     }

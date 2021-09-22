@@ -1,6 +1,28 @@
 ﻿@page "/diagnosis"
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IPatientsService PatientService
+@inject NavigationManager navigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+@inject StateContainer StateContainer
 <h3>Диагнозы</h3>
 
 @code {
+    public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        diagnosis = await GetDiagnoses();
+    }
 
+    protected async Task<IEnumerable<DepartmentPatientDiagnosInfoDto>> GetDiagnoses(bool Archive = false)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "Diagnosis");
+        request.Headers.Add("PersonId", PatientService.CurrentPatient.ToString());
+        request.Headers.Add("Archive", Archive.ToString());
+        request.Headers.Add("HealthcareServiceId", PatientService.HealthcareServiceId.ToString());
+        HttpResponseMessage httpResponse = await Http.SendAsync(request);
+        IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
+        return result;
+    }
 }
