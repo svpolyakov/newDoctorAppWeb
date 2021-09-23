@@ -107,6 +107,7 @@ a, .btn-link {
 
 .pageWrapper {
     padding-top: 1rem;
+    padding-bottom: 4rem;
     max-width: 95vw;
     margin: 0 auto;
 }

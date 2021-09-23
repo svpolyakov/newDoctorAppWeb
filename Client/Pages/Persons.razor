@@ -103,7 +103,7 @@
                 }
                 <MudTd Class="stickyCell stickyWhiteBg">
                     <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
-                                                                                 string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+                                                                                 string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday.ToString().Split(' ')[0] + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
                     <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
@@ -244,35 +244,47 @@
 
     void FindPatients()
     {
-        if (string.IsNullOrWhiteSpace(SearchQuery) && !string.IsNullOrWhiteSpace(SelectedDepartment) && !string.IsNullOrWhiteSpace(SelectedDoctor))
+        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+        List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
+
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
         {
-            UpdatePagePersons();
-            PersonsCount = PatientService.AllPersons.Count;
+            tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
+        }
+
+        if (!string.IsNullOrWhiteSpace(SelectedDepartment))
+        {
+            // filtering doctors by department
+            Doctors = Doctors
+            .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
+                .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
+            .Count() > 0);
+
+            tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+
+        } else
+        {
+            Doctors = FullDoctorsList;
+        }
+
+        if (!string.IsNullOrWhiteSpace(SelectedDoctor))
+        {
+            // filtering departments by doctor
+            var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
+            var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
+            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementShortName));
+
+            // todo: the implementation is incorrect due to bad data in "Doctor" property
+            tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
+            //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
         }
         else
         {
-            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-            List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
-
-            if (!string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
-            }
-
-            if (!string.IsNullOrWhiteSpace(SelectedDepartment))
-            {
-                tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
-                Console.WriteLine(tempPatientsResult.Count());
-            }
-
-            if (!string.IsNullOrWhiteSpace(SelectedDoctor))
-            {
-                tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
-            }
-
-            tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-            AllPersons = tempPatientsResult.ToArray();
+            Departments = FullDepartmentList;
         }
+
+        tempPatientsResult = tempPatientsResult ?? new List<Patient>();
+        AllPersons = tempPatientsResult.ToArray();
     }
 
     private void ShowBtnPress(Guid id)
@@ -299,6 +311,8 @@
     public string SelectedDoctor = " ";
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
     public IEnumerable<Department> Departments { get; set; }
+    public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> FullDoctorsList { get; set; }
+    public IEnumerable<Department> FullDepartmentList { get; set; }
     private int PageSize = 10;
     private string SearchQuery { get; set; }
     private List<CustomGridPerson> CustomGridPerson { get; set; }
@@ -320,6 +334,10 @@
         {
             Departments = db.Departments;
             Doctors = db.Doctors;
+
+            FullDoctorsList = db.Doctors;
+            FullDepartmentList = db.Departments;
+
             CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
             CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
             string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
@@ -351,14 +369,17 @@
 
     protected void UpdatePagePersons(bool resetLastPageNumber = false)
     {
-        if (string.IsNullOrEmpty(SearchQuery))
+        AllPersons = PatientService.AllPersons.ToArray();
+
+        // todo: figure out wtf is that
+        /*if (string.IsNullOrEmpty(SearchQuery))
         {
             AllPersons = PatientService.AllPersons.ToArray();
         }
         else
         {
             AllPersons = PatientService.AllPersons.Where(p => (p.Lastname + " " + p.Firstname + " " + p.Patronymic).ToLower().Contains(SearchQuery.ToLower())).ToArray();
-        }
+        }*/
     }
 
     private async Task FilterMyPatientsClick()
