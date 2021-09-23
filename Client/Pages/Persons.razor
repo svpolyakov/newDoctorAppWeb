@@ -34,7 +34,14 @@
                 <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Class="filtersWrapper">
                         <MudItem xs="10">
-                            <MudTextField OnClearButtonClick="FindPatients" Clearable="true" FullWidth="true" @bind-Value="SearchQuery" Label="ФИО или номер ИБ" Variant="Variant.Outlined"></MudTextField>
+                            <MudTextField 
+                                          OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
+                                          OnClearButtonClick="FindPatients"
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="ФИО или номер ИБ"
+                                          Variant="Variant.Outlined"></MudTextField>
                         </MudItem>
                         <MudItem xs="2">
                             <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />

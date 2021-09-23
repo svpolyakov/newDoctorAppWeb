@@ -10,7 +10,9 @@
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
 @inject IDialogService Dialog
-    <MudDialogProvider />
+<MudDialogProvider />
+
+<Progress isVisible="@showProgress"></Progress>
 <MudCard Class="loginBlock">
     <MudCardContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
@@ -75,6 +77,7 @@
 </style>
 
 @code{
+    public bool showProgress = false;
     LoginRequest loginRequest { get; set; } = new LoginRequest();
     string error { get; set; }
     MudForm form;
@@ -92,6 +95,7 @@
     async Task OnSubmit()
     {
         error = null;
+        showProgress = true;
         try
         {
             using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
@@ -143,7 +147,8 @@
             //    await db.SaveChanges();
             //}
 
-            navigationManager.NavigateTo("");
+            navigationManager.NavigateTo("/persons");
+            showProgress = false;
         }
         catch (Exception ex)
         {

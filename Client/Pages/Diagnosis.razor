@@ -6,6 +6,7 @@
 @inject NavigationManager navigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @inject StateContainer StateContainer
+
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
@@ -15,35 +16,59 @@
 
         <div class="tabWrapper">
             <MudTabs>
-                <MudTabPanel Text="ТЕКУЩИЕ">
+                <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="ТЕКУЩИЕ">
+                    @if (diagnosis != null)
+                    {
+                        foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
+                        {
+                            <div class="infoBlock">
+                                <MudText Class="infoTitle" Color="Color.Secondary">@diag.Department</MudText>
+                                <div class="infoWrapper">
+                                    @foreach (PatientDiagnosInfoDto info in diag.PatientDiagnosInfoList)
+                                    {
+                                        <MudGrid>
+                                            <MudItem xs="2"><MudText Class="grayText" Typo="Typo.subtitle1">@info.WhenStartedDate.ToString().Split(' ')[0]</MudText></MudItem>
+                                            <MudItem xs="10">
+                                                <div><MudText Class="blueText">@info.MKBDiagnosisCode @info.DiagnosText</MudText></div>
+                                                <div><MudText Class="grayText">@info.DiagnosisImportance @info.IllnessType @info.CureStagesDiagnos @info.DiagnosisAccuracy</MudText></div>
+                                            </MudItem>
+                                        </MudGrid>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
                 </MudTabPanel>
-                <MudTabPanel Text="АРХИВ">
+                <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="АРХИВ">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })" OnClearButtonClick="HandleSearch" Clearable="true" FullWidth="true" @bind-Value="SearchQuery" Label="Код или ткст диагноза" Variant="Variant.Outlined"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                        </MudItem>
+                    </MudGrid>
+                    @if (diagnosis != null)
+                    {
+                        foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
+                        {
+                            @foreach (PatientDiagnosInfoDto info in diag.PatientDiagnosInfoList)
+                            {
+                                <MudGrid>
+                                    <MudItem xs="2"><MudText Class="grayText" Typo="Typo.subtitle1">@info.WhenStartedDate.ToString().Split(' ')[0]</MudText></MudItem>
+                                    <MudItem xs="10">
+                                        <div><MudText Class="blueText">@info.MKBDiagnosisCode @info.DiagnosText</MudText></div>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                        }
+                    }
                 </MudTabPanel>
                 
             </MudTabs>
         </div>
 
-        @if (diagnosis != null)
-        {
-            foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
-            {
-                <div class="infoBlock">
-                    <MudText Class="infoTitle" Color="Color.Secondary">@diag.Department</MudText>
-                    <div class="infoWrapper">
-                        @foreach (PatientDiagnosInfoDto info in diag.PatientDiagnosInfoList)
-                        {
-                            <MudGrid>
-                                <MudItem xs="2"><MudText Class="grayText" Typo="Typo.subtitle1">@info.WhenStartedDate.ToString().Split(' ')[0]</MudText></MudItem>
-                                <MudItem xs="10">
-                                    <div><MudText Class="blueText">@info.MKBDiagnosisCode @info.DiagnosText</MudText></div>
-                                    <div><MudText Class="grayText">@info.DiagnosisImportance @info.IllnessType @info.CureStagesDiagnos @info.DiagnosisAccuracy</MudText></div>
-                                </MudItem>
-                            </MudGrid>
-                        }
-                    </div>
-                </div>
-            }
-        }
+        
     </div>
 </MudPaper>
 
@@ -64,10 +89,17 @@
     .blueText {
         color: @DoctorAppWeb.Client.Shared.Colors.Blue
     }
+    .searchButton {
+        width: 100%;
+        height: 2.3rem;
+        margin-top: 6px;
+    }
 </style>
 
         @code {
             public bool showProgress = true;
+            public bool isArchive = false;
+            public string SearchQuery;
             public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
             protected override async Task OnInitializedAsync()
             {
@@ -85,5 +117,25 @@
                 HttpResponseMessage httpResponse = await Http.SendAsync(request);
                 IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
                 return result;
+            }
+
+            private async Task HandleArchiveToggle()
+            {
+                isArchive = !isArchive;
+
+                showProgress = true;
+                // isArchive -- no data there
+                diagnosis = await GetDiagnoses(isArchive);
+                showProgress = false;
+            }
+
+            private async Task HandleSearch()
+            {
+                diagnosis = diagnosis
+                    .Where(d => 
+                        (d.PatientDiagnosInfoList
+                        .Where(info => 
+                            (info.MKBDiagnosisCode + " " + info.DiagnosText).ToLower().Contains(SearchQuery.ToLower()))
+                        .Count() > 0));
             }
         }
