@@ -1,7 +1,7 @@
 ﻿<div @ondragover="@OnOver"
      @ondrop="@OnDrop"
      @ondragstart="@OnDragStartHandler"
-     style="top: @top" draggable="true" class="item">
+     style="top: @top;" draggable="true" class="item">
     @(title)
 </div>
 
@@ -17,6 +17,7 @@
         position: absolute;
         min-width: 200px;
         width: calc(31vw - 3rem);
+        background-color: #ffffff;
     }
         
    .item:active {
@@ -36,11 +37,11 @@
     [Parameter]
     public EventCallback<DragEventArgs> OnOver { get; set; }
 
+    bool isDragged = false;
+
     private void OnDragStartHandler(DragEventArgs args)
     {
         isDragged = true;
         OnDragStart.InvokeAsync(args);
     }
-
-    bool isDragged = false;
 }
