@@ -2,7 +2,7 @@
 
 /*variables*/
 :root {
-    --base-font-size: 32px;
+    --base-font-size: 1.666vw;
     --mud-drawer-width: 300px;
     --mud-drawer-width-left: 300px;
 }

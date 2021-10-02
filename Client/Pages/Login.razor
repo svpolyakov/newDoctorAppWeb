@@ -16,11 +16,11 @@
 <MudCard Class="loginBlock">
     <MudCardContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-            <div class="cardTitle">
-                <MudText Typo="Typo.h4" Color="Color.Primary">
-                    Рабочее место врача на обходе
-                </MudText>
+            <div class="cardTitle" style="display: flex">
+                <div><img src="logoGray.svg"></div>
+                <MudText Typo="Typo.h4" Color="Color.Primary">Авиценна.планшет</MudText>
             </div>
+
             <div id="form">
                 <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
                     <DataAnnotationsValidator />
