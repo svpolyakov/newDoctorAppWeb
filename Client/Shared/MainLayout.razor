@@ -9,7 +9,7 @@
 {
     <div class="menuBlock">
         <div class="menuBlockItem">
-            <MudButton Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
+            <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
         </div>
     </div>
 }
@@ -39,12 +39,20 @@
             <PatientHeader />
         }
         @Body
+        <div class="appVersion">
+            <MudText Typo="Typo.caption">app version: @version</MudText>
+        </div>
     </MudMainContent>
 </MudLayout>
 
 <style>
     .whiteButton {
         color: white;
+    }
+
+    .exitIcon {
+        width: 1rem;
+        height: 1rem;
     }
 
     .flexSpacer {
@@ -81,9 +89,16 @@
     .logo {
         width: 2rem;
     }
+
+    .appVersion {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
 </style>
 
 @code {
+    Version version = typeof(Program).Assembly.GetName().Version;
     bool isDrawerOpen = false;
     bool isMenuVisible = false;
     string menuIcon = Icons.Material.Filled.Menu;

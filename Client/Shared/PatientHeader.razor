@@ -1,5 +1,7 @@
 ﻿@inject StateContainer StateContainer
+@inject IDialogService Dialog
 
+<MudDialogProvider Position="DialogPosition.CenterLeft" MaxWidth="MaxWidth.Large" />
 <div class="patientInfo">
     <MudPaper class="patientInfoToggle">
         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
@@ -11,12 +13,20 @@
     @if (isOpen)
     {
         <MudPaper class="patientInfoWrapper">
+
             <MudText Typo="Typo.h5">Информация о пациенте</MudText>
-            <div style="display: flex">
-                <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">@StateContainer.CurrentPatient.SDInpatientServiceCase</MudText>
+
+            <div class="patientInfoData">
+                <div style="display: flex">
+                    <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">&nbsp;@StateContainer.CurrentPatient.SDInpatientServiceCase</MudText>
+                </div>
+                <div style="display: flex">
+                    <MudText Class="blueText">@StateContainer.CurrentPatient.IsWorkingStr</MudText>
+                </div>
             </div>
-            <div style="display: flex">
-                <MudText Class="blueText">@StateContainer.CurrentPatient.IsWorkingStr</MudText>
+
+            <div class="patientInfoButtonsBlock">
+                <MudButton OnClick="ShowAnamnesis" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез жизни</MudButton>
             </div>
         </MudPaper>
     }
@@ -52,7 +62,9 @@
         padding: 1rem;
         background-color: #ffffff;
     }
-
+    .patientInfoData {
+        margin-top: 1rem;
+    }
     .arrowDown {
         transform: rotate(180deg);
     }
@@ -62,12 +74,22 @@
     .blueText {
         color: @DoctorAppWeb.Client.Shared.Colors.Blue
     }
+    .patientInfoButtonsBlock {
+        margin-top: 1rem;
+    }
 </style>
 
 @code {
     bool isOpen = false;
+
     void ToggleOpen()
     {
         isOpen = !isOpen;
+    }
+
+    void ShowAnamnesis()
+    {
+        DialogOptions options = new DialogOptions() { CloseButton = true};
+        Dialog.Show<Anamnesis>("Анамнез жизни", options);
     }
 }
