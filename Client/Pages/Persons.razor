@@ -49,7 +49,7 @@
                             <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
                                 @foreach (Department dep in Departments)
                                 {
-                                    <MudSelectItem T="string" Value="@dep.BusinessElementShortName">@dep.BusinessElementShortName</MudSelectItem>
+                                    <MudSelectItem T="string" Value="@dep.BusinessElementFullName">@dep.BusinessElementFullName</MudSelectItem>
                                 }
                             </MudSelect>
                         </MudItem>
@@ -296,7 +296,7 @@
             // filtering departments by doctor
             var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
             var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
-            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementShortName));
+            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
 
             // todo: the implementation is incorrect due to bad data in "Doctor" property
             tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
