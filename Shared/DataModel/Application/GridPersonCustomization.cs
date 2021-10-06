@@ -39,7 +39,7 @@ namespace DoctorAppWeb.Shared.DataModel.Application
             defaults.Add(new List<object>() { "SexEnum", "Пол", 19, false, false, false, false, dtUpdate });
             //defaults.Add(new List<object>() { "IsWorking", "Занятость", 20, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "HelpForm", "Форма помощи", 21, false, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "AdmissionInfo", "Где и как", 22, false, false, false, false, dtUpdate });
+            defaults.Add(new List<object>() { "AdmissionInfo", "Поступил", 22, false, false, false, false, dtUpdate });
             //defaults.Add(new List<object>() { "IsDocsExist", "Отсутствие документов", 23, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "Benefits", "Льготы", 24, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "PatientCondition", "Состояние пациента", 25, false, false, false, false, dtUpdate });
