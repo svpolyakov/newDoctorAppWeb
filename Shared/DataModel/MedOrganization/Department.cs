@@ -12,7 +12,7 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         [Key]
         public int ID { get; set; }
         public string BusinessElementID { get; set; }
-        public string BusinessElementShortName { get; set; }
+        public string BusinessElementFullName { get; set; }
         public DateTime? DateUpdate { get; set; }
     }
 }

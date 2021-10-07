@@ -1,0 +1,95 @@
+﻿@inject StateContainer StateContainer
+@inject IDialogService Dialog
+
+<MudDialogProvider Position="DialogPosition.CenterLeft" MaxWidth="MaxWidth.Large" />
+<div class="patientInfo">
+    <MudPaper class="patientInfoToggle">
+        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                       OnClick="ToggleOpen"
+                       Size="Size.Medium"
+                       class=@(isOpen ? "patientInfoToggle-button arrowDown" : "patientInfoToggle-button")></MudIconButton>
+        <MudIcon Class="patientInfoToggle-icon" Icon="@Icons.Material.Outlined.AssignmentInd" Color="Color.Primary"></MudIcon>
+    </MudPaper>
+    @if (isOpen)
+    {
+        <MudPaper class="patientInfoWrapper">
+
+            <MudText Typo="Typo.h5">Информация о пациенте</MudText>
+
+            <div class="patientInfoData">
+                <div style="display: flex">
+                    <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">&nbsp;@StateContainer.CurrentPatient.SDInpatientServiceCase</MudText>
+                </div>
+                <div style="display: flex">
+                    <MudText Class="blueText">@StateContainer.CurrentPatient.IsWorkingStr</MudText>
+                </div>
+            </div>
+
+            <div class="patientInfoButtonsBlock">
+                <MudButton OnClick="ShowAnamnesis" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез жизни</MudButton>
+            </div>
+        </MudPaper>
+    }
+
+</div>
+
+<style>
+    .patientInfo {
+        margin-left: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .patientInfoToggle {
+        background-color: #ffffff;
+        display: flex;
+        padding: 1rem;
+        width: 5rem;
+        height: 2.5rem;
+        margin-bottom: -5px;
+    }
+
+    .patientInfoToggle-button {
+        padding: 0;
+        height: 1.5rem;
+        margin-top: -0.5rem;
+    }
+
+    .patientInfoToggle-icon {
+        margin-top: -0.5rem;
+    }
+
+    .patientInfoWrapper {
+        padding: 1rem;
+        background-color: #ffffff;
+    }
+    .patientInfoData {
+        margin-top: 1rem;
+    }
+    .arrowDown {
+        transform: rotate(180deg);
+    }
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .blueText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Blue
+    }
+    .patientInfoButtonsBlock {
+        margin-top: 1rem;
+    }
+</style>
+
+@code {
+    bool isOpen = false;
+
+    void ToggleOpen()
+    {
+        isOpen = !isOpen;
+    }
+
+    void ShowAnamnesis()
+    {
+        DialogOptions options = new DialogOptions() { CloseButton = true};
+        Dialog.Show<Anamnesis>("Анамнез жизни", options);
+    }
+}

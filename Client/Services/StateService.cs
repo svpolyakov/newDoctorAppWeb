@@ -1,10 +1,12 @@
 ﻿using System;
+using DoctorAppWeb.Shared.DataModel.MedOrganization;
 
 public class StateContainer
 {
     private bool showDrawer;
     private string appTitle;
     private string currentPage;
+    private Patient currentPatient;
 
     public Boolean ShowDrawer
     {
@@ -32,6 +34,16 @@ public class StateContainer
         set
         {
             currentPage = value;
+            NotifyStateChanged();
+        }
+    }
+
+    public Patient CurrentPatient
+    {
+        get => currentPatient;
+        set
+        {
+            currentPatient = value;
             NotifyStateChanged();
         }
     }

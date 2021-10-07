@@ -6,7 +6,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
-@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @inject StateContainer StateContainer
 
 <Progress isVisible="@showProgress"></Progress>
@@ -50,7 +49,7 @@
                             <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
                                 @foreach (Department dep in Departments)
                                 {
-                                    <MudSelectItem T="string" Value="@dep.BusinessElementShortName">@dep.BusinessElementShortName</MudSelectItem>
+                                    <MudSelectItem T="string" Value="@dep.BusinessElementFullName">@dep.BusinessElementFullName</MudSelectItem>
                                 }
                             </MudSelect>
                         </MudItem>
@@ -103,8 +102,8 @@
                 }
                 <MudTd Class="stickyCell stickyWhiteBg">
                     <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
-                                                                                 string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday.ToString().Split(' ')[0] + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
-                                                                                 GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId);
+                                                                                 string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+                                                                                 GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId, context);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
                     <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
                     </MudIconButton>
@@ -123,9 +122,9 @@
                                 <MudGrid>
                                     @foreach (var field in CustomGridPerson)
                                     {
-                                        if (!field.WhereToDisplay)
+                                        string value = context.GetPropertyValue(field.NameColumnEn);
+                                        if (!field.WhereToDisplay && !string.IsNullOrEmpty(value))
                                         {
-                                            string value = context.GetPropertyValue(field.NameColumnEn);
                                             int xs;
                                             int threshold = 20;
                                             if (value?.Length > threshold)
@@ -136,9 +135,27 @@
                                             {
                                                 xs = 6; // half line
                                             }
-                                            <MudItem xs="@xs">
-                                                <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
-                                            </MudItem>
+                                    <MudItem xs="@xs">
+
+                                        @if (field.NameColumnEn != "SexEnum")
+                                        {
+                                            <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
+                                        }
+                                        else
+                                        {
+                                            if (value == "1")
+                                            {
+                                                <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
+                                        <MudIcon Class="darkBlue" Icon="@Icons.Material.Filled.Male" />
+                                            }
+                                            else
+                                            {
+                                                <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
+                                        <MudIcon Class="darkRed" Icon="@Icons.Material.Filled.Female" />
+                                            }
+                                        }
+
+                                    </MudItem>
 
                                         }
                                     }
@@ -222,6 +239,12 @@
         width: 1.5rem;
         height: 1.5rem;
     }
+    .darkBlue {
+        color: @DoctorAppWeb.Client.Shared.Colors.DarkBlue;
+    }
+    .darkRed {
+        color: @DoctorAppWeb.Client.Shared.Colors.DarkRed;
+    }
 </style>
 
 @code{
@@ -233,12 +256,13 @@
         navigationManager.NavigateTo(PatientService.CurrentPage + "Custom");
     }
 
-    async Task GoToPatientInfo(Guid id, string title, Guid hcsId)
+    async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
     {
         StateContainer.AppTitle = title;
         PatientService.CurrentPatient = id;
         PatientService.HealthcareServiceId = hcsId;
         StateContainer.CurrentPage = Pages.WhatsNew;
+        StateContainer.CurrentPatient = person;
         navigationManager.NavigateTo(Pages.WhatsNew);
     }
 
@@ -272,7 +296,7 @@
             // filtering departments by doctor
             var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
             var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
-            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementShortName));
+            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
 
             // todo: the implementation is incorrect due to bad data in "Doctor" property
             tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
@@ -289,7 +313,6 @@
 
     private void ShowBtnPress(Guid id)
     {
-        Console.WriteLine(id);
         Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
         tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
     }
@@ -463,7 +486,7 @@
                             Lastname = person.Lastname,
                             Patronymic = person.Patronymic,
                             Age = person.Age,
-                            Birthday = person.Birthday,
+                            Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
                             Bed = person.Bed,
                             Room = person.Room,
                             isChanged = person.isChanged,
@@ -478,7 +501,7 @@
                             Doctor = person.Doctor,
                             Diagnos = person.Diagnos,
                             SDDepTreatmentCase = person.SDDepTreatmentCase,
-                            SDInpatientServiceCase = person.SDInpatientServiceCase,
+                            SDInpatientServiceCase = person.SDInpatientServiceCase.Value.ToString("dd.MM.yyyy HH:mm"),
                             AgeDescription = person.AgeDescription,
                             SexEnum = person.SexEnum,
                             DiagnosAnamnesisID = person.DiagnosAnamnesisID,
@@ -487,6 +510,7 @@
                             HealthcareServiceId = person.HealthcareServiceId,
                             HelpForm = person.HelpForm,
                             IsWorking = person.IsWorking,
+                            IsWorkingStr = person.IsWorking ? "Работает" : "Не работает",
                             PathologyАnamnesisID = person.PathologyАnamnesisID,
                             SDReceptionCase = person.SDReceptionCase,
                             PersonnelID = person.PersonnelID,

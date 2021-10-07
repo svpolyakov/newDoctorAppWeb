@@ -4,7 +4,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
-@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @inject StateContainer StateContainer
 
 <Progress isVisible="@showProgress"></Progress>
@@ -42,7 +41,13 @@
                 <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="АРХИВ">
                     <MudGrid>
                         <MudItem xs="10">
-                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })" OnClearButtonClick="HandleSearch" Clearable="true" FullWidth="true" @bind-Value="SearchQuery" Label="Код или ткст диагноза" Variant="Variant.Outlined"></MudTextField>
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                          OnClearButtonClick="HandleSearch" 
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="Код или текст диагноза"
+                                          Variant="Variant.Outlined"></MudTextField>
                         </MudItem>
                         <MudItem xs="2">
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />

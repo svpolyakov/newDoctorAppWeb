@@ -22,7 +22,7 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         
         public int SexEnum { get; set; }
         
-        public DateTime? Birthday { get; set; }
+        public string Birthday { get; set; }
         
         public int Age { get; set; }
         
@@ -44,7 +44,7 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         
         public DateTime? SDDepTreatmentCase { get; set; }
         
-        public DateTime? SDInpatientServiceCase { get; set; }
+        public string SDInpatientServiceCase { get; set; }
         
         public bool InResuscitation { get; set; }
         
@@ -67,6 +67,8 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public Guid HealthcareServiceId { get; set; }
         
         public bool IsWorking { get; set; }
+        
+        public string IsWorkingStr { get; set; }
         
         public string Benefits { get; set; }
         

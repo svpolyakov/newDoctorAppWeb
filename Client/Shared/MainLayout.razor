@@ -5,17 +5,33 @@
 @inject IIndexedDbFactory DbFactory
 @inject StateContainer StateContainer
 
+@if (isMenuVisible)
+{
+    <div class="menuBlock">
+        <div class="menuBlockItem">
+            <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
+        </div>
+    </div>
+}
+<MudOverlay @bind-Visible="isMenuVisible" DarkBackground="true" ZIndex="1101" AutoClose="false" />
+
 <MudLayout>
+    
     <MudAppBar>
-        @if (StateContainer.AppTitle?.Length > 0)
+        <div class="logoContainer"><img class="logo" src="logoWhite.svg"></div>
+        @if (StateContainer.AppTitle?.Length > 0 && !isMenuVisible)
         {
-            <MudIconButton Class="backButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton><div class="flexSpacer" />
+            <MudIconButton Class="whiteButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton><div class="flexSpacer" />
         }
-        <MudText>@StateContainer.AppTitle</MudText>
+        @if (!isMenuVisible)
+        {
+            <MudText>@StateContainer.AppTitle</MudText>
+        }
+
         <div class="flexSpacer" />
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="@LogoutClick">Выход</MudButton>
+        <MudIcon @onclick="DisplayMenu" Class="whiteButton" Icon="@menuIcon" />
     </MudAppBar>
-        <!-- for mini variant: Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" -->
+    <!-- for mini variant: Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" -->
     <MudDrawer ClipMode="@DrawerClipMode.Docked" @bind-Open="@StateContainer.ShowDrawer">
         <AuthorizeView>
             <NavMenu />
@@ -23,21 +39,74 @@
     </MudDrawer>
 
     <MudMainContent Style="min-height: 100vh">
+        @if (StateContainer.AppTitle?.Length > 0) { 
+            <PatientHeader />
+        }
         @Body
+        <div class="appVersion">
+            <MudText Typo="Typo.caption">app version: @version</MudText>
+        </div>
     </MudMainContent>
 </MudLayout>
 
 <style>
-    .backButton {
+    .whiteButton {
         color: white;
     }
+
+    .exitIcon svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
     .flexSpacer {
         flex: 1;
+    }
+
+    .menuBlock {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.Blue;
+        color: #ffffff;
+        position: absolute;
+        right: 0px;
+        top: 2rem;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        padding-right: 1rem;
+        padding-left: 3rem;
+        z-index: 1201;
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 11px 10px 1px;
+        /*temporary while no other items there*/
+        min-width: 25rem;
+    }
+
+    .menuBlockItem {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    .mud-appbar {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.Blue;
+    }
+
+    .logoContainer {     
+    }
+
+    .logo {
+        width: 2rem;
+    }
+
+    .appVersion {
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
 </style>
 
 @code {
+    Version version = typeof(Program).Assembly.GetName().Version;
     bool isDrawerOpen = false;
+    bool isMenuVisible = false;
+    string menuIcon = Icons.Material.Filled.Menu;
 
     protected override void OnInitialized()
     {
@@ -53,6 +122,7 @@
     {
         navigationManager.NavigateTo("persons");
     }
+
 }
 
 @functions{
@@ -70,6 +140,19 @@
     void ToggleDrawer()
     {
         open = !open;
+    }
+
+    void DisplayMenu()
+    {
+        isMenuVisible = !isMenuVisible;
+        if (isMenuVisible)
+        {
+            menuIcon = Icons.Material.Filled.Close;
+        }
+        else
+        {
+            menuIcon = Icons.Material.Filled.Menu;
+        }
     }
 
     protected override async Task OnInitializedAsync()

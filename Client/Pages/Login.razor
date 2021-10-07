@@ -16,19 +16,19 @@
 <MudCard Class="loginBlock">
     <MudCardContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-            <div class="cardTitle">
-                <MudText Typo="Typo.h4" Color="Color.Primary">
-                    Рабочее место врача на обходе
-                </MudText>
+            <div class="cardTitle" style="display: flex">
+                <div class="loginLogoWrapper"><img src="logoGray.svg"></div>
+                <MudText Typo="Typo.h4" Color="Color.Primary">Авиценна.планшет</MudText>
             </div>
+
             <div id="form">
                 <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
                     <DataAnnotationsValidator />
                     <div>
-                        <MudTextField Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
+                        <MudTextField Immediate="true" Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
                     </div>
                     <div>
-                        <MudTextField Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
+                        <MudTextField Immediate="true" Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
                     </div>
                     <div class="buttonWrapper">
                         <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
@@ -36,9 +36,6 @@
                     <div class="forgotPwdWrapper">
                         <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
                     </div>
-                    <!--<NavLink href="register">
-                        <h6 class="font-weight-normal text-center">Create account</h6>
-                    </NavLink>-->
                 </EditForm>
 
             </div>
@@ -61,18 +58,21 @@
 
     .cardTitle {
         text-align: center;
-        padding-top: 60px;
-        margin-bottom: 60px;
+        padding-top: 4.2rem;
+        margin-bottom: 4.2rem;
     }
 
     .buttonWrapper {
-        margin-top: 60px
+        margin-top: 4.2rem
     }
 
     .forgotPwdWrapper {
         display: flex;
         flex-direction: row-reverse;
-        margin-top: 10px
+        margin-top: 1rem;
+    }
+    .loginLogoWrapper {
+        padding-right: 1rem;
     }
 </style>
 
