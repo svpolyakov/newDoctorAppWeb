@@ -1,0 +1,305 @@
+﻿@page "/indications"
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IPatientsService PatientService
+@inject NavigationManager navigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
+@inject StateContainer StateContainer
+
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Показатели
+        </MudText>
+
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ГРАФИКИ">
+                    @if (indCharts != null)
+                    {
+                        @foreach (IndicantChartDto indChart in indCharts)
+                        {
+                            <div class="flexSpacer" />
+                            <MudGrid>
+                                <MudText Typo="Typo.h5">
+                                    @indChart.Caption
+                                </MudText>
+                            </MudGrid>
+                            <MudGrid>
+                                <MudItem lg="10" sm="12">
+                                    <MudChart ChartType="ChartType.Line" ChartSeries="@LineChartSeries(indChart)" XAxisLabels="@ChartLabels(indChart)"
+                                              ChartOptions="@LineChartOptions(indChart)" LegendPosition="Position.Right" />
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="ТАБЛИЦА">
+                    @if (indicants != null)
+                    {
+                        <MudTable Items="@indicants" Hover="false" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                @foreach (var h in PrepareIndicantTableHeaders())
+                                {
+                                    @if (h == dateColName)
+                                    {
+                                        <MudTh Class="stickyCell tableHeader unWrapCell">
+                                            <MudTableSortLabel SortBy="new Func<PatientIndicantDto, object>(x=>x.ValueDate)">
+                                                <span class="tableHeaderText">@dateColName</span>
+                                            </MudTableSortLabel>
+                                        </MudTh>
+                                    }
+                                    else
+                                    {
+                                        <MudTh Class="tableHeader unWrapCell">
+                                            <span class="tableHeaderText">@h</span>
+                                        </MudTh>
+                                    }
+                                }
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="@dateColName" Class="stickyCell stickyWhiteBg unWrapCell alignRightCell vBorderColumn hBorderRow">@GetValueDate(context.ValueDate)</MudTd>
+                                @foreach (var value in context.Indicant)
+                                    {
+                                    <MudTd DataLabel="@value.Name" Class="vBorderColumn">@value.Value</MudTd>
+                                    }
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:" />
+                            </PagerContent>
+                        </MudTable>
+                    }
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+</MudPaper>
+
+<style>
+    .tableHeader {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.LightBlue;
+    }
+    .tableHeaderText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray;
+        font-weight: 600;
+        line-height: 1rem;
+    }
+    .stickyWhiteBg {
+        background: white;
+    }
+    .stickyCell {
+        position: sticky;
+        left: -1px;
+    }
+    .unWrapCell {
+        white-space: nowrap;
+    }
+    .alignRightCell {
+        text-align: right;
+    }
+    .vBorderColumn {
+        border-right: 1px solid #eeeeef;
+    }
+    .hBorderRow {
+        border-bottom: 1px solid #eeeeef;
+    }
+</style>
+
+@code {
+    private const string dateColName = "Дата - время";
+
+    private DateTime? maxValueDate;
+    private DateTime? minValueDate;
+    private DateTime? baseValueDate;
+    private Dictionary<string, string[]> baseChartPalette;
+    private CustomSettings customSettings { get; set; }
+
+    public bool showProgress = true;
+    public IEnumerable<PatientIndicantDto> indicants { get; set; }
+    public IEnumerable<IndicantChartDto> indCharts { get; set; }
+    public IEnumerable<string> indHeadings { get; set; }
+
+    private ChartOptions LineChartOptions(IndicantChartDto indChart)
+    {
+        ChartOptions chartOptions = new ChartOptions();
+        chartOptions.YAxisLines = true;
+        chartOptions.XAxisLines = true;
+        chartOptions.InterpolationOption = InterpolationOption.NaturalSpline;
+        if (indChart.PatientIndicant.Max(x => x.Name) == indChart.PatientIndicant.Min(x => x.Name))
+        {
+            chartOptions.DisableLegend = true;
+            chartOptions.ChartPalette = baseChartPalette[indChart.Caption];
+        }
+        else
+        {
+            chartOptions.YAxisLines = true;
+            chartOptions.XAxisLines = true;
+            chartOptions.ChartPalette = baseChartPalette[indChart.Caption];
+        }
+        return chartOptions;
+    }
+
+    private string GetValueDate(DateTime? valueDate)
+    {
+        if (valueDate == null) { return ""; }
+        if (Nullable.Compare<DateTime>(minValueDate, valueDate) == 0 || Nullable.Compare<DateTime>(maxValueDate, valueDate) == 0)
+        {
+            baseValueDate = null;
+        }
+        if (baseValueDate == null) { baseValueDate = valueDate; }
+        if (((DateTime)baseValueDate).ToString("dd/MM/yyyy") != ((DateTime)valueDate).ToString("dd/MM/yyyy"))
+        {
+            baseValueDate = valueDate;
+        }
+        if (Nullable.Compare<DateTime>(baseValueDate, valueDate) == 0)
+        {
+            return (((DateTime)valueDate).ToString("dd/MM/yyyy HH:mm"));
+        }
+        else
+        {
+            return (((DateTime)valueDate).ToString("           HH:mm"));
+        }
+    }
+
+    private string[] ChartLabels(IndicantChartDto indChartDto)
+    {
+        PatientNumericIndicantDto patIndicantDto = indChartDto.PatientIndicant.First();
+        string[] chartLabels = new string[patIndicantDto.Indicant.Count()];
+        int index = 0;
+        foreach (NumericIndicantValueDto numIndicantValueDto in patIndicantDto.Indicant.OrderBy(x => x.ValueDate))
+        {
+            chartLabels[index] = numIndicantValueDto.ValueDate == null ? "" : ((DateTime)numIndicantValueDto.ValueDate).ToString("dd/MM");
+            index++;
+        }
+        return chartLabels;
+    }
+
+    private List<ChartSeries> LineChartSeries(IndicantChartDto indChartDto)
+    {
+        List<ChartSeries> chartSeriesList = new List<ChartSeries>();
+        foreach (PatientNumericIndicantDto patIndicantDto in indChartDto.PatientIndicant)
+        {
+            ChartSeries chartSeries = new ChartSeries();
+            chartSeries.Name = patIndicantDto.Name;
+            chartSeries.Data = new double[patIndicantDto.Indicant.Count()];
+            int index = 0;
+            foreach (NumericIndicantValueDto numIndicantValueDto in patIndicantDto.Indicant.OrderBy(x => x.ValueDate))
+            {
+                chartSeries.Data[index] = (double)numIndicantValueDto.NumericValue;
+                index++;
+            }
+            chartSeriesList.Add(chartSeries);
+        }
+        return chartSeriesList;
+    }
+
+    protected IEnumerable<string> PrepareIndicantTableHeaders()
+    {
+        List<string> indHeadingList = new List<string> { dateColName };
+        if (indicants != null && indicants.Count() > 0)
+        {
+            PatientIndicantDto patIndicantDto = indicants.FirstOrDefault();
+            if (patIndicantDto != null && patIndicantDto.Indicant != null)
+            {
+                foreach (IndicantValueDto indValueDto in patIndicantDto.Indicant)
+                {
+                    indHeadingList.Add(indValueDto.Name);
+                }
+            }
+            minValueDate = indicants.Min(x => x.ValueDate);
+            maxValueDate = indicants.Max(x => x.ValueDate);
+        }
+        return indHeadingList.ToArray();
+    }
+
+    private string GetHexRandomColor()
+    {
+        Random random = new Random();
+        return System.Drawing.ColorTranslator.ToHtml(System.Drawing.Color.FromArgb((byte)random.Next(0, 255), (byte)random.Next(0, 255), (byte)random.Next(0, 255)));
+    }
+
+    private async Task<CustomSettings> GetCustomSettings()
+    {
+        CustomSettings customSettings;
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            customSettings = db.CustomSettings.FirstOrDefault();
+        }
+        return customSettings != null ? customSettings : new CustomSettings();
+    }
+
+    protected Dictionary<string, string[]> PrepareIndicantChartPalettes()
+    {
+        var dictChartPalette = new Dictionary<string, string[]>();
+        if (indCharts != null && indCharts.Count() > 0)
+        {
+            ChartOptions baseChartOptions = new ChartOptions();
+            int i = 0;
+            foreach (IndicantChartDto indChart in indCharts)
+            {
+                List<string> chartColors = new List<string>();
+                for (int k = 1; k <= indChart.PatientIndicant.Count(); k++)
+                {
+                    if (baseChartOptions.ChartPalette != null && i < baseChartOptions.ChartPalette.Count())
+                    {
+                        chartColors.Add(baseChartOptions.ChartPalette[i]);
+                        i++;
+                    }
+                    else
+                    {
+                        chartColors.Add(GetHexRandomColor()); //#4661EE"
+                    }
+
+                }
+                dictChartPalette.Add(indChart.Caption, chartColors.ToArray());
+            }
+        }
+        return dictChartPalette;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        showProgress = true;
+        customSettings = await GetCustomSettings();
+        indicants = await GetIndicants();
+        indCharts = await GetIndicantCharts();
+        baseChartPalette = await Task.Run(PrepareIndicantChartPalettes);
+        showProgress = false;
+    }
+
+    protected async Task<IEnumerable<PatientIndicantDto>> GetIndicants(bool Archive = false)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "Indicants/Table");
+            request.Headers.Add("hServiceId", PatientService.HealthcareServiceId.ToString());
+            request.Headers.Add("maxPeriodData", customSettings.MaxPeriodData.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(request);
+            IEnumerable<PatientIndicantDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientIndicantDto>>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+        }
+        return null;
+    }
+
+    protected async Task<IEnumerable<IndicantChartDto>> GetIndicantCharts(bool Archive = false)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "Indicants/Chart");
+            request.Headers.Add("hServiceId", PatientService.HealthcareServiceId.ToString());
+            request.Headers.Add("maxPeriodData", customSettings.MaxPeriodData.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(request);
+            IEnumerable<IndicantChartDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<IndicantChartDto>>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+        }
+        return null;
+    }
+}

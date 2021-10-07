@@ -1,12 +1,7 @@
-﻿{
-  "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
-  "Version": "15.0.40203.910",
-  "GettingStartedDocument": {
-    "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
-  },
+{
   "ExtendedData": {
     "inputs": [
-      "http://95.161.3.172:666/Doctest/?wsdl"
+      "http://192.168.184.128:666/Doctest/?wsdl"
     ],
     "collectionTypes": [
       "System.Collections.Generic.Dictionary`2",

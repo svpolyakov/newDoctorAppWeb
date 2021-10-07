@@ -1,0 +1,87 @@
+﻿@page "/customization"
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Text.Json
+@using System.Net.Http.Headers
+@using System.Text
+@inject HttpClient Http
+@inject IIndexedDbFactory DbFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService modal
+@inject IPatientsService PatientService
+Кастомизация
+
+<MudItem xs="12" sm="6" md="4">
+    <MudTextField @bind-Value="@_searchText"
+                  Label=""
+                  Variant="Variant.Outlined"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@Icons.Filled.Search"
+                  OnAdornmentClick="HandleAdornment"
+                  Immediate="true" />
+</MudItem>
+
+<MudTreeView T="UserDto" ServerData="LoadUserList" Items="TreeUsers" CanActivate="true" ExpandOnClick="true" ActivatedValueChanged="HandleActivatedValueChanged">
+    <ItemTemplate>
+        <MudTreeViewItem Items="@Enumerable.ToHashSet(context.SubItems)" Value="@context"
+                         Text="@context.Login" EndText="@context.FIO" EndTextTypo="@Typo.caption"
+                         Style="@($"color:{MudBlazor.Colors.Shades.Black}; background:{(context.HasWebCustomization ? MudBlazor.Colors.Cyan.Lighten3 : MudBlazor.Colors.Shades.White)};")" />
+    </ItemTemplate>
+</MudTreeView>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="CustomDisabled" OnClick="HandleSaveCustomization">Взять настройки с пользователя</MudButton>
+
+@code{
+
+    private string _searchText;
+    private UserDto SelectedCustomization;
+    private HashSet<UserDto> TreeUsers { get; set; } = new HashSet<UserDto>();
+    private bool CustomDisabled = true;
+    private MudTheme Theme = new MudTheme();
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string userName = (await AuthenticationState).User.Identity.Name;
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Customization/users");
+        var httpResponse = await Http.SendAsync(httpRequest);
+        TreeUsers = Enumerable.ToHashSet(await httpResponse.Content.ReadFromJsonAsync<IEnumerable<UserDto>>());
+    }
+
+    public async Task<HashSet<UserDto>> LoadUserList(UserDto parentNode)
+    {
+        return Enumerable.ToHashSet(parentNode.SubItems);
+    }
+
+    private void HandleAdornment(MouseEventArgs e)
+    {
+        SelectedCustomization = (UserDto)TreeUsers.Where(x => x.FIO.Contains(_searchText)).FirstOrDefault();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleActivatedValueChanged(UserDto userDto)
+    {
+        SelectedCustomization = userDto;
+        CustomDisabled = !SelectedCustomization.HasWebCustomization;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSaveCustomization(MouseEventArgs e)
+    {
+        string userName = (await AuthenticationState).User.Identity.Name;
+        var customization = JsonSerializer.Serialize(SelectedCustomization);
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "Customization/copy");
+        httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        httpRequest.Content = new StringContent(customization, Encoding.UTF8);
+        httpRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        httpRequest.Headers.Add("sourceLogin", SelectedCustomization.Login);
+        httpRequest.Headers.Add("targetLogin", userName);
+        var httpResponse = await Http.SendAsync(httpRequest);
+        httpResponse.EnsureSuccessStatusCode();
+        httpRequest = new HttpRequestMessage(HttpMethod.Get, "Customization");
+        httpResponse = await Http.SendAsync(httpRequest);
+        TreeUsers = Enumerable.ToHashSet(await httpResponse.Content.ReadFromJsonAsync<IEnumerable<UserDto>>());
+    }
+}
+

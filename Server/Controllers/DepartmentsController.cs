@@ -35,7 +35,7 @@ namespace DoctorAppWeb.Server.Controllers
             _logger.LogDebug("GetAsync");
             IEnumerable<DepartmentDto> departments = await _dataWCFService.GetAllDepartmentsAsync();
             IEnumerable<ActualDoctorDto> doctors = await _dataWCFService.GetAllActualDoctorsAsync();
-            IEnumerable<Department> deps = departments.Select(x => new Department { BusinessElementID = x.BusinessElementID.ToString(), BusinessElementShortName = x.BusinessElementShortName, DateUpdate = x.DateUpdate });
+            IEnumerable<Department> deps = departments.Select(x => new Department { BusinessElementID = x.BusinessElementID.ToString(), BusinessElementShortName = x.BusinessElementFullName });
             IEnumerable<Doctor> docs = doctors.Select(x => new Doctor {FirstName = x.FirstName, SurName = x.SurName, Patronymic = x.Patronymic, PersonId = x.PersonId, PersonnelPositionList = x.PersonnelPositionList.Select(x => new PersonnelPosition { PositionType = x.PositionType, IdPersonnel = x.IdPersonnel, Department = x.Department}).ToList() });
             return new Tuple<IEnumerable<Department>, IEnumerable<Doctor>>(deps, docs);
             

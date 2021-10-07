@@ -8,7 +8,7 @@ using PatientsWcf;
 namespace DoctorAppWeb.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class CustomizationController : Controller
     {
         [HttpGet]
@@ -18,10 +18,27 @@ namespace DoctorAppWeb.Server.Controllers
             return  await new InpatientDoctorClient().GetCustomizationAsync(login, null);
         }
 
-        [HttpPost]
-        public async Task PostAsync()
+        [HttpGet("/users")]
+        public async Task<List<UserDto>> GetUsersAsync([FromHeader] string login)
         {
-            //new InpatientDoctorClient().SaveCustomizationAsync()
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            return await inpatientDoctorClient.GetAllUsersAsync(login);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CustomizationInfoDto>> PostAsync([FromHeader] CustomizationInfoDto customizationInfo, [FromHeader] string Login, [FromHeader] string targetLogin)
+        {
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            await inpatientDoctorClient.SaveCustomizationAsync(customizationInfo, Login, targetLogin);
+            return await inpatientDoctorClient.GetCustomizationAsync(Login, targetLogin);
+        }
+
+        [HttpPost("/copy")]
+        public async Task<ActionResult<CustomizationInfoDto>> CopyAsync([FromHeader] string sourceLogin, [FromHeader] string targetLogin)
+        {
+            InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+            await inpatientDoctorClient.CopyCustomizationAsync(sourceLogin, targetLogin);
+            return await inpatientDoctorClient.GetCustomizationAsync(targetLogin, null);
         }
     }
 }
