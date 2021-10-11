@@ -8,7 +8,7 @@ using PatientsWcf;
 namespace DoctorAppWeb.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     public class CustomizationController : Controller
     {
         [HttpGet]
@@ -18,7 +18,7 @@ namespace DoctorAppWeb.Server.Controllers
             return  await new InpatientDoctorClient().GetCustomizationAsync(login, null);
         }
 
-        [HttpGet("/users")]
+        [HttpGet("Users")]
         public async Task<List<UserDto>> GetUsersAsync([FromHeader] string login)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
@@ -33,7 +33,7 @@ namespace DoctorAppWeb.Server.Controllers
             return await inpatientDoctorClient.GetCustomizationAsync(Login, targetLogin);
         }
 
-        [HttpPost("/copy")]
+        [HttpPost("Copy")]
         public async Task<ActionResult<CustomizationInfoDto>> CopyAsync([FromHeader] string sourceLogin, [FromHeader] string targetLogin)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
