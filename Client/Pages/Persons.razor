@@ -31,7 +31,7 @@
                 <MudTabPanel OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
                 </MudTabPanel>
                 <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
-                    <MudGrid Class="filtersWrapper">
+                    <MudGrid Spacing="1" Class="filtersWrapper">
                         <MudItem xs="10">
                             <MudTextField 
                                           OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
@@ -40,13 +40,21 @@
                                           FullWidth="true"
                                           @bind-Value="SearchQuery"
                                           Label="ФИО или номер ИБ"
+                                          Margin="Margin.Dense"
                                           Variant="Variant.Outlined"></MudTextField>
                         </MudItem>
                         <MudItem xs="2">
                             <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDepartment" T="string" Label="Отделение" Variant="Variant.Outlined">
+                            <MudSelect 
+                                       Clearable="true"
+                                       OnClearButtonClick="FindPatients"
+                                       @bind-Value="@SelectedDepartment"
+                                       T="string"
+                                       Label="Отделение"
+                                       Margin="Margin.Dense"
+                                       Variant="Variant.Outlined">
                                 @foreach (Department dep in Departments)
                                 {
                                     <MudSelectItem T="string" Value="@dep.BusinessElementFullName">@dep.BusinessElementFullName</MudSelectItem>
@@ -54,7 +62,14 @@
                             </MudSelect>
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect Clearable="true" OnClearButtonClick="FindPatients" @bind-Value="@SelectedDoctor" T="string" Label="Лечащий врач" Variant="Variant.Outlined">
+                            <MudSelect 
+                                       Clearable="true"
+                                       OnClearButtonClick="FindPatients"
+                                       @bind-Value="@SelectedDoctor"
+                                       T="string"
+                                       Label="Лечащий врач"
+                                       Margin="Margin.Dense"
+                                       Variant="Variant.Outlined">
                                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                                 {
                                     string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
@@ -68,7 +83,7 @@
             </MudTabs>
         </div>
 
-        <MudTable Items="@AllPersons" Hover="false" Breakpoint="Breakpoint.Sm">
+        <MudTable AllowUnsorted="false" Items="@AllPersons" Hover="false" Dense="true">
             <HeaderContent>
                 <MudTh Class="tableHeader"></MudTh>
                 @foreach (var field in CustomGridPerson)
@@ -87,7 +102,10 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="@(() => ShowBtnPress(context.PersonID))" Size="Size.Large" class=@(context.ShowDetails ? "arrowDown" : "")></MudIconButton>
+                    <MudIconButton 
+                                   Icon="@Icons.Material.Filled.KeyboardArrowDown" 
+                                   OnClick="@(() => ShowBtnPress(context.PersonID))" 
+                                   Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
                 </MudTd>
 
 
@@ -119,7 +137,7 @@
                         <td class="green"></td>
                         <td class="green" colspan="@CustomGridPerson.Count">
                             <div class="descriprion">
-                                <MudGrid>
+                                <MudGrid Spacing="0">
                                     @foreach (var field in CustomGridPerson)
                                     {
                                         string value = context.GetPropertyValue(field.NameColumnEn);
@@ -187,8 +205,8 @@
     }
 
     .tabWrapper {
-        padding-top: 54px;
-        padding-bottom: 38px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
     .arrowDown {
         transform: rotate(180deg);
@@ -198,15 +216,15 @@
     }
     .descriprion {
         width: calc(100vw - 163px);
-        padding: 12px;
+        padding: 0.7rem;
     }
     .descriprion-title {
         color:  @DoctorAppWeb.Client.Shared.Colors.Green;
-        font-size:34px;
+        font-size: 1rem;
     }
     .descriprion-content {
         color: @DoctorAppWeb.Client.Shared.Colors.Gray;
-        font-size: 34px;
+        font-size: 1rem;
     }
     .tableHeader {
         background-color: @DoctorAppWeb.Client.Shared.Colors.LightBlue;
@@ -225,11 +243,11 @@
     }
     .searchButton {
         width: 100%;
-        height: 2.3rem;
-        margin-top: 6px;
+        margin-top: 3px;
+        margin-bottom: 2px;
     }
     .filtersWrapper {
-        margin-top: 2rem;
+        margin-top: 0.2rem;
     }
     .goToPatientBtn {
         width: 80px;
@@ -244,6 +262,9 @@
     }
     .darkRed {
         color: @DoctorAppWeb.Client.Shared.Colors.DarkRed;
+    }
+    .expanderButton {
+        padding: 0;
     }
 </style>
 

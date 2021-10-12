@@ -1,40 +1,40 @@
 ﻿@inject NavigationManager navigationManager
 @inject StateContainer StateContainer
 
-<MudPaper Class="d-inline-flex py-3" Square="true">
-    <MudNavMenu Class="mud-width-full navMenu">
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.WhatsNew))"
-                    Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Diagnosis ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Diagnosis))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Diagnosis ? DoctorIcons.DiagnosisActive : DoctorIcons.Diagnosis)">Диагнозы</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Indications ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Indications))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Indications ? DoctorIcons.IndicationsActive : DoctorIcons.Indications)">Показатели</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Analysis ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Analysis))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Analysis ? DoctorIcons.AnalysisActive : DoctorIcons.Analysis)">Анализы</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Meds ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Meds))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Meds ? DoctorIcons.MedsActive : DoctorIcons.Meds)">Медикаменты</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Research ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Research))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Research ? DoctorIcons.ResearchActive : DoctorIcons.Research)">Обследования</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Consult ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Consult))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Consult ? DoctorIcons.ConsultActive : DoctorIcons.Consult)">Консультации</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Visit ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Visit))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Visit ? DoctorIcons.VisitActive : DoctorIcons.Visit)">Обходы</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Procedure ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Procedure))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Procedure ? DoctorIcons.ProcedureActive : DoctorIcons.Procedure)">Процедуры</MudNavLink>
-        <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Surgery ? "navItem activePage" : "navItem")"
-                    OnClick="@(() => GoToPage(Pages.Surgery))"
-                    Icon="@(StateContainer.CurrentPage == Pages.Surgery ? DoctorIcons.SurgeryActive : DoctorIcons.Surgery)">Операции</MudNavLink>
-    </MudNavMenu>
-</MudPaper>
+
+<MudNavMenu Class="mud-width-full navMenu">
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.WhatsNew))"
+                Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Diagnosis ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Diagnosis))"
+                Icon="@(StateContainer.CurrentPage == Pages.Diagnosis ? DoctorIcons.DiagnosisActive : DoctorIcons.Diagnosis)">Диагнозы</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Indications ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Indications))"
+                Icon="@(StateContainer.CurrentPage == Pages.Indications ? DoctorIcons.IndicationsActive : DoctorIcons.Indications)">Показатели</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Analysis ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Analysis))"
+                Icon="@(StateContainer.CurrentPage == Pages.Analysis ? DoctorIcons.AnalysisActive : DoctorIcons.Analysis)">Анализы</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Meds ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Meds))"
+                Icon="@(StateContainer.CurrentPage == Pages.Meds ? DoctorIcons.MedsActive : DoctorIcons.Meds)">Медикаменты</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Research ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Research))"
+                Icon="@(StateContainer.CurrentPage == Pages.Research ? DoctorIcons.ResearchActive : DoctorIcons.Research)">Обследования</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Consult ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Consult))"
+                Icon="@(StateContainer.CurrentPage == Pages.Consult ? DoctorIcons.ConsultActive : DoctorIcons.Consult)">Консультации</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Visit ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Visit))"
+                Icon="@(StateContainer.CurrentPage == Pages.Visit ? DoctorIcons.VisitActive : DoctorIcons.Visit)">Обходы</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Procedure ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Procedure))"
+                Icon="@(StateContainer.CurrentPage == Pages.Procedure ? DoctorIcons.ProcedureActive : DoctorIcons.Procedure)">Процедуры</MudNavLink>
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Surgery ? "navItem activePage" : "navItem")"
+                OnClick="@(() => GoToPage(Pages.Surgery))"
+                Icon="@(StateContainer.CurrentPage == Pages.Surgery ? DoctorIcons.SurgeryActive : DoctorIcons.Surgery)">Операции</MudNavLink>
+</MudNavMenu>
+
 
 <style>
     .activePage {

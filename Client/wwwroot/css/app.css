@@ -2,9 +2,10 @@
 
 /*variables*/
 :root {
-    --base-font-size: 1.666vw;
-    --mud-drawer-width: 300px;
-    --mud-drawer-width-left: 300px;
+    --base-font-size: max(1.666vw, 12px);
+    --mud-drawer-width: 20%;
+    --mud-drawer-width-left: 20%;
+    --mud-appbar-min-height: 2rem;
 }
 /*end*/
 
@@ -97,12 +98,9 @@ a, .btn-link {
     float:right
 }
 
-.mud-input-label-outlined {
-    transform: translate(14px,29px) scale(1);
-}
-
 .mud-drawer-open-responsive-md-left .mud-main-content {
-    margin-left: 300px;
+    margin-left: 20%;
+    max-width: 78%;
 }
 
 .pageWrapper {
@@ -116,4 +114,13 @@ a, .btn-link {
     margin-left: 0.5rem;
     margin-top: 0.5rem;
     padding-left: 1.25rem;
+}
+
+.mud-main-content {
+    padding-top: 1.1rem;
+}
+
+.mud-drawer-fixed.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-md {
+    top: 2rem;
+    height: calc(100vh - 2rem);
 }

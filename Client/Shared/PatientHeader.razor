@@ -3,7 +3,7 @@
 
 <MudDialogProvider Position="DialogPosition.CenterLeft" MaxWidth="MaxWidth.Large" />
 <div class="patientInfo">
-    <MudPaper class="patientInfoToggle">
+    <MudPaper class="@(isOpen ? "patientInfoToggle activeToggle" : "patientInfoToggle")">
         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
                        OnClick="ToggleOpen"
                        Size="Size.Medium"
@@ -45,7 +45,10 @@
         padding: 1rem;
         width: 5rem;
         height: 2.5rem;
-        margin-bottom: -5px;
+    }
+
+    .activeToggle {
+        border-radius: 4px 4px 0 0;
     }
 
     .patientInfoToggle-button {
@@ -61,6 +64,8 @@
     .patientInfoWrapper {
         padding: 1rem;
         background-color: #ffffff;
+        border-radius: 0 4px 4px 4px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 3px 1px 1px 0px;
     }
     .patientInfoData {
         margin-top: 1rem;
