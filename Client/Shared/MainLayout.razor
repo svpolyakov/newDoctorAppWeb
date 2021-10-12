@@ -7,11 +7,17 @@
 
 @if (isMenuVisible)
 {
-    <div class="menuBlock">
-        <div class="menuBlockItem">
-            <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
-        </div>
+<div class="menuBlock">
+    <div class="menuBlockItem">
+        <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
     </div>
+    <br>
+    <MudDivider />
+    <br>
+    <div class="menuBlockItem">
+        <MudButton IconClass="customIcon" Color="Color.Tertiary" Variant="Variant.Outlined" OnClick="CustomizationTree">Кастомизация</MudButton>
+    </div>
+</div>
 }
 <MudOverlay @bind-Visible="isMenuVisible" DarkBackground="true" ZIndex="1101" AutoClose="false" />
 
@@ -29,7 +35,7 @@
         }
 
         <div class="flexSpacer" />
-        <MudIcon @onclick="DisplayMenu" Class="whiteButton" Icon="@menuIcon" />
+        <MudIcon @onclick="DisplayMenu" Class="whiteButton" Icon="@(SetMenuIcon())" />
     </MudAppBar>
     <!-- for mini variant: Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" -->
     <MudDrawer ClipMode="@DrawerClipMode.Docked" @bind-Open="@StateContainer.ShowDrawer">
@@ -55,6 +61,11 @@
     }
 
     .exitIcon svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .customIcon svg {
         width: 1rem;
         height: 1rem;
     }
@@ -106,7 +117,7 @@
     Version version = typeof(Program).Assembly.GetName().Version;
     bool isDrawerOpen = false;
     bool isMenuVisible = false;
-    string menuIcon = Icons.Material.Filled.Menu;
+//    string menuIcon = Icons.Material.Filled.Menu;
 
     protected override void OnInitialized()
     {
@@ -123,6 +134,11 @@
         navigationManager.NavigateTo("persons");
     }
 
+    public async Task CustomizationTree()
+    {
+        isMenuVisible = !isMenuVisible;
+        navigationManager.NavigateTo("customization");
+    }
 }
 
 @functions{
@@ -142,17 +158,20 @@
         open = !open;
     }
 
-    void DisplayMenu()
+    string SetMenuIcon()
     {
-        isMenuVisible = !isMenuVisible;
         if (isMenuVisible)
         {
-            menuIcon = Icons.Material.Filled.Close;
+            return Icons.Material.Filled.Close;
         }
         else
         {
-            menuIcon = Icons.Material.Filled.Menu;
+            return Icons.Material.Filled.Menu;
         }
+    }
+    void DisplayMenu()
+    {
+        isMenuVisible = !isMenuVisible;
     }
 
     protected override async Task OnInitializedAsync()
