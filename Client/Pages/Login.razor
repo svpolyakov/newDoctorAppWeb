@@ -10,149 +10,190 @@
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
 @inject IDialogService Dialog
+@inject ISnackbar Snackbar
 <MudDialogProvider />
+<MudSnackbarProvider />
 
-<Progress isVisible="@showProgress"></Progress>
-<MudCard Class="loginBlock">
-    <MudCardContent>
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-            <div class="cardTitle" style="display: flex">
-                <div class="loginLogoWrapper"><img src="logoGray.svg"></div>
-                <MudText Typo="Typo.h4" Color="Color.Primary">Авиценна.планшет</MudText>
-            </div>
+    <Progress isVisible="@showProgress"></Progress>
+    <MudCard Class="loginBlock">
+        <MudCardContent>
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <div class="cardTitle" style="display: flex">
+                    <div class="loginLogoWrapper"><img src="logoGray.svg"></div>
+                    <MudText Typo="Typo.h4" Color="Color.Primary">Авиценна.планшет</MudText>
+                </div>
 
-            <div id="form">
-                <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
-                    <DataAnnotationsValidator />
-                    <div>
-                        <MudTextField Immediate="true" Required="true" FullWidth="true" Label="Логин" id="inputUsername" @bind-Value="loginRequest.UserName" RequiredError="Имя пользователя не заполнено" />
-                    </div>
-                    <div>
-                        <MudTextField Immediate="true" Required="true" FullWidth="true" Label="Пароль" InputType="InputType.Password" id="inputPassword" @bind-Value="loginRequest.Password" RequiredError="Пароль не заполнен" />
-                    </div>
-                    <div class="buttonWrapper">
-                        <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
-                    </div>
-                    <div class="forgotPwdWrapper">
-                        <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
-                    </div>
-                </EditForm>
+                <div id="form">
+                    <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+                        <DataAnnotationsValidator />
+                        <div>
+                            <MudTextField
+                                          TextChanged="@(() => ResetError("login"))"
+                                          Error="@loginError"
+                                          ErrorText="Неверное имя пользователя или пароль"
+                                          Immediate="true"
+                                          Required="true" 
+                                          FullWidth="true"
+                                          Label="Логин"
+                                          id="inputUsername"
+                                          @bind-Value="loginRequest.UserName"
+                                          RequiredError="Имя пользователя не заполнено" />
+                        </div>
+                        <div>
+                            <MudTextField
+                                          TextChanged="@(() => ResetError("password"))"
+                                          Error="@passwordError"
+                                          ErrorText="Неверное имя пользователя или пароль"
+                                          Immediate="true"
+                                          Required="true"
+                                          FullWidth="true"
+                                          Label="Пароль"
+                                          InputType="InputType.Password"
+                                          id="inputPassword"
+                                          @bind-Value="loginRequest.Password"
+                                          RequiredError="Пароль не заполнен" />
+                        </div>
+                        <div class="buttonWrapper">
+                            <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                        </div>
+                        <div class="forgotPwdWrapper">
+                            <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
+                        </div>
+                    </EditForm>
 
-            </div>
-        </MudForm>
-    </MudCardContent>
+                </div>
+            </MudForm>
+        </MudCardContent>
 
-</MudCard>
+    </MudCard>
 
-<style>
-    .loginBlock {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .fullWidth {
-        width: 100%
-    }
-
-    .cardTitle {
-        text-align: center;
-        padding-top: 4.2rem;
-        margin-bottom: 4.2rem;
-    }
-
-    .buttonWrapper {
-        margin-top: 4.2rem
-    }
-
-    .forgotPwdWrapper {
-        display: flex;
-        flex-direction: row-reverse;
-        margin-top: 1rem;
-    }
-    .loginLogoWrapper {
-        padding-right: 1rem;
-    }
-</style>
-
-@code{
-    public bool showProgress = false;
-    LoginRequest loginRequest { get; set; } = new LoginRequest();
-    string error { get; set; }
-    MudForm form;
-    bool success;
-    string[] errors = { };
-    bool isResetDlgVisible = false;
-
-    private void OpenDialog()
-    {
-        DialogOptions options = new DialogOptions() { CloseButton = true };
-        Dialog.Show<LostPassword>("Сброс пароля", options);
-    }
-
-
-    async Task OnSubmit()
-    {
-        error = null;
-        showProgress = true;
-        try
-        {
-            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            {
-                db.PagesSettings.Clear();
-                db.CustomAuthorizations.Clear();
-                db.Departments.Clear();
-                db.Doctors.Clear();
-                db.CustomSettings.Clear();
-                await db.SaveChanges();
-            }
-
-            await authStateProvider.Login(loginRequest);
-
-            Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
-            var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
-            request.Headers.Add("UserLogin", loginRequest.UserName);
-            using var httpResponse = await Http.SendAsync(request);
-            CustomizationInfoDto result = await httpResponse.Content.ReadFromJsonAsync<CustomizationInfoDto>();
-
-            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-            {
-                if (result != null && result.PagesSettings as Dictionary<string, string> != null)
-                    foreach (KeyValuePair<string, string> webPageInfo in result.PagesSettings as Dictionary<string, string>)
-                    {
-                        if (string.IsNullOrWhiteSpace(webPageInfo.Key) || string.IsNullOrWhiteSpace(webPageInfo.Value))
-                            continue;
-                        db.PagesSettings.Add(new PagesSettings { FormID = webPageInfo.Key, FormSettings = webPageInfo.Value });
-                    }
-
-                foreach (Department dep in departmentsToDoctors.Item1)
-                    db.Departments.Add(dep);
-
-                foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
-                    db.Doctors.Add(doc);
-
-                await db.SaveChanges();
-            }
-
-            //    CustomSettings customSettings = new CustomSettings()
-            //    {
-            //        DateUpdate = result.CustomSettings.DateUpdate,
-            //        MaxPeriodData = result.CustomSettings.MaxPeriodData,
-            //        PeriodActive = result.CustomSettings.PeriodActive,
-            //        OnlineMode = result.CustomSettings.OnlineMode
-            //    };
-            //    db.CustomSettings.Add(customSettings);
-
-            //    await db.SaveChanges();
-            //}
-
-            navigationManager.NavigateTo("/persons");
-            showProgress = false;
+    <style>
+        .loginBlock {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
-        catch (Exception ex)
+
+        .fullWidth {
+            width: 100%
+        }
+
+        .cardTitle {
+            text-align: center;
+            padding-top: 4.2rem;
+            margin-bottom: 4.2rem;
+        }
+
+        .buttonWrapper {
+            margin-top: 4.2rem
+        }
+
+        .forgotPwdWrapper {
+            display: flex;
+            flex-direction: row-reverse;
+            margin-top: 1rem;
+        }
+
+        .loginLogoWrapper {
+            padding-right: 1rem;
+        }
+    </style>
+
+    @code{
+        public bool showProgress = false;
+        public bool loginError = false;
+        public bool passwordError = false;
+        LoginRequest loginRequest { get; set; } = new LoginRequest();
+        string error { get; set; }
+        MudForm form;
+        bool success;
+        string[] errors = { };
+        bool isResetDlgVisible = false;
+
+        private void OpenDialog()
         {
-            error = ex.Message;
+            DialogOptions options = new DialogOptions() { CloseButton = true };
+            Dialog.Show<LostPassword>("Сброс пароля", options);
+        }
+
+        private void ResetError(string type)
+        {
+            if (type == "password")
+            {
+                passwordError = false;
+            }
+            if (type == "login")
+            {
+                loginError = false;
+            }
+        }
+
+        async Task OnSubmit()
+        {
+            error = null;
+            showProgress = true;
+            try
+            {
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    db.PagesSettings.Clear();
+                    db.CustomAuthorizations.Clear();
+                    db.Departments.Clear();
+                    db.Doctors.Clear();
+                    db.CustomSettings.Clear();
+                    await db.SaveChanges();
+                }
+
+                await authStateProvider.Login(loginRequest);
+
+                Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
+                var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
+                request.Headers.Add("UserLogin", loginRequest.UserName);
+                using var httpResponse = await Http.SendAsync(request);
+                CustomizationInfoDto result = await httpResponse.Content.ReadFromJsonAsync<CustomizationInfoDto>();
+
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    if (result != null && result.PagesSettings as Dictionary<string, string> != null)
+                        foreach (KeyValuePair<string, string> webPageInfo in result.PagesSettings as Dictionary<string, string>)
+                        {
+                            if (string.IsNullOrWhiteSpace(webPageInfo.Key) || string.IsNullOrWhiteSpace(webPageInfo.Value))
+                                continue;
+                            db.PagesSettings.Add(new PagesSettings { FormID = webPageInfo.Key, FormSettings = webPageInfo.Value });
+                        }
+
+                    foreach (Department dep in departmentsToDoctors.Item1)
+                        db.Departments.Add(dep);
+
+                    foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
+                        db.Doctors.Add(doc);
+
+                    await db.SaveChanges();
+                }
+
+                //    CustomSettings customSettings = new CustomSettings()
+                //    {
+                //        DateUpdate = result.CustomSettings.DateUpdate,
+                //        MaxPeriodData = result.CustomSettings.MaxPeriodData,
+                //        PeriodActive = result.CustomSettings.PeriodActive,
+                //        OnlineMode = result.CustomSettings.OnlineMode
+                //    };
+                //    db.CustomSettings.Add(customSettings);
+
+                //    await db.SaveChanges();
+                //}
+
+                navigationManager.NavigateTo("/persons");
+                showProgress = false;
+            }
+            catch (Exception ex)
+            {
+                showProgress = false;
+                Snackbar.Add("Login error: " + ex.Message, Severity.Error);
+                loginError = true;
+                passwordError = true;
+                error = ex.Message;
+            }
         }
     }
-}
