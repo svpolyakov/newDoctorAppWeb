@@ -26,14 +26,14 @@ namespace DoctorAppWeb.Server.Controllers
             
         }
 
-        public async Task<List<PatientsWcf.IndicantDto>> GetAsync(System.Guid id)
+        public async Task<PatientsWcf.IndicantDto[]> GetAsync(System.Guid id)
         {
             _logger.LogDebug("GetAsync");
             return await _dataWCFService.GetIndicantAsync(id);
         }
 
         [HttpGet("Table")]
-        public async Task<List<PatientsWcf.PatientIndicantDto>> GetTableAsync([FromHeader] System.Guid hServiceId, [FromHeader] double maxPeriodData)
+        public async Task<PatientsWcf.PatientIndicantDto[]> GetTableAsync([FromHeader] System.Guid hServiceId, [FromHeader] double maxPeriodData)
         {
             _logger.LogDebug("GetTableAsync");
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
@@ -42,7 +42,7 @@ namespace DoctorAppWeb.Server.Controllers
         }
 
         [HttpGet("Chart")]
-        public async Task<List<PatientsWcf.IndicantChartDto>> GetChartAsync([FromHeader] System.Guid hServiceId, [FromHeader] double maxPeriodData)
+        public async Task<PatientsWcf.IndicantChartDto[]> GetChartAsync([FromHeader] System.Guid hServiceId, [FromHeader] double maxPeriodData)
         {
             _logger.LogDebug("GetChartAsync");
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();

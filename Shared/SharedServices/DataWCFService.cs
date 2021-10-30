@@ -45,13 +45,13 @@ namespace DoctorAppWeb.Shared.SharedServices
             _logger.LogDebug("Create");
         }
 
-        public Task<List<PatientsWcf.PatientDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
+        public Task<PatientsWcf.PatientDto[]> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
         {
             _logger.LogDebug("GetPersonsAsync");
             return _client.GetPatientsAsync(new PersonQueryParamsDto {PersonQueryType = FilterPersonTypeDto.AllPatients }, login);
         }
 
-        public Task<List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)
+        public Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id)
         {
             _logger.LogDebug("GetIndicantAsync");
             return _client.GetIndicantAsync(id);
@@ -63,13 +63,13 @@ namespace DoctorAppWeb.Shared.SharedServices
             return _client.AuthorizeAsync(login, password);
         }
 
-        public Task<List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync()
+        public Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync()
         {
             _logger.LogDebug("GetAllActualDoctorsAsync");
             return _client.GetAllActualDoctorsAsync();
         }
 
-        public Task<List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync()
+        public Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync()
         {
             _logger.LogDebug("GetAllDepartmentsAsync");
             return _client.GetAllDepartmentsAsync();

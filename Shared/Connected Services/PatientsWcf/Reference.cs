@@ -13,21 +13,21 @@ namespace PatientsWcf
     
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PersonQueryParamsDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PersonQueryParamsDto : object
     {
         
-        private System.Collections.Generic.List<System.Guid> DepartmentListField;
+        private System.Guid[] DepartmentListField;
         
-        private System.Collections.Generic.List<string> PersonAttributeListField;
+        private string[] PersonAttributeListField;
         
         private PatientsWcf.FilterPersonTypeDto PersonQueryTypeField;
         
-        private System.Collections.Generic.List<PatientsWcf.PersonnelParamDto> PersonnelListField;
+        private PatientsWcf.PersonnelParamDto[] PersonnelListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<System.Guid> DepartmentList
+        public System.Guid[] DepartmentList
         {
             get
             {
@@ -40,7 +40,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<string> PersonAttributeList
+        public string[] PersonAttributeList
         {
             get
             {
@@ -66,7 +66,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.PersonnelParamDto> PersonnelList
+        public PatientsWcf.PersonnelParamDto[] PersonnelList
         {
             get
             {
@@ -79,7 +79,7 @@ namespace PatientsWcf
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FilterPersonTypeDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public enum FilterPersonTypeDto : int
     {
@@ -110,7 +110,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PersonnelParamDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PersonnelParamDto : object
     {
@@ -147,7 +147,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PatientDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PatientDto : object
     {
@@ -179,6 +179,8 @@ namespace PatientsWcf
         private string HelpFormField;
         
         private bool InResuscitationField;
+        
+        private string IndicantStateValueField;
         
         private bool IsWorkingField;
         
@@ -403,6 +405,19 @@ namespace PatientsWcf
             set
             {
                 this.InResuscitationField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string IndicantStateValue
+        {
+            get
+            {
+                return this.IndicantStateValueField;
+            }
+            set
+            {
+                this.IndicantStateValueField = value;
             }
         }
         
@@ -694,14 +709,14 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name="AdmissionInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto", ItemName="AdmissionInfoItemDto", KeyName="InfoKey", ValueName="InfoValue")]
     public class AdmissionInfoDto : System.Collections.Generic.Dictionary<string, string>
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="IndicantDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class IndicantDto : object
     {
@@ -753,7 +768,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ActualDoctorDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class ActualDoctorDto : object
     {
@@ -764,7 +779,7 @@ namespace PatientsWcf
         
         private System.Guid PersonIdField;
         
-        private System.Collections.Generic.List<PatientsWcf.PersonnelPositionDto> PersonnelPositionListField;
+        private PatientsWcf.PersonnelPositionDto[] PersonnelPositionListField;
         
         private string SurNameField;
         
@@ -808,7 +823,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.PersonnelPositionDto> PersonnelPositionList
+        public PatientsWcf.PersonnelPositionDto[] PersonnelPositionList
         {
             get
             {
@@ -835,7 +850,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PersonnelPositionDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PersonnelPositionDto : object
     {
@@ -887,7 +902,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DepartmentDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class DepartmentDto : object
     {
@@ -924,12 +939,12 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="UserInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class UserInfoDto : object
     {
         
-        private System.Collections.Generic.List<PatientsWcf.DepartmentInfoDto> DepartmentInfoListField;
+        private PatientsWcf.DepartmentInfoDto[] DepartmentInfoListField;
         
         private string FirstNameField;
         
@@ -937,14 +952,14 @@ namespace PatientsWcf
         
         private string MiddleNameField;
         
-        private System.Collections.Generic.List<string> PermissionsField;
+        private string[] PermissionsField;
         
         private string SnilsField;
         
         private System.Guid UserIdAVField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.DepartmentInfoDto> DepartmentInfoList
+        public PatientsWcf.DepartmentInfoDto[] DepartmentInfoList
         {
             get
             {
@@ -996,7 +1011,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<string> Permissions
+        public string[] Permissions
         {
             get
             {
@@ -1036,7 +1051,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DepartmentInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class DepartmentInfoDto : object
     {
@@ -1118,7 +1133,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="UserDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class UserDto : object
     {
@@ -1131,7 +1146,7 @@ namespace PatientsWcf
         
         private string LoginField;
         
-        private System.Collections.Generic.List<PatientsWcf.UserDto> SubItemsField;
+        private PatientsWcf.UserDto[] SubItemsField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string Description
@@ -1186,7 +1201,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.UserDto> SubItems
+        public PatientsWcf.UserDto[] SubItems
         {
             get
             {
@@ -1200,7 +1215,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CustomizationInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class CustomizationInfoDto : object
     {
@@ -1237,21 +1252,21 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name="WebPageInfosDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto", ItemName="WebPageInfoDto", KeyName="FormId", ValueName="FormSettings")]
     public class WebPageInfosDto : System.Collections.Generic.Dictionary<string, string>
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DepartmentPatientDiagnosInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class DepartmentPatientDiagnosInfoDto : object
     {
         
         private string DepartmentField;
         
-        private System.Collections.Generic.List<PatientsWcf.PatientDiagnosInfoDto> PatientDiagnosInfoListField;
+        private PatientsWcf.PatientDiagnosInfoDto[] PatientDiagnosInfoListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string Department
@@ -1267,7 +1282,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.PatientDiagnosInfoDto> PatientDiagnosInfoList
+        public PatientsWcf.PatientDiagnosInfoDto[] PatientDiagnosInfoList
         {
             get
             {
@@ -1281,7 +1296,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PatientDiagnosInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PatientDiagnosInfoDto : object
     {
@@ -1558,14 +1573,14 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="IndicantChartDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class IndicantChartDto : object
     {
         
         private string CaptionField;
         
-        private System.Collections.Generic.List<PatientsWcf.PatientNumericIndicantDto> PatientIndicantField;
+        private PatientsWcf.PatientNumericIndicantDto[] PatientIndicantField;
         
         private int PositionField;
         
@@ -1583,7 +1598,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.PatientNumericIndicantDto> PatientIndicant
+        public PatientsWcf.PatientNumericIndicantDto[] PatientIndicant
         {
             get
             {
@@ -1610,19 +1625,19 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PatientNumericIndicantDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PatientNumericIndicantDto : object
     {
         
-        private System.Collections.Generic.List<PatientsWcf.NumericIndicantValueDto> IndicantField;
+        private PatientsWcf.NumericIndicantValueDto[] IndicantField;
         
         private string NameField;
         
         private int ValueTypeField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.NumericIndicantValueDto> Indicant
+        public PatientsWcf.NumericIndicantValueDto[] Indicant
         {
             get
             {
@@ -1662,7 +1677,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="NumericIndicantValueDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class NumericIndicantValueDto : object
     {
@@ -1699,17 +1714,17 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PatientIndicantDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PatientIndicantDto : object
     {
         
-        private System.Collections.Generic.List<PatientsWcf.IndicantValueDto> IndicantField;
+        private PatientsWcf.IndicantValueDto[] IndicantField;
         
         private System.Nullable<System.DateTime> ValueDateField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.IndicantValueDto> Indicant
+        public PatientsWcf.IndicantValueDto[] Indicant
         {
             get
             {
@@ -1736,7 +1751,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="IndicantValueDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class IndicantValueDto : object
     {
@@ -1788,7 +1803,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="AnamnesisInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class AnamnesisInfoDto : object
     {
@@ -1825,12 +1840,12 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ServiceMedDocDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class ServiceMedDocDto : object
     {
         
-        private System.Collections.Generic.List<PatientsWcf.MedDocVersionDto> MedDocListField;
+        private PatientsWcf.MedDocVersionDto[] MedDocListField;
         
         private System.Nullable<System.DateTime> ParentSrvEDField;
         
@@ -1839,7 +1854,7 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> ParentSrvSDField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.MedDocVersionDto> MedDocList
+        public PatientsWcf.MedDocVersionDto[] MedDocList
         {
             get
             {
@@ -1892,7 +1907,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="MedDocVersionDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class MedDocVersionDto : object
     {
@@ -1974,7 +1989,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="MedDocDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class MedDocDto : object
     {
@@ -2010,9 +2025,9 @@ namespace PatientsWcf
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ServiceCategoryEnumDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
-    public enum ServiceCategoryEnumDto : int
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SrvType", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public enum SrvType : int
     {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
@@ -2029,31 +2044,70 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PatientMedicamentResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class PatientMedicamentResultDto : object
+    {
+        
+        private PatientsWcf.PatientMedicamentDto[] AllMedicamentListField;
+        
+        private PatientsWcf.ServiceMedicamentDto[] DTCMedicamentListField;
+        
+        private PatientsWcf.PatientMedicamentDto[] ISCMedicamentListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.PatientMedicamentDto[] AllMedicamentList
+        {
+            get
+            {
+                return this.AllMedicamentListField;
+            }
+            set
+            {
+                this.AllMedicamentListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ServiceMedicamentDto[] DTCMedicamentList
+        {
+            get
+            {
+                return this.DTCMedicamentListField;
+            }
+            set
+            {
+                this.DTCMedicamentListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.PatientMedicamentDto[] ISCMedicamentList
+        {
+            get
+            {
+                return this.ISCMedicamentListField;
+            }
+            set
+            {
+                this.ISCMedicamentListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PatientMedicamentDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class PatientMedicamentDto : object
     {
-        
-        private System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> MedicamentCourseListField;
         
         private string ParentServiceNameField;
         
         private System.Nullable<System.DateTime> ServiceEDField;
         
-        private System.Nullable<System.DateTime> ServiceSDField;
+        private PatientsWcf.ServiceMedicamentDto[] ServiceMedicamentListField;
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> MedicamentCourseList
-        {
-            get
-            {
-                return this.MedicamentCourseListField;
-            }
-            set
-            {
-                this.MedicamentCourseListField = value;
-            }
-        }
+        private System.Nullable<System.DateTime> ServiceSDField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ParentServiceName
@@ -2068,7 +2122,7 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
         public System.Nullable<System.DateTime> ServiceED
         {
             get
@@ -2078,6 +2132,19 @@ namespace PatientsWcf
             set
             {
                 this.ServiceEDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.ServiceMedicamentDto[] ServiceMedicamentList
+        {
+            get
+            {
+                return this.ServiceMedicamentListField;
+            }
+            set
+            {
+                this.ServiceMedicamentListField = value;
             }
         }
         
@@ -2096,7 +2163,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ServiceMedicamentDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class ServiceMedicamentDto : object
     {
@@ -2105,15 +2172,11 @@ namespace PatientsWcf
         
         private System.Nullable<System.DateTime> CourseEDField;
         
-        private string CourseHeaderField;
+        private PatientsWcf.CourseMedicamentDto[] CourseMedicamentListField;
         
         private System.Nullable<System.DateTime> CourseSDField;
         
-        private System.Collections.Generic.List<PatientsWcf.MedicamentTherapyInfoDto> MedicamentTherapyListField;
-        
-        private int PrescribedField;
-        
-        private int TakenField;
+        private string GroupHeaderField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ApplicationMethod
@@ -2141,16 +2204,16 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string CourseHeader
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.CourseMedicamentDto[] CourseMedicamentList
         {
             get
             {
-                return this.CourseHeaderField;
+                return this.CourseMedicamentListField;
             }
             set
             {
-                this.CourseHeaderField = value;
+                this.CourseMedicamentListField = value;
             }
         }
         
@@ -2168,7 +2231,48 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.List<PatientsWcf.MedicamentTherapyInfoDto> MedicamentTherapyList
+        public string GroupHeader
+        {
+            get
+            {
+                return this.GroupHeaderField;
+            }
+            set
+            {
+                this.GroupHeaderField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CourseMedicamentDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class CourseMedicamentDto : object
+    {
+        
+        private string CourseHeaderField;
+        
+        private PatientsWcf.MedicamentTherapyInfoDto[] MedicamentTherapyListField;
+        
+        private System.Nullable<int> PrescribedField;
+        
+        private System.Nullable<int> TakenField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CourseHeader
+        {
+            get
+            {
+                return this.CourseHeaderField;
+            }
+            set
+            {
+                this.CourseHeaderField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.MedicamentTherapyInfoDto[] MedicamentTherapyList
         {
             get
             {
@@ -2180,8 +2284,8 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Prescribed
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<int> Prescribed
         {
             get
             {
@@ -2193,8 +2297,8 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Taken
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<int> Taken
         {
             get
             {
@@ -2208,7 +2312,7 @@ namespace PatientsWcf
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="MedicamentTherapyInfoDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class MedicamentTherapyInfoDto : object
     {
@@ -2244,49 +2348,947 @@ namespace PatientsWcf
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="SrvType", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
-    public enum SrvType : int
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ProcedureResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ProcedureResultDto : object
     {
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        NotDefined = 0,
+        private PatientsWcf.DepartmentTreatmentCaseDto DepartmentTreatmentCaseField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        DTC = 1,
+        private PatientsWcf.MultipleProcedureResultDto MultipleProcedureField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        ISC = 2,
+        private PatientsWcf.MultipleProcedureResultDto[] MultipleProceduresField;
         
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        All = 3,
+        private PatientsWcf.SingleProcedureResultDto[] SingleProcedureResultListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.DepartmentTreatmentCaseDto DepartmentTreatmentCase
+        {
+            get
+            {
+                return this.DepartmentTreatmentCaseField;
+            }
+            set
+            {
+                this.DepartmentTreatmentCaseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.MultipleProcedureResultDto MultipleProcedure
+        {
+            get
+            {
+                return this.MultipleProcedureField;
+            }
+            set
+            {
+                this.MultipleProcedureField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.MultipleProcedureResultDto[] MultipleProcedures
+        {
+            get
+            {
+                return this.MultipleProceduresField;
+            }
+            set
+            {
+                this.MultipleProceduresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.SingleProcedureResultDto[] SingleProcedureResultList
+        {
+            get
+            {
+                return this.SingleProcedureResultListField;
+            }
+            set
+            {
+                this.SingleProcedureResultListField = value;
+            }
+        }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="DepartmentTreatmentCaseDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class DepartmentTreatmentCaseDto : object
+    {
+        
+        private System.Nullable<System.DateTime> BeginDateField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string NameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> BeginDate
+        {
+            get
+            {
+                return this.BeginDateField;
+            }
+            set
+            {
+                this.BeginDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MultipleProcedureResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class MultipleProcedureResultDto : object
+    {
+        
+        private System.Nullable<System.DateTime> BeginDateField;
+        
+        private int CompletedField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string ExecutorField;
+        
+        private bool IsMultipleField;
+        
+        private string NameField;
+        
+        private int PrescribedField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> BeginDate
+        {
+            get
+            {
+                return this.BeginDateField;
+            }
+            set
+            {
+                this.BeginDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Completed
+        {
+            get
+            {
+                return this.CompletedField;
+            }
+            set
+            {
+                this.CompletedField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Executor
+        {
+            get
+            {
+                return this.ExecutorField;
+            }
+            set
+            {
+                this.ExecutorField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsMultiple
+        {
+            get
+            {
+                return this.IsMultipleField;
+            }
+            set
+            {
+                this.IsMultipleField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Prescribed
+        {
+            get
+            {
+                return this.PrescribedField;
+            }
+            set
+            {
+                this.PrescribedField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SingleProcedureResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class SingleProcedureResultDto : object
+    {
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string ExecutorField;
+        
+        private string NameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Executor
+        {
+            get
+            {
+                return this.ExecutorField;
+            }
+            set
+            {
+                this.ExecutorField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SurgeryDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class SurgeryDto : object
+    {
+        
+        private PatientsWcf.ProtocolDto ConclusionField;
+        
+        private string DiagnosTextField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string MainExecutorFIOField;
+        
+        private string ProducingPointNameField;
+        
+        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        
+        private System.Nullable<System.DateTime> StartDateField;
+        
+        private string SurgeryNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto Conclusion
+        {
+            get
+            {
+                return this.ConclusionField;
+            }
+            set
+            {
+                this.ConclusionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string DiagnosText
+        {
+            get
+            {
+                return this.DiagnosTextField;
+            }
+            set
+            {
+                this.DiagnosTextField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string MainExecutorFIO
+        {
+            get
+            {
+                return this.MainExecutorFIOField;
+            }
+            set
+            {
+                this.MainExecutorFIOField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string ProducingPointName
+        {
+            get
+            {
+                return this.ProducingPointNameField;
+            }
+            set
+            {
+                this.ProducingPointNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto[] ProtocolList
+        {
+            get
+            {
+                return this.ProtocolListField;
+            }
+            set
+            {
+                this.ProtocolListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> StartDate
+        {
+            get
+            {
+                return this.StartDateField;
+            }
+            set
+            {
+                this.StartDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SurgeryName
+        {
+            get
+            {
+                return this.SurgeryNameField;
+            }
+            set
+            {
+                this.SurgeryNameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ProtocolDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ProtocolDto : object
+    {
+        
+        private int VersionFormatField;
+        
+        private string VersionTextField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int VersionFormat
+        {
+            get
+            {
+                return this.VersionFormatField;
+            }
+            set
+            {
+                this.VersionFormatField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VersionText
+        {
+            get
+            {
+                return this.VersionTextField;
+            }
+            set
+            {
+                this.VersionTextField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PatientConsultanceResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class PatientConsultanceResultDto : object
+    {
+        
+        private PatientsWcf.ISCConsultanceDto[] AllConsultanceListField;
+        
+        private PatientsWcf.ConsultanceDto[] DTCConsultanceListField;
+        
+        private PatientsWcf.DTCConsultanceDto[] ISCConsultanceListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ISCConsultanceDto[] AllConsultanceList
+        {
+            get
+            {
+                return this.AllConsultanceListField;
+            }
+            set
+            {
+                this.AllConsultanceListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ConsultanceDto[] DTCConsultanceList
+        {
+            get
+            {
+                return this.DTCConsultanceListField;
+            }
+            set
+            {
+                this.DTCConsultanceListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.DTCConsultanceDto[] ISCConsultanceList
+        {
+            get
+            {
+                return this.ISCConsultanceListField;
+            }
+            set
+            {
+                this.ISCConsultanceListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ISCConsultanceDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ISCConsultanceDto : object
+    {
+        
+        private PatientsWcf.ConsultanceDto[] ConsultanceListField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string ISCNameField;
+        
+        private System.Nullable<System.DateTime> StartDateField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.ConsultanceDto[] ConsultanceList
+        {
+            get
+            {
+                return this.ConsultanceListField;
+            }
+            set
+            {
+                this.ConsultanceListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ISCName
+        {
+            get
+            {
+                return this.ISCNameField;
+            }
+            set
+            {
+                this.ISCNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> StartDate
+        {
+            get
+            {
+                return this.StartDateField;
+            }
+            set
+            {
+                this.StartDateField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ConsultanceDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ConsultanceDto : object
+    {
+        
+        private PatientsWcf.ProtocolDto ConclusionField;
+        
+        private string ConsultanceNameField;
+        
+        private string DiagnosTextField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string MainExecutorFIOField;
+        
+        private string ProducingPointNameField;
+        
+        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        
+        private System.Nullable<System.DateTime> StartDateField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto Conclusion
+        {
+            get
+            {
+                return this.ConclusionField;
+            }
+            set
+            {
+                this.ConclusionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ConsultanceName
+        {
+            get
+            {
+                return this.ConsultanceNameField;
+            }
+            set
+            {
+                this.ConsultanceNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string DiagnosText
+        {
+            get
+            {
+                return this.DiagnosTextField;
+            }
+            set
+            {
+                this.DiagnosTextField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string MainExecutorFIO
+        {
+            get
+            {
+                return this.MainExecutorFIOField;
+            }
+            set
+            {
+                this.MainExecutorFIOField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string ProducingPointName
+        {
+            get
+            {
+                return this.ProducingPointNameField;
+            }
+            set
+            {
+                this.ProducingPointNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto[] ProtocolList
+        {
+            get
+            {
+                return this.ProtocolListField;
+            }
+            set
+            {
+                this.ProtocolListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> StartDate
+        {
+            get
+            {
+                return this.StartDateField;
+            }
+            set
+            {
+                this.StartDateField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="DTCConsultanceDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class DTCConsultanceDto : object
+    {
+        
+        private PatientsWcf.ConsultanceDto[] ConsultanceListField;
+        
+        private string DTCNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.ConsultanceDto[] ConsultanceList
+        {
+            get
+            {
+                return this.ConsultanceListField;
+            }
+            set
+            {
+                this.ConsultanceListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DTCName
+        {
+            get
+            {
+                return this.DTCNameField;
+            }
+            set
+            {
+                this.DTCNameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InvestigationsResultDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class InvestigationsResultDto : object
+    {
+        
+        private PatientsWcf.GroupInvestigationDto[] AllInvestigationListField;
+        
+        private PatientsWcf.InvestigationDto[] DTCInvestigationListField;
+        
+        private PatientsWcf.GroupInvestigationDto[] ISCInvestigationListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.GroupInvestigationDto[] AllInvestigationList
+        {
+            get
+            {
+                return this.AllInvestigationListField;
+            }
+            set
+            {
+                this.AllInvestigationListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.InvestigationDto[] DTCInvestigationList
+        {
+            get
+            {
+                return this.DTCInvestigationListField;
+            }
+            set
+            {
+                this.DTCInvestigationListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.GroupInvestigationDto[] ISCInvestigationList
+        {
+            get
+            {
+                return this.ISCInvestigationListField;
+            }
+            set
+            {
+                this.ISCInvestigationListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="GroupInvestigationDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class GroupInvestigationDto : object
+    {
+        
+        private string InvestigationGroupNameField;
+        
+        private PatientsWcf.InvestigationDto[] InvestigationListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string InvestigationGroupName
+        {
+            get
+            {
+                return this.InvestigationGroupNameField;
+            }
+            set
+            {
+                this.InvestigationGroupNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.InvestigationDto[] InvestigationList
+        {
+            get
+            {
+                return this.InvestigationListField;
+            }
+            set
+            {
+                this.InvestigationListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InvestigationDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class InvestigationDto : object
+    {
+        
+        private PatientsWcf.ProtocolDto ConclusionField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string InvestigationNameField;
+        
+        private string MainExecutorFIOField;
+        
+        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        
+        private System.Nullable<System.DateTime> StartDateField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto Conclusion
+        {
+            get
+            {
+                return this.ConclusionField;
+            }
+            set
+            {
+                this.ConclusionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string InvestigationName
+        {
+            get
+            {
+                return this.InvestigationNameField;
+            }
+            set
+            {
+                this.InvestigationNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string MainExecutorFIO
+        {
+            get
+            {
+                return this.MainExecutorFIOField;
+            }
+            set
+            {
+                this.MainExecutorFIOField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.ProtocolDto[] ProtocolList
+        {
+            get
+            {
+                return this.ProtocolListField;
+            }
+            set
+            {
+                this.ProtocolListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> StartDate
+        {
+            get
+            {
+                return this.StartDateField;
+            }
+            set
+            {
+                this.StartDateField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="PatientsWcf.IInpatientDoctor")]
     public interface IInpatientDoctor
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatients", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientsResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login);
+        System.Threading.Tasks.Task<PatientsWcf.PatientDto[]> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicant", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id);
+        System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/Authorize", ReplyAction="http://tempuri.org/IInpatientDoctor/AuthorizeResponse")]
         System.Threading.Tasks.Task<System.Nullable<System.Guid>> AuthorizeAsync(string login, string password);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllActualDoctors", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllActualDoctorsResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync();
+        System.Threading.Tasks.Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllDepartments", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllDepartmentsResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync();
+        System.Threading.Tasks.Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetUserInfo", ReplyAction="http://tempuri.org/IInpatientDoctor/GetUserInfoResponse")]
         System.Threading.Tasks.Task<PatientsWcf.UserInfoDto> GetUserInfoAsync(string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllUsers", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllUsersResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.UserDto>> GetAllUsersAsync(string login);
+        System.Threading.Tasks.Task<PatientsWcf.UserDto[]> GetAllUsersAsync(string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetCustomization", ReplyAction="http://tempuri.org/IInpatientDoctor/GetCustomizationResponse")]
         System.Threading.Tasks.Task<PatientsWcf.CustomizationInfoDto> GetCustomizationAsync(string login, string sourceLogin);
@@ -2301,40 +3303,49 @@ namespace PatientsWcf
         System.Threading.Tasks.Task<bool> CopyCustomizationAsync(string sourceLogin, string targetLogin);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetHealthcareIndicants", ReplyAction="http://tempuri.org/IInpatientDoctor/GetHealthcareIndicantsResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetHealthcareIndicantsAsync(System.Guid id, double days);
+        System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetHealthcareIndicantsAsync(System.Guid id, double days);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientDiagnosis", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientDiagnosisResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentPatientDiagnosInfoDto>> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId);
+        System.Threading.Tasks.Task<PatientsWcf.DepartmentPatientDiagnosInfoDto[]> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicantChart", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantChartResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantChartDto>> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData);
+        System.Threading.Tasks.Task<PatientsWcf.IndicantChartDto[]> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicantTable", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantTableResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientIndicantDto>> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData);
+        System.Threading.Tasks.Task<PatientsWcf.PatientIndicantDto[]> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAnamnesis", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAnamnesisResponse")]
         System.Threading.Tasks.Task<PatientsWcf.AnamnesisInfoDto> GetAnamnesisAsync(System.Guid id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetMedDocList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetMedDocListResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ServiceMedDocDto>> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId);
+        System.Threading.Tasks.Task<PatientsWcf.ServiceMedDocDto[]> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetMedDoc", ReplyAction="http://tempuri.org/IInpatientDoctor/GetMedDocResponse")]
         System.Threading.Tasks.Task<PatientsWcf.MedDocDto> GetMedDocAsync(System.Guid epicrisisVersionID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientMedicamentList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientMedicamentListResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto>> GetPatientMedicamentListAsync(PatientsWcf.ServiceCategoryEnumDto srvType, System.Guid personId, System.Guid healthcareServiceId);
+        System.Threading.Tasks.Task<PatientsWcf.PatientMedicamentResultDto> GetPatientMedicamentListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetProcedures", ReplyAction="http://tempuri.org/IInpatientDoctor/GetProceduresResponse")]
-        System.Threading.Tasks.Task GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type);
+        System.Threading.Tasks.Task<PatientsWcf.ProcedureResultDto[]> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientSurgeryList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientSurgeryListResponse")]
+        System.Threading.Tasks.Task<PatientsWcf.SurgeryDto[]> GetPatientSurgeryListAsync(System.Guid personId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientConsultanceList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientConsultanceListResponse")]
+        System.Threading.Tasks.Task<PatientsWcf.PatientConsultanceResultDto> GetPatientConsultanceListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetInvestigations", ReplyAction="http://tempuri.org/IInpatientDoctor/GetInvestigationsResponse")]
+        System.Threading.Tasks.Task<PatientsWcf.InvestigationsResultDto> GetInvestigationsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     public interface IInpatientDoctorChannel : PatientsWcf.IInpatientDoctor, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     public partial class InpatientDoctorClient : System.ServiceModel.ClientBase<PatientsWcf.IInpatientDoctor>, PatientsWcf.IInpatientDoctor
     {
         
@@ -2378,12 +3389,12 @@ namespace PatientsWcf
         {
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login)
+        public System.Threading.Tasks.Task<PatientsWcf.PatientDto[]> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login)
         {
             return base.Channel.GetPatientsAsync(personQueryParamsDto, login);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)
+        public System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id)
         {
             return base.Channel.GetIndicantAsync(id);
         }
@@ -2393,12 +3404,12 @@ namespace PatientsWcf
             return base.Channel.AuthorizeAsync(login, password);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync()
+        public System.Threading.Tasks.Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync()
         {
             return base.Channel.GetAllActualDoctorsAsync();
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync()
+        public System.Threading.Tasks.Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync()
         {
             return base.Channel.GetAllDepartmentsAsync();
         }
@@ -2408,7 +3419,7 @@ namespace PatientsWcf
             return base.Channel.GetUserInfoAsync(login);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.UserDto>> GetAllUsersAsync(string login)
+        public System.Threading.Tasks.Task<PatientsWcf.UserDto[]> GetAllUsersAsync(string login)
         {
             return base.Channel.GetAllUsersAsync(login);
         }
@@ -2433,22 +3444,22 @@ namespace PatientsWcf
             return base.Channel.CopyCustomizationAsync(sourceLogin, targetLogin);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetHealthcareIndicantsAsync(System.Guid id, double days)
+        public System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetHealthcareIndicantsAsync(System.Guid id, double days)
         {
             return base.Channel.GetHealthcareIndicantsAsync(id, days);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentPatientDiagnosInfoDto>> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId)
+        public System.Threading.Tasks.Task<PatientsWcf.DepartmentPatientDiagnosInfoDto[]> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId)
         {
             return base.Channel.GetPatientDiagnosisAsync(personId, isArchived, healthcareServiceId);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantChartDto>> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData)
+        public System.Threading.Tasks.Task<PatientsWcf.IndicantChartDto[]> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData)
         {
             return base.Channel.GetIndicantChartAsync(healthcareServiceID, maxPeriodData);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientIndicantDto>> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData)
+        public System.Threading.Tasks.Task<PatientsWcf.PatientIndicantDto[]> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData)
         {
             return base.Channel.GetIndicantTableAsync(healthcareServiceID, maxPeriodData);
         }
@@ -2458,7 +3469,7 @@ namespace PatientsWcf
             return base.Channel.GetAnamnesisAsync(id);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ServiceMedDocDto>> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId)
+        public System.Threading.Tasks.Task<PatientsWcf.ServiceMedDocDto[]> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId)
         {
             return base.Channel.GetMedDocListAsync(personId, healthcareServiceId);
         }
@@ -2468,14 +3479,29 @@ namespace PatientsWcf
             return base.Channel.GetMedDocAsync(epicrisisVersionID);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto>> GetPatientMedicamentListAsync(PatientsWcf.ServiceCategoryEnumDto srvType, System.Guid personId, System.Guid healthcareServiceId)
+        public System.Threading.Tasks.Task<PatientsWcf.PatientMedicamentResultDto> GetPatientMedicamentListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType)
         {
-            return base.Channel.GetPatientMedicamentListAsync(srvType, personId, healthcareServiceId);
+            return base.Channel.GetPatientMedicamentListAsync(personId, healthcareServiceId, srvType);
         }
         
-        public System.Threading.Tasks.Task GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type)
+        public System.Threading.Tasks.Task<PatientsWcf.ProcedureResultDto[]> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type)
         {
             return base.Channel.GetProceduresAsync(personId, healthcareServiceID, type);
+        }
+        
+        public System.Threading.Tasks.Task<PatientsWcf.SurgeryDto[]> GetPatientSurgeryListAsync(System.Guid personId)
+        {
+            return base.Channel.GetPatientSurgeryListAsync(personId);
+        }
+        
+        public System.Threading.Tasks.Task<PatientsWcf.PatientConsultanceResultDto> GetPatientConsultanceListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType)
+        {
+            return base.Channel.GetPatientConsultanceListAsync(personId, healthcareServiceId, srvType);
+        }
+        
+        public System.Threading.Tasks.Task<PatientsWcf.InvestigationsResultDto> GetInvestigationsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType)
+        {
+            return base.Channel.GetInvestigationsAsync(personId, healthcareServiceId, srvType);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

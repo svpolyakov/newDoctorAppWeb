@@ -29,7 +29,7 @@ namespace DoctorAppWeb.Server.Controllers
 
         }
 
-        public async Task<List<ActualDoctorDto>> GetAsync( )
+        public async Task<ActualDoctorDto[]> GetAsync( )
         {
             _logger.LogDebug("GetAsync");
             return await _dataWCFService.GetAllActualDoctorsAsync();

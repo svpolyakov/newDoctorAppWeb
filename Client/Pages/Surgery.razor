@@ -1,0 +1,33 @@
+﻿@page "/surgery"
+@inject IPatientsService PatientService
+@inject HttpClient Http
+<h3>Surgery</h3>
+
+
+@code {
+
+    public List<SurgeryDto> Surgeries { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Surgeries = await GetSurgeryListAsync();
+    }
+
+    private async Task<List<SurgeryDto>> GetSurgeryListAsync()
+    {
+        List<SurgeryDto> result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Surgery/SurgeryList");
+            httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<List<SurgeryDto>>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+}
