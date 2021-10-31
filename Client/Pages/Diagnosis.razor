@@ -47,6 +47,7 @@
                                           FullWidth="true"
                                           @bind-Value="SearchQuery"
                                           Label="Код или текст диагноза"
+                                          Margin="Margin.Dense"
                                           Variant="Variant.Outlined"></MudTextField>
                         </MudItem>
                         <MudItem xs="2">
@@ -96,51 +97,51 @@
     }
     .searchButton {
         width: 100%;
-        height: 2.3rem;
-        margin-top: 6px;
+        margin-top: 3px;
+        margin-bottom: 2px;
     }
 </style>
 
-        @code {
-            public bool showProgress = true;
-            public bool isArchive = false;
-            public string SearchQuery;
-            public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
-            protected override async Task OnInitializedAsync()
-            {
-                showProgress = true;
-                diagnosis = await GetDiagnoses();
-                showProgress = false;
-            }
+@code {
+    public bool showProgress = true;
+    public bool isArchive = false;
+    public string SearchQuery;
+    public IEnumerable<DepartmentPatientDiagnosInfoDto> diagnosis { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        showProgress = true;
+        diagnosis = await GetDiagnoses();
+        showProgress = false;
+    }
 
-            protected async Task<IEnumerable<DepartmentPatientDiagnosInfoDto>> GetDiagnoses(bool Archive = false)
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "Diagnosis");
-                request.Headers.Add("PersonId", PatientService.CurrentPatient.ToString());
-                request.Headers.Add("Archive", Archive.ToString());
-                request.Headers.Add("HealthcareServiceId", PatientService.HealthcareServiceId.ToString());
-                HttpResponseMessage httpResponse = await Http.SendAsync(request);
-                IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
-                return result;
-            }
+    protected async Task<IEnumerable<DepartmentPatientDiagnosInfoDto>> GetDiagnoses(bool Archive = false)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "Diagnosis");
+        request.Headers.Add("PersonId", PatientService.CurrentPatient.ToString());
+        request.Headers.Add("Archive", Archive.ToString());
+        request.Headers.Add("HealthcareServiceId", PatientService.HealthcareServiceId.ToString());
+        HttpResponseMessage httpResponse = await Http.SendAsync(request);
+        IEnumerable<DepartmentPatientDiagnosInfoDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<DepartmentPatientDiagnosInfoDto>>();
+        return result;
+    }
 
-            private async Task HandleArchiveToggle()
-            {
-                isArchive = !isArchive;
+    private async Task HandleArchiveToggle()
+    {
+        isArchive = !isArchive;
 
-                showProgress = true;
-                // isArchive -- no data there
-                diagnosis = await GetDiagnoses(isArchive);
-                showProgress = false;
-            }
+        showProgress = true;
+        // isArchive -- no data there
+        diagnosis = await GetDiagnoses(isArchive);
+        showProgress = false;
+    }
 
-            private async Task HandleSearch()
-            {
-                diagnosis = diagnosis
-                    .Where(d => 
-                        (d.PatientDiagnosInfoList
-                        .Where(info => 
-                            (info.MKBDiagnosisCode + " " + info.DiagnosText).ToLower().Contains(SearchQuery.ToLower()))
-                        .Count() > 0));
-            }
-        }
+    private async Task HandleSearch()
+    {
+        diagnosis = diagnosis
+            .Where(d => 
+                (d.PatientDiagnosInfoList
+                .Where(info => 
+                    (info.MKBDiagnosisCode + " " + info.DiagnosText).ToLower().Contains(SearchQuery.ToLower()))
+                .Count() > 0));
+    }
+}

@@ -1,15 +1,163 @@
 ﻿@page "/consult"
 @inject IPatientsService PatientService
 @inject HttpClient Http
-<h3>Consult</h3>
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Консультации
+        </MudText>
+
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ТЕКУЩИЕ">
+                    @if (dtcConsult != null)
+                    {
+                        foreach (ConsultanceDto consult in dtcConsult.DTCConsultanceList)
+                        {
+                                string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                            <MudExpansionPanel>
+                                <TitleContent>
+                                    <MudGrid>
+                                        <MudItem xs="8">
+                                            <MudText Typo="Typo.h5">@consult.ConsultanceName</MudText>
+                                            <MudText Class="grayText" Typo="Typo.body1">@consult.MainExecutorFIO @consult.ProducingPointName</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </TitleContent>
+                                <ChildContent>
+                                    <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                    <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
+                    @if (iscConsult != null)
+                    {
+                        foreach (DTCConsultanceDto consultGroup in iscConsult.ISCConsultanceList)
+                        {
+                            <MudText Class="greenText" Typo="Typo.body1">@consultGroup.DTCName</MudText>
+                            foreach (ConsultanceDto consult in consultGroup.ConsultanceList)
+                            {
+                                string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudGrid>
+                                            <MudItem xs="8">
+                                                <MudText Typo="Typo.h5">@consult?.ConsultanceName</MudText>
+                                                <MudText Class="grayText" Typo="Typo.body1">@consult?.MainExecutorFIO @consult?.ProducingPointName</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="АРХИВ">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                          OnClearButtonClick="HandleSearch"
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="Название консультации"
+                                          Margin="Margin.Dense"
+                                          Variant="Variant.Outlined"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                        </MudItem>
+                    </MudGrid>
+                    @if (allConsult != null)
+                    {
+                        foreach (ISCConsultanceDto consultGroup in allConsult.AllConsultanceList)
+                        {
+                            string sGroupTime = consultGroup.StartDate != null ? "с " + consultGroup.StartDate.Value.ToString("dd.MM.yyyy") : "";
+                            string eGroupTime = consultGroup.EndDate != null ? "по " + consultGroup.EndDate.Value.ToString("dd.MM.yyyy") : "";
+                            <MudText Class="greenText" Typo="Typo.body1">@consultGroup.ISCName @sGroupTime @eGroupTime</MudText>
+                            foreach (ConsultanceDto consult in consultGroup.ConsultanceList)
+                            {
+                                string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudGrid>
+                                            <MudItem xs="8">
+                                                <MudText Typo="Typo.h5">@consult?.ConsultanceName</MudText>
+                                                <MudText Class="grayText" Typo="Typo.body1">@consult?.MainExecutorFIO @consult?.ProducingPointName</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                        <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        }
+                    }
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+</MudPaper>
+
+<style>
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+        .greenText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Green
+    }
+    .searchButton {
+        width: 100%;
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+</style>
 
 @code {
+    public bool showProgress = true;
+    public PatientConsultanceResultDto dtcConsult;
+    public PatientConsultanceResultDto iscConsult;
+    public PatientConsultanceResultDto allConsult;
+
+    public string SearchQuery;
 
     protected override async Task OnInitializedAsync()
     {
-        PatientConsultanceResultDto test1 = await GetPatientConsultanceAsync(SrvType.DTC);
-        PatientConsultanceResultDto test2 = await GetPatientConsultanceAsync(SrvType.ISC);
-        PatientConsultanceResultDto test3 = await GetPatientConsultanceAsync(SrvType.All);
+        dtcConsult = await GetPatientConsultanceAsync(SrvType.DTC);
+        iscConsult = await GetPatientConsultanceAsync(SrvType.ISC);
+        allConsult = await GetPatientConsultanceAsync(SrvType.All);
+
+        showProgress = false;
     }
 
     private async Task<PatientConsultanceResultDto> GetPatientConsultanceAsync(SrvType srvType)
@@ -32,4 +180,13 @@
         return result;
     }
 
+    private async Task HandleSearch()
+    {
+            // todo: search
+          /*
+            .Where(group =>
+                group.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower())
+            )
+            .Count() > 0).ToArray();*/
+        }
 }
