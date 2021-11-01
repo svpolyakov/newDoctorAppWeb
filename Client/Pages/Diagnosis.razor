@@ -5,6 +5,7 @@
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
 @inject StateContainer StateContainer
+@inject StateContainer StateContainer
 
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
@@ -42,7 +43,7 @@
                     <MudGrid>
                         <MudItem xs="10">
                             <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
-                                          OnClearButtonClick="HandleSearch" 
+                                          OnClearButtonClick="HandleSearch"
                                           Clearable="true"
                                           FullWidth="true"
                                           @bind-Value="SearchQuery"
@@ -70,11 +71,11 @@
                         }
                     }
                 </MudTabPanel>
-                
+
             </MudTabs>
         </div>
 
-        
+
     </div>
 </MudPaper>
 
@@ -110,6 +111,7 @@
     protected override async Task OnInitializedAsync()
     {
         showProgress = true;
+        StateContainer.ShowDrawer = true;
         diagnosis = await GetDiagnoses();
         showProgress = false;
     }
@@ -138,9 +140,9 @@
     private async Task HandleSearch()
     {
         diagnosis = diagnosis
-            .Where(d => 
+            .Where(d =>
                 (d.PatientDiagnosInfoList
-                .Where(info => 
+                .Where(info =>
                     (info.MKBDiagnosisCode + " " + info.DiagnosText).ToLower().Contains(SearchQuery.ToLower()))
                 .Count() > 0));
     }

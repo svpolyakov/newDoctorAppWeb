@@ -7,6 +7,7 @@
 @inject IPatientsService PatientService
 @inject NavigationManager navigationManager
 @inject StateContainer StateContainer
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper>
@@ -18,7 +19,7 @@
 
             <div class="flexSpacer" />
 
-            <MudIconButton Class="pale-icon" Icon="@Icons.Material.Outlined.Refresh"aria-label="refresh"></MudIconButton>
+            <MudIconButton Class="pale-icon" Icon="@Icons.Material.Outlined.Refresh" aria-label="refresh"></MudIconButton>
             <MudIconButton Class="pale-icon" OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" aria-label="settings"></MudIconButton>
         </div>
 
@@ -33,8 +34,7 @@
                 <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Spacing="1" Class="filtersWrapper">
                         <MudItem xs="10">
-                            <MudTextField 
-                                          OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
                                           OnClearButtonClick="FindPatients"
                                           Clearable="true"
                                           FullWidth="true"
@@ -47,8 +47,7 @@
                             <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect 
-                                       Clearable="true"
+                            <MudSelect Clearable="true"
                                        OnClearButtonClick="FindPatients"
                                        @bind-Value="@SelectedDepartment"
                                        T="string"
@@ -62,8 +61,7 @@
                             </MudSelect>
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect 
-                                       Clearable="true"
+                            <MudSelect Clearable="true"
                                        OnClearButtonClick="FindPatients"
                                        @bind-Value="@SelectedDoctor"
                                        T="string"
@@ -102,9 +100,8 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd>
-                    <MudIconButton 
-                                   Icon="@Icons.Material.Filled.KeyboardArrowDown" 
-                                   OnClick="@(() => ShowBtnPress(context.PersonID))" 
+                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                                   OnClick="@(() => ShowBtnPress(context.PersonID))"
                                    Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
                 </MudTd>
 
@@ -123,7 +120,7 @@
                                                                                  string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId, context);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
-                    <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
+                        <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
                     </MudIconButton>
                 </MudTd>
             </RowTemplate>
@@ -131,7 +128,7 @@
                 @if (context.ShowDetails)
                 {
                     string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
-                    
+
 
                     <MudTr>
                         <td class="green"></td>
@@ -153,27 +150,27 @@
                                             {
                                                 xs = 6; // half line
                                             }
-                                    <MudItem xs="@xs">
+                                            <MudItem xs="@xs">
 
-                                        @if (field.NameColumnEn != "SexEnum")
-                                        {
-                                            <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
-                                        }
-                                        else
-                                        {
-                                            if (value == "1")
-                                            {
-                                                <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
-                                        <MudIcon Class="darkBlue" Icon="@Icons.Material.Filled.Male" />
-                                            }
-                                            else
-                                            {
-                                                <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
-                                        <MudIcon Class="darkRed" Icon="@Icons.Material.Filled.Female" />
-                                            }
-                                        }
+                                                @if (field.NameColumnEn != "SexEnum")
+                                                {
+                                                    <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span><span class="descriprion-content">@value</span>
+                                                }
+                                                else
+                                                {
+                                                    if (value == "1")
+                                                    {
+                                                        <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
+                                                        <MudIcon Class="darkBlue" Icon="@Icons.Material.Filled.Male" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="descriprion-title" Color="Color.Secondary">@field.NameColumnRu: </span>
+                                                        <MudIcon Class="darkRed" Icon="@Icons.Material.Filled.Female" />
+                                                    }
+                                                }
 
-                                    </MudItem>
+                                            </MudItem>
 
                                         }
                                     }
@@ -284,6 +281,16 @@
         PatientService.HealthcareServiceId = hcsId;
         StateContainer.CurrentPage = Pages.WhatsNew;
         StateContainer.CurrentPatient = person;
+
+        await localStorage.SetItemAsync("CurrentPatientID", id);
+        await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
+        await localStorage.SetItemAsync("AppTitle", title);
+        await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
+
+        string stringifiedPerson = JsonConvert.SerializeObject(person);
+
+        await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
+
         navigationManager.NavigateTo(Pages.WhatsNew);
     }
 
@@ -307,7 +314,8 @@
 
             tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
 
-        } else
+        }
+        else
         {
             Doctors = FullDoctorsList;
         }
@@ -374,6 +382,13 @@
         StateContainer.ShowDrawer = false;
         StateContainer.AppTitle = "";
         showProgress = true;
+
+        await localStorage.RemoveItemAsync("CurrentPatientID");
+        await localStorage.RemoveItemAsync("HealthcareServiceId");
+        await localStorage.RemoveItemAsync("AppTitle");
+        await localStorage.RemoveItemAsync("CurrentPage");
+        await localStorage.RemoveItemAsync("CurrentPatient");
+
         using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
         {
             Departments = db.Departments;

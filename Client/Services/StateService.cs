@@ -1,6 +1,5 @@
 ﻿using System;
 using DoctorAppWeb.Shared.DataModel.MedOrganization;
-
 public class StateContainer
 {
     private bool showDrawer;

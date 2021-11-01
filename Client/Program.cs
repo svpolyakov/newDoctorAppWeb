@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
+
 namespace DoctorAppWeb.Client
 {
     public class Program
@@ -36,6 +38,7 @@ namespace DoctorAppWeb.Client
             builder.Services.AddBlazoredModal();
             builder.Services.AddMudServices();
             builder.Services.AddSingleton<StateContainer>();
+            builder.Services.AddBlazoredLocalStorage();
             //builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

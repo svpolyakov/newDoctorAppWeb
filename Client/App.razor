@@ -1,3 +1,8 @@
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject StateContainer StateContainer
+@inject IPatientsService PatientService
+@using Newtonsoft.Json
+
 <MudThemeProvider Theme="theme" />
 <CascadingBlazoredModal>
     <Router AppAssembly="@typeof(Program).Assembly">
@@ -74,4 +79,34 @@
         }
 
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await localStorage.SetItemAsync("name", StateContainer.AppTitle);
+        string idS = await localStorage.GetItemAsync<string>("CurrentPatientID");
+        string hcsIdS = await localStorage.GetItemAsync<string>("HealthcareServiceId");
+
+        string appTitle = await localStorage.GetItemAsync<string>("AppTitle");
+        string currentPage = await localStorage.GetItemAsync<string>("CurrentPage");
+
+        string currentPatient = await localStorage.GetItemAsync<string>("CurrentPatient");
+
+        if (string.IsNullOrEmpty(idS) || string.IsNullOrEmpty(hcsIdS) || string.IsNullOrEmpty(appTitle) ||
+            string.IsNullOrEmpty(currentPage) || string.IsNullOrEmpty(currentPatient))
+        {
+            return;
+        }
+
+        Guid id = new Guid(idS);
+        Guid hcsId = new Guid(hcsIdS);
+
+        PatientService.CurrentPatient = id;
+        PatientService.HealthcareServiceId = hcsId;
+
+        StateContainer.AppTitle = appTitle;
+        StateContainer.CurrentPage = currentPage;
+
+        StateContainer.CurrentPatient = JsonConvert.DeserializeObject<Patient>(currentPatient);
+
+    }
 }

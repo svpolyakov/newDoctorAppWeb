@@ -1,6 +1,8 @@
 ﻿@page "/consult"
 @inject IPatientsService PatientService
 @inject HttpClient Http
+@inject StateContainer StateContainer
+
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
@@ -15,8 +17,8 @@
                     {
                         foreach (ConsultanceDto consult in dtcConsult.DTCConsultanceList)
                         {
-                                string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
-                                string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                            string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                            string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
                             <MudExpansionPanel>
                                 <TitleContent>
                                     <MudGrid>
@@ -153,6 +155,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        StateContainer.ShowDrawer = true;
+
         dtcConsult = await GetPatientConsultanceAsync(SrvType.DTC);
         iscConsult = await GetPatientConsultanceAsync(SrvType.ISC);
         allConsult = await GetPatientConsultanceAsync(SrvType.All);
@@ -182,11 +186,11 @@
 
     private async Task HandleSearch()
     {
-            // todo: search
-          /*
-            .Where(group =>
-                group.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower())
-            )
-            .Count() > 0).ToArray();*/
-        }
+        // todo: search
+        /*
+          .Where(group =>
+              group.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower())
+          )
+          .Count() > 0).ToArray();*/
+    }
 }

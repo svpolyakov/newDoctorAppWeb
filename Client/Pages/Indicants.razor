@@ -262,6 +262,7 @@
     protected override async Task OnInitializedAsync()
     {
         showProgress = true;
+        StateContainer.ShowDrawer = true;
         customSettings = await GetCustomSettings();
         indicants = await GetIndicants();
         indCharts = await GetIndicantCharts();
