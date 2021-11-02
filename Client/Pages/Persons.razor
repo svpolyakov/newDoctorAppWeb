@@ -286,6 +286,7 @@
         await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
         await localStorage.SetItemAsync("AppTitle", title);
         await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
+        await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
 
         string stringifiedPerson = JsonConvert.SerializeObject(person);
 

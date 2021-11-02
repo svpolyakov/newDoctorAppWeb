@@ -1,0 +1,36 @@
+﻿@page "/procedure"
+@inject IPatientsService PatientService
+@inject HttpClient Http
+@inject StateContainer StateContainer
+<h3>Procedure</h3>
+
+@code {
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<ProcedureResultDto> test1 = await GetProceduresAsync(SrvType.All);
+        List<ProcedureResultDto> test2 = await GetProceduresAsync(SrvType.DTC);
+        List<ProcedureResultDto> test3 = await GetProceduresAsync(SrvType.ISC);
+    }
+
+    private async Task<List<ProcedureResultDto>> GetProceduresAsync(SrvType srvType)
+    {
+        List<ProcedureResultDto> result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Procedures/Procedures");
+            httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
+            httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
+            httpRequest.Headers.Add("srvType", srvType.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<List<ProcedureResultDto>>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+}
