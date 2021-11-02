@@ -1,0 +1,34 @@
+﻿@page "/meds"
+@inject IPatientsService PatientService
+@inject HttpClient Http
+<h3>Meds</h3>
+
+@code {        
+
+    protected override async Task OnInitializedAsync()
+    {
+        PatientMedicamentResultDto test1 = await GetMedicamentsAsync(SrvType.DTC);
+        PatientMedicamentResultDto test2 = await GetMedicamentsAsync(SrvType.ISC);
+        PatientMedicamentResultDto test3 = await GetMedicamentsAsync(SrvType.All);
+    }
+
+    private async Task<PatientMedicamentResultDto> GetMedicamentsAsync(SrvType srvType)
+    {
+        PatientMedicamentResultDto result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Medicaments/Medicaments");
+            httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
+            httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
+            httpRequest.Headers.Add("srvType", srvType.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<PatientMedicamentResultDto>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+}

@@ -13,9 +13,9 @@ namespace DoctorAppWeb.Shared.SharedServices
     public interface IDataWCFService
     {
         public Task<Guid?> AuthorizeAsync(string login, string password);
-        public Task<PatientsWcf.PatientDto[]> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login);
-        public Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id);
-        public Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync();
-        public Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync();
+        public Task<List<PatientDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login);
+        public Task<List<IndicantDto>> GetIndicantAsync(System.Guid id);
+        public Task<List<ActualDoctorDto>> GetAllActualDoctorsAsync();
+        public Task<List<DepartmentDto>> GetAllDepartmentsAsync();
     }
 }

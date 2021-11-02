@@ -18,16 +18,16 @@ namespace PatientsWcf
     public partial class PersonQueryParamsDto : object
     {
         
-        private System.Guid[] DepartmentListField;
+        private System.Collections.Generic.List<System.Guid> DepartmentListField;
         
-        private string[] PersonAttributeListField;
+        private System.Collections.Generic.List<string> PersonAttributeListField;
         
         private PatientsWcf.FilterPersonTypeDto PersonQueryTypeField;
         
-        private PatientsWcf.PersonnelParamDto[] PersonnelListField;
+        private System.Collections.Generic.List<PatientsWcf.PersonnelParamDto> PersonnelListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid[] DepartmentList
+        public System.Collections.Generic.List<System.Guid> DepartmentList
         {
             get
             {
@@ -40,7 +40,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string[] PersonAttributeList
+        public System.Collections.Generic.List<string> PersonAttributeList
         {
             get
             {
@@ -66,7 +66,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.PersonnelParamDto[] PersonnelList
+        public System.Collections.Generic.List<PatientsWcf.PersonnelParamDto> PersonnelList
         {
             get
             {
@@ -779,7 +779,7 @@ namespace PatientsWcf
         
         private System.Guid PersonIdField;
         
-        private PatientsWcf.PersonnelPositionDto[] PersonnelPositionListField;
+        private System.Collections.Generic.List<PatientsWcf.PersonnelPositionDto> PersonnelPositionListField;
         
         private string SurNameField;
         
@@ -823,7 +823,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.PersonnelPositionDto[] PersonnelPositionList
+        public System.Collections.Generic.List<PatientsWcf.PersonnelPositionDto> PersonnelPositionList
         {
             get
             {
@@ -944,7 +944,7 @@ namespace PatientsWcf
     public partial class UserInfoDto : object
     {
         
-        private PatientsWcf.DepartmentInfoDto[] DepartmentInfoListField;
+        private System.Collections.Generic.List<PatientsWcf.DepartmentInfoDto> DepartmentInfoListField;
         
         private string FirstNameField;
         
@@ -952,14 +952,14 @@ namespace PatientsWcf
         
         private string MiddleNameField;
         
-        private string[] PermissionsField;
+        private System.Collections.Generic.List<string> PermissionsField;
         
         private string SnilsField;
         
         private System.Guid UserIdAVField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.DepartmentInfoDto[] DepartmentInfoList
+        public System.Collections.Generic.List<PatientsWcf.DepartmentInfoDto> DepartmentInfoList
         {
             get
             {
@@ -1011,7 +1011,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string[] Permissions
+        public System.Collections.Generic.List<string> Permissions
         {
             get
             {
@@ -1146,7 +1146,7 @@ namespace PatientsWcf
         
         private string LoginField;
         
-        private PatientsWcf.UserDto[] SubItemsField;
+        private System.Collections.Generic.List<PatientsWcf.UserDto> SubItemsField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string Description
@@ -1201,7 +1201,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.UserDto[] SubItems
+        public System.Collections.Generic.List<PatientsWcf.UserDto> SubItems
         {
             get
             {
@@ -1266,7 +1266,7 @@ namespace PatientsWcf
         
         private string DepartmentField;
         
-        private PatientsWcf.PatientDiagnosInfoDto[] PatientDiagnosInfoListField;
+        private System.Collections.Generic.List<PatientsWcf.PatientDiagnosInfoDto> PatientDiagnosInfoListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string Department
@@ -1282,7 +1282,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.PatientDiagnosInfoDto[] PatientDiagnosInfoList
+        public System.Collections.Generic.List<PatientsWcf.PatientDiagnosInfoDto> PatientDiagnosInfoList
         {
             get
             {
@@ -1580,7 +1580,7 @@ namespace PatientsWcf
         
         private string CaptionField;
         
-        private PatientsWcf.PatientNumericIndicantDto[] PatientIndicantField;
+        private System.Collections.Generic.List<PatientsWcf.PatientNumericIndicantDto> PatientIndicantField;
         
         private int PositionField;
         
@@ -1598,7 +1598,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.PatientNumericIndicantDto[] PatientIndicant
+        public System.Collections.Generic.List<PatientsWcf.PatientNumericIndicantDto> PatientIndicant
         {
             get
             {
@@ -1630,14 +1630,14 @@ namespace PatientsWcf
     public partial class PatientNumericIndicantDto : object
     {
         
-        private PatientsWcf.NumericIndicantValueDto[] IndicantField;
+        private System.Collections.Generic.List<PatientsWcf.NumericIndicantValueDto> IndicantField;
         
         private string NameField;
         
         private int ValueTypeField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.NumericIndicantValueDto[] Indicant
+        public System.Collections.Generic.List<PatientsWcf.NumericIndicantValueDto> Indicant
         {
             get
             {
@@ -1719,12 +1719,12 @@ namespace PatientsWcf
     public partial class PatientIndicantDto : object
     {
         
-        private PatientsWcf.IndicantValueDto[] IndicantField;
+        private System.Collections.Generic.List<PatientsWcf.IndicantValueDto> IndicantField;
         
         private System.Nullable<System.DateTime> ValueDateField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.IndicantValueDto[] Indicant
+        public System.Collections.Generic.List<PatientsWcf.IndicantValueDto> Indicant
         {
             get
             {
@@ -1845,7 +1845,7 @@ namespace PatientsWcf
     public partial class ServiceMedDocDto : object
     {
         
-        private PatientsWcf.MedDocVersionDto[] MedDocListField;
+        private System.Collections.Generic.List<PatientsWcf.MedDocVersionDto> MedDocListField;
         
         private System.Nullable<System.DateTime> ParentSrvEDField;
         
@@ -1854,7 +1854,7 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> ParentSrvSDField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.MedDocVersionDto[] MedDocList
+        public System.Collections.Generic.List<PatientsWcf.MedDocVersionDto> MedDocList
         {
             get
             {
@@ -2049,14 +2049,14 @@ namespace PatientsWcf
     public partial class PatientMedicamentResultDto : object
     {
         
-        private PatientsWcf.PatientMedicamentDto[] AllMedicamentListField;
+        private System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto> AllMedicamentListField;
         
-        private PatientsWcf.ServiceMedicamentDto[] DTCMedicamentListField;
+        private System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> DTCMedicamentListField;
         
-        private PatientsWcf.PatientMedicamentDto[] ISCMedicamentListField;
+        private System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto> ISCMedicamentListField;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.PatientMedicamentDto[] AllMedicamentList
+        public System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto> AllMedicamentList
         {
             get
             {
@@ -2069,7 +2069,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ServiceMedicamentDto[] DTCMedicamentList
+        public System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> DTCMedicamentList
         {
             get
             {
@@ -2082,7 +2082,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.PatientMedicamentDto[] ISCMedicamentList
+        public System.Collections.Generic.List<PatientsWcf.PatientMedicamentDto> ISCMedicamentList
         {
             get
             {
@@ -2105,7 +2105,7 @@ namespace PatientsWcf
         
         private System.Nullable<System.DateTime> ServiceEDField;
         
-        private PatientsWcf.ServiceMedicamentDto[] ServiceMedicamentListField;
+        private System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> ServiceMedicamentListField;
         
         private System.Nullable<System.DateTime> ServiceSDField;
         
@@ -2136,7 +2136,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.ServiceMedicamentDto[] ServiceMedicamentList
+        public System.Collections.Generic.List<PatientsWcf.ServiceMedicamentDto> ServiceMedicamentList
         {
             get
             {
@@ -2172,7 +2172,7 @@ namespace PatientsWcf
         
         private System.Nullable<System.DateTime> CourseEDField;
         
-        private PatientsWcf.CourseMedicamentDto[] CourseMedicamentListField;
+        private System.Collections.Generic.List<PatientsWcf.CourseMedicamentDto> CourseMedicamentListField;
         
         private System.Nullable<System.DateTime> CourseSDField;
         
@@ -2205,7 +2205,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.CourseMedicamentDto[] CourseMedicamentList
+        public System.Collections.Generic.List<PatientsWcf.CourseMedicamentDto> CourseMedicamentList
         {
             get
             {
@@ -2252,7 +2252,7 @@ namespace PatientsWcf
         
         private string CourseHeaderField;
         
-        private PatientsWcf.MedicamentTherapyInfoDto[] MedicamentTherapyListField;
+        private System.Collections.Generic.List<PatientsWcf.MedicamentTherapyInfoDto> MedicamentTherapyListField;
         
         private System.Nullable<int> PrescribedField;
         
@@ -2272,7 +2272,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.MedicamentTherapyInfoDto[] MedicamentTherapyList
+        public System.Collections.Generic.List<PatientsWcf.MedicamentTherapyInfoDto> MedicamentTherapyList
         {
             get
             {
@@ -2356,13 +2356,15 @@ namespace PatientsWcf
         
         private PatientsWcf.DepartmentTreatmentCaseDto DepartmentTreatmentCaseField;
         
+        private PatientsWcf.InpatientServiceCaseDto InpatientServiceCaseField;
+        
         private PatientsWcf.MultipleProcedureResultDto MultipleProcedureField;
         
-        private PatientsWcf.MultipleProcedureResultDto[] MultipleProceduresField;
+        private System.Collections.Generic.List<PatientsWcf.MultipleProcedureResultDto> MultipleProceduresField;
         
-        private PatientsWcf.SingleProcedureResultDto[] SingleProcedureResultListField;
+        private System.Collections.Generic.List<PatientsWcf.SingleProcedureResultDto> SingleProcedureResultListField;
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
         public PatientsWcf.DepartmentTreatmentCaseDto DepartmentTreatmentCase
         {
             get
@@ -2375,7 +2377,20 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.InpatientServiceCaseDto InpatientServiceCase
+        {
+            get
+            {
+                return this.InpatientServiceCaseField;
+            }
+            set
+            {
+                this.InpatientServiceCaseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
         public PatientsWcf.MultipleProcedureResultDto MultipleProcedure
         {
             get
@@ -2388,8 +2403,8 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.MultipleProcedureResultDto[] MultipleProcedures
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Collections.Generic.List<PatientsWcf.MultipleProcedureResultDto> MultipleProcedures
         {
             get
             {
@@ -2401,8 +2416,8 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.SingleProcedureResultDto[] SingleProcedureResultList
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Collections.Generic.List<PatientsWcf.SingleProcedureResultDto> SingleProcedureResultList
         {
             get
             {
@@ -2419,6 +2434,58 @@ namespace PatientsWcf
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DepartmentTreatmentCaseDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
     public partial class DepartmentTreatmentCaseDto : object
+    {
+        
+        private System.Nullable<System.DateTime> BeginDateField;
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private string NameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> BeginDate
+        {
+            get
+            {
+                return this.BeginDateField;
+            }
+            set
+            {
+                this.BeginDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InpatientServiceCaseDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class InpatientServiceCaseDto : object
     {
         
         private System.Nullable<System.DateTime> BeginDateField;
@@ -2647,7 +2714,7 @@ namespace PatientsWcf
         
         private string ProducingPointNameField;
         
-        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        private System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolListField;
         
         private System.Nullable<System.DateTime> StartDateField;
         
@@ -2719,7 +2786,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ProtocolDto[] ProtocolList
+        public System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolList
         {
             get
             {
@@ -2801,14 +2868,14 @@ namespace PatientsWcf
     public partial class PatientConsultanceResultDto : object
     {
         
-        private PatientsWcf.ISCConsultanceDto[] AllConsultanceListField;
+        private System.Collections.Generic.List<PatientsWcf.ISCConsultanceDto> AllConsultanceListField;
         
-        private PatientsWcf.ConsultanceDto[] DTCConsultanceListField;
+        private System.Collections.Generic.List<PatientsWcf.ConsultanceDto> DTCConsultanceListField;
         
-        private PatientsWcf.DTCConsultanceDto[] ISCConsultanceListField;
+        private System.Collections.Generic.List<PatientsWcf.DTCConsultanceDto> ISCConsultanceListField;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ISCConsultanceDto[] AllConsultanceList
+        public System.Collections.Generic.List<PatientsWcf.ISCConsultanceDto> AllConsultanceList
         {
             get
             {
@@ -2821,7 +2888,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ConsultanceDto[] DTCConsultanceList
+        public System.Collections.Generic.List<PatientsWcf.ConsultanceDto> DTCConsultanceList
         {
             get
             {
@@ -2834,7 +2901,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.DTCConsultanceDto[] ISCConsultanceList
+        public System.Collections.Generic.List<PatientsWcf.DTCConsultanceDto> ISCConsultanceList
         {
             get
             {
@@ -2853,7 +2920,7 @@ namespace PatientsWcf
     public partial class ISCConsultanceDto : object
     {
         
-        private PatientsWcf.ConsultanceDto[] ConsultanceListField;
+        private System.Collections.Generic.List<PatientsWcf.ConsultanceDto> ConsultanceListField;
         
         private System.Nullable<System.DateTime> EndDateField;
         
@@ -2862,7 +2929,7 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> StartDateField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.ConsultanceDto[] ConsultanceList
+        public System.Collections.Generic.List<PatientsWcf.ConsultanceDto> ConsultanceList
         {
             get
             {
@@ -2932,7 +2999,7 @@ namespace PatientsWcf
         
         private string ProducingPointNameField;
         
-        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        private System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolListField;
         
         private System.Nullable<System.DateTime> StartDateField;
         
@@ -3015,7 +3082,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ProtocolDto[] ProtocolList
+        public System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolList
         {
             get
             {
@@ -3047,12 +3114,12 @@ namespace PatientsWcf
     public partial class DTCConsultanceDto : object
     {
         
-        private PatientsWcf.ConsultanceDto[] ConsultanceListField;
+        private System.Collections.Generic.List<PatientsWcf.ConsultanceDto> ConsultanceListField;
         
         private string DTCNameField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.ConsultanceDto[] ConsultanceList
+        public System.Collections.Generic.List<PatientsWcf.ConsultanceDto> ConsultanceList
         {
             get
             {
@@ -3084,14 +3151,14 @@ namespace PatientsWcf
     public partial class InvestigationsResultDto : object
     {
         
-        private PatientsWcf.GroupInvestigationDto[] AllInvestigationListField;
+        private System.Collections.Generic.List<PatientsWcf.GroupInvestigationDto> AllInvestigationListField;
         
-        private PatientsWcf.InvestigationDto[] DTCInvestigationListField;
+        private System.Collections.Generic.List<PatientsWcf.InvestigationDto> DTCInvestigationListField;
         
-        private PatientsWcf.GroupInvestigationDto[] ISCInvestigationListField;
+        private System.Collections.Generic.List<PatientsWcf.GroupInvestigationDto> ISCInvestigationListField;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.GroupInvestigationDto[] AllInvestigationList
+        public System.Collections.Generic.List<PatientsWcf.GroupInvestigationDto> AllInvestigationList
         {
             get
             {
@@ -3104,7 +3171,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.InvestigationDto[] DTCInvestigationList
+        public System.Collections.Generic.List<PatientsWcf.InvestigationDto> DTCInvestigationList
         {
             get
             {
@@ -3117,7 +3184,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.GroupInvestigationDto[] ISCInvestigationList
+        public System.Collections.Generic.List<PatientsWcf.GroupInvestigationDto> ISCInvestigationList
         {
             get
             {
@@ -3138,7 +3205,7 @@ namespace PatientsWcf
         
         private string InvestigationGroupNameField;
         
-        private PatientsWcf.InvestigationDto[] InvestigationListField;
+        private System.Collections.Generic.List<PatientsWcf.InvestigationDto> InvestigationListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string InvestigationGroupName
@@ -3154,7 +3221,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public PatientsWcf.InvestigationDto[] InvestigationList
+        public System.Collections.Generic.List<PatientsWcf.InvestigationDto> InvestigationList
         {
             get
             {
@@ -3181,7 +3248,7 @@ namespace PatientsWcf
         
         private string MainExecutorFIOField;
         
-        private PatientsWcf.ProtocolDto[] ProtocolListField;
+        private System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolListField;
         
         private System.Nullable<System.DateTime> StartDateField;
         
@@ -3238,7 +3305,7 @@ namespace PatientsWcf
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public PatientsWcf.ProtocolDto[] ProtocolList
+        public System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolList
         {
             get
             {
@@ -3270,25 +3337,25 @@ namespace PatientsWcf
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatients", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientsResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.PatientDto[]> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicant", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/Authorize", ReplyAction="http://tempuri.org/IInpatientDoctor/AuthorizeResponse")]
         System.Threading.Tasks.Task<System.Nullable<System.Guid>> AuthorizeAsync(string login, string password);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllActualDoctors", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllActualDoctorsResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllDepartments", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllDepartmentsResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetUserInfo", ReplyAction="http://tempuri.org/IInpatientDoctor/GetUserInfoResponse")]
         System.Threading.Tasks.Task<PatientsWcf.UserInfoDto> GetUserInfoAsync(string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAllUsers", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAllUsersResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.UserDto[]> GetAllUsersAsync(string login);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.UserDto>> GetAllUsersAsync(string login);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetCustomization", ReplyAction="http://tempuri.org/IInpatientDoctor/GetCustomizationResponse")]
         System.Threading.Tasks.Task<PatientsWcf.CustomizationInfoDto> GetCustomizationAsync(string login, string sourceLogin);
@@ -3303,22 +3370,22 @@ namespace PatientsWcf
         System.Threading.Tasks.Task<bool> CopyCustomizationAsync(string sourceLogin, string targetLogin);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetHealthcareIndicants", ReplyAction="http://tempuri.org/IInpatientDoctor/GetHealthcareIndicantsResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetHealthcareIndicantsAsync(System.Guid id, double days);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetHealthcareIndicantsAsync(System.Guid id, double days);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientDiagnosis", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientDiagnosisResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.DepartmentPatientDiagnosInfoDto[]> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentPatientDiagnosInfoDto>> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicantChart", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantChartResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.IndicantChartDto[]> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantChartDto>> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetIndicantTable", ReplyAction="http://tempuri.org/IInpatientDoctor/GetIndicantTableResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.PatientIndicantDto[]> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientIndicantDto>> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetAnamnesis", ReplyAction="http://tempuri.org/IInpatientDoctor/GetAnamnesisResponse")]
         System.Threading.Tasks.Task<PatientsWcf.AnamnesisInfoDto> GetAnamnesisAsync(System.Guid id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetMedDocList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetMedDocListResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.ServiceMedDocDto[]> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ServiceMedDocDto>> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetMedDoc", ReplyAction="http://tempuri.org/IInpatientDoctor/GetMedDocResponse")]
         System.Threading.Tasks.Task<PatientsWcf.MedDocDto> GetMedDocAsync(System.Guid epicrisisVersionID);
@@ -3327,10 +3394,10 @@ namespace PatientsWcf
         System.Threading.Tasks.Task<PatientsWcf.PatientMedicamentResultDto> GetPatientMedicamentListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetProcedures", ReplyAction="http://tempuri.org/IInpatientDoctor/GetProceduresResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.ProcedureResultDto[]> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ProcedureResultDto>> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientSurgeryList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientSurgeryListResponse")]
-        System.Threading.Tasks.Task<PatientsWcf.SurgeryDto[]> GetPatientSurgeryListAsync(System.Guid personId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.SurgeryDto>> GetPatientSurgeryListAsync(System.Guid personId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientConsultanceList", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientConsultanceListResponse")]
         System.Threading.Tasks.Task<PatientsWcf.PatientConsultanceResultDto> GetPatientConsultanceListAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
@@ -3389,12 +3456,12 @@ namespace PatientsWcf
         {
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.PatientDto[]> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login)
         {
             return base.Channel.GetPatientsAsync(personQueryParamsDto, login);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetIndicantAsync(System.Guid id)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetIndicantAsync(System.Guid id)
         {
             return base.Channel.GetIndicantAsync(id);
         }
@@ -3404,12 +3471,12 @@ namespace PatientsWcf
             return base.Channel.AuthorizeAsync(login, password);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.ActualDoctorDto[]> GetAllActualDoctorsAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ActualDoctorDto>> GetAllActualDoctorsAsync()
         {
             return base.Channel.GetAllActualDoctorsAsync();
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.DepartmentDto[]> GetAllDepartmentsAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentDto>> GetAllDepartmentsAsync()
         {
             return base.Channel.GetAllDepartmentsAsync();
         }
@@ -3419,7 +3486,7 @@ namespace PatientsWcf
             return base.Channel.GetUserInfoAsync(login);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.UserDto[]> GetAllUsersAsync(string login)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.UserDto>> GetAllUsersAsync(string login)
         {
             return base.Channel.GetAllUsersAsync(login);
         }
@@ -3444,22 +3511,22 @@ namespace PatientsWcf
             return base.Channel.CopyCustomizationAsync(sourceLogin, targetLogin);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.IndicantDto[]> GetHealthcareIndicantsAsync(System.Guid id, double days)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantDto>> GetHealthcareIndicantsAsync(System.Guid id, double days)
         {
             return base.Channel.GetHealthcareIndicantsAsync(id, days);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.DepartmentPatientDiagnosInfoDto[]> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.DepartmentPatientDiagnosInfoDto>> GetPatientDiagnosisAsync(System.Guid personId, bool isArchived, System.Guid healthcareServiceId)
         {
             return base.Channel.GetPatientDiagnosisAsync(personId, isArchived, healthcareServiceId);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.IndicantChartDto[]> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.IndicantChartDto>> GetIndicantChartAsync(System.Guid healthcareServiceID, double maxPeriodData)
         {
             return base.Channel.GetIndicantChartAsync(healthcareServiceID, maxPeriodData);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.PatientIndicantDto[]> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientIndicantDto>> GetIndicantTableAsync(System.Guid healthcareServiceID, double maxPeriodData)
         {
             return base.Channel.GetIndicantTableAsync(healthcareServiceID, maxPeriodData);
         }
@@ -3469,7 +3536,7 @@ namespace PatientsWcf
             return base.Channel.GetAnamnesisAsync(id);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.ServiceMedDocDto[]> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ServiceMedDocDto>> GetMedDocListAsync(System.Guid personId, System.Guid healthcareServiceId)
         {
             return base.Channel.GetMedDocListAsync(personId, healthcareServiceId);
         }
@@ -3484,12 +3551,12 @@ namespace PatientsWcf
             return base.Channel.GetPatientMedicamentListAsync(personId, healthcareServiceId, srvType);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.ProcedureResultDto[]> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.ProcedureResultDto>> GetProceduresAsync(System.Guid personId, System.Guid healthcareServiceID, PatientsWcf.SrvType type)
         {
             return base.Channel.GetProceduresAsync(personId, healthcareServiceID, type);
         }
         
-        public System.Threading.Tasks.Task<PatientsWcf.SurgeryDto[]> GetPatientSurgeryListAsync(System.Guid personId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.SurgeryDto>> GetPatientSurgeryListAsync(System.Guid personId)
         {
             return base.Channel.GetPatientSurgeryListAsync(personId);
         }

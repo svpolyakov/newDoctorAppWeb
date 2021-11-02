@@ -32,28 +32,28 @@ namespace DoctorAppWeb.Client.Services
             throw new NotImplementedException($"Метод не определён, ищите его в {nameof(AuthService)}");
         }
 
-        public async Task<PatientDto[]> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
+        public async Task<List<PatientDto>> GetPersonsAsync(FilterPersonTypeDto filterPersonType, string login)
         {
             _logger.LogDebug("GetPersonsAsync");
-            return await _http.GetFromJsonAsync<PatientDto[]>("Persons");
+            return await _http.GetFromJsonAsync<List<PatientDto>>("Persons");
         }
 
-        public async Task<IndicantDto[]> GetIndicantAsync(Guid id)
+        public async Task<List<IndicantDto>> GetIndicantAsync(Guid id)
         {
             _logger.LogDebug("GetIndicantAsync");
-            return await _http.GetFromJsonAsync<IndicantDto[]>("Indicants");
+            return await _http.GetFromJsonAsync<List<IndicantDto>>("Indicants");
         }
 
-        public async Task<ActualDoctorDto[]> GetAllActualDoctorsAsync()
+        public async Task<List<ActualDoctorDto>> GetAllActualDoctorsAsync()
         {
             _logger.LogDebug("GetAllActualDoctorsAsync");
-            return await _http.GetFromJsonAsync<ActualDoctorDto[]>("Doctors");
+            return await _http.GetFromJsonAsync<List<ActualDoctorDto>>("Doctors");
         }
 
-        public async Task<DepartmentDto[]> GetAllDepartmentsAsync()
+        public async Task<List<DepartmentDto>> GetAllDepartmentsAsync()
         {
             _logger.LogDebug("GetAllDepartmentsAsync");
-            return await _http.GetFromJsonAsync<DepartmentDto[]>("Departments");
+            return await _http.GetFromJsonAsync<List<DepartmentDto>>("Departments");
         }
     }
 }

@@ -19,7 +19,7 @@ namespace DoctorAppWeb.Server.Controllers
         }
 
         [HttpGet("Users")]
-        public async Task<UserDto[]> GetUsersAsync([FromHeader] string login)
+        public async Task<List<UserDto>> GetUsersAsync([FromHeader] string login)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
             return await inpatientDoctorClient.GetAllUsersAsync(login);

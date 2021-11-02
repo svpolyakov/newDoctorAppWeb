@@ -12,7 +12,7 @@ namespace DoctorAppWeb.Server.Controllers
     public class SurgeryController : ControllerBase
     {
         [HttpGet("SurgeryList")]
-        public async Task<SurgeryDto[]> GetSurgeryListAsync([FromHeader] Guid patientId)
+        public async Task<List<SurgeryDto>> GetSurgeryListAsync([FromHeader] Guid patientId)
         {
             return await new InpatientDoctorClient().GetPatientSurgeryListAsync(patientId);
         }
