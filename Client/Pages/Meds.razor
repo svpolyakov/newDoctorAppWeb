@@ -1,10 +1,25 @@
 ﻿@page "/meds"
 @inject IPatientsService PatientService
 @inject HttpClient Http
-<h3>Meds</h3>
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Медикаменты
+        </MudText>
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ТЕКУЩИЕ"></MudTabPanel>
+                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ"></MudTabPanel>
+                <MudTabPanel Text="АРХИВ"></MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+</MudPaper>
 
-@code {        
 
+@code {
+    public bool showProgress = true;
     protected override async Task OnInitializedAsync()
     {
         PatientMedicamentResultDto test1 = await GetMedicamentsAsync(SrvType.DTC);
@@ -17,12 +32,14 @@
         PatientMedicamentResultDto result = null;
         try
         {
+            showProgress = true;
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Medicaments/Medicaments");
             httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
             httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
             httpRequest.Headers.Add("srvType", srvType.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<PatientMedicamentResultDto>();
+            showProgress = false;
         }
         catch (Exception ex)
         {

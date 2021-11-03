@@ -40,8 +40,11 @@
                                     </MudGrid>
                                 </TitleContent>
                                 <ChildContent>
-                                    <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
-                                    <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                                    @if (consult.Conclusion != null && !String.IsNullOrEmpty(consult.Conclusion.VersionText))
+                                    {
+                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                        <MudText>@((MarkupString)consult.Conclusion.VersionText)</MudText>
+                                    }
                                 </ChildContent>
                             </MudExpansionPanel>
                         }
@@ -57,7 +60,7 @@
                             {
                                 string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
                                 string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
-                                <MudExpansionPanel>
+                                    <MudExpansionPanel>
                                     <TitleContent>
                                         <MudGrid>
                                             <MudItem xs="1">
@@ -78,7 +81,11 @@
                                         </MudGrid>
                                     </TitleContent>
                                     <ChildContent>
-                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                        @if (consult.Conclusion != null && !String.IsNullOrEmpty(consult.Conclusion.VersionText))
+                                        {
+                                            <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                            <MudText>@((MarkupString)consult.Conclusion.VersionText)</MudText>
+                                        }
                                     </ChildContent>
                                 </MudExpansionPanel>
                             }
@@ -133,8 +140,11 @@
                                         </MudGrid>
                                     </TitleContent>
                                     <ChildContent>
-                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
-                                        <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                                        @if (consult.Conclusion != null && !String.IsNullOrEmpty(consult.Conclusion.VersionText))
+                                        {
+                                            <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                            <MudText>@((MarkupString)consult.Conclusion.VersionText)</MudText>
+                                        }
                                     </ChildContent>
                                 </MudExpansionPanel>
                             }
@@ -171,6 +181,8 @@
     public PatientConsultanceResultDto iscConsult;
     public PatientConsultanceResultDto allConsult;
 
+    List<ISCConsultanceDto> fullList = new List<ISCConsultanceDto>();
+
     public string SearchQuery;
 
     protected override async Task OnInitializedAsync()
@@ -179,7 +191,10 @@
 
         dtcConsult = await GetPatientConsultanceAsync(SrvType.DTC);
         iscConsult = await GetPatientConsultanceAsync(SrvType.ISC);
-        allConsult = await GetPatientConsultanceAsync(SrvType.All);
+        PatientConsultanceResultDto archive = await GetPatientConsultanceAsync(SrvType.All);
+
+        fullList = archive.AllConsultanceList.GetRange(0, archive.AllConsultanceList.Count);
+        allConsult = archive;
 
         showProgress = false;
     }
@@ -206,12 +221,28 @@
 
     private async Task HandleSearch()
     {
-        // allConsult.AllConsultanceList = allConsult.AllConsultanceList.Select(group => group.ConsultanceList.Select()).ToArray();
-        // todo: search
-        /*
-          .Where(group =>
-              group.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower())
-          )
-          .Count() > 0).ToArray();*/
+        if (String.IsNullOrEmpty(SearchQuery))
+        {
+            allConsult.AllConsultanceList = fullList;
+            return;
+        }
+        List<ISCConsultanceDto> filtered = new List<ISCConsultanceDto>();
+        foreach (ISCConsultanceDto consultGroup in fullList)
+        {
+            IEnumerable<ConsultanceDto> matches = consultGroup.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower()));
+            if (matches.Any())
+            {
+                ISCConsultanceDto filteredGroup = new ISCConsultanceDto();
+
+                filteredGroup.ConsultanceList = matches.ToList();
+                filteredGroup.EndDate = consultGroup.EndDate;
+                filteredGroup.ISCName = consultGroup.ISCName;
+                filteredGroup.StartDate = consultGroup.StartDate;
+
+                filtered.Add(filteredGroup);
+            }
+        }
+
+        allConsult.AllConsultanceList = filtered;
     }
 }

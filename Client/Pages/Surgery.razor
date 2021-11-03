@@ -1,7 +1,7 @@
 ﻿@page "/surgery"
 @inject IPatientsService PatientService
 @inject HttpClient Http
-
+@inject StateContainer StateContainer
 
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
@@ -11,16 +11,18 @@
         </MudText>
         @if (Surgeries != null)
         {
-            foreach (SurgeryDto sugery in Surgeries)
+            foreach (SurgeryDto surgery in Surgeries)
             {
-                string sTime = sugery.StartDate != null ? sugery.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
-                string eTime = sugery.EndDate != null ? sugery.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                string sTime = surgery.StartDate != null ? surgery.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                string eTime = surgery.EndDate != null ? surgery.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+
                 <MudExpansionPanel>
                     <TitleContent>
                         <MudGrid>
                             <MudItem xs="8">
-                                <MudText Typo="Typo.h5">@sugery.SurgeryName</MudText>
-                                <MudText Class="grayText" Typo="Typo.body1">@sugery.MainExecutorFIO</MudText>
+                                <MudText Typo="Typo.h5">@surgery.SurgeryName</MudText>
+                                <MudText Class="grayText" Typo="Typo.body1">@surgery.MainExecutorFIO @surgery.ProducingPointName</MudText>
+                                <MudText Class="grayText" Typo="Typo.body1">@surgery.DiagnosText</MudText>
                             </MudItem>
                             <MudItem xs="2">
                                 <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
@@ -32,14 +34,21 @@
                     </TitleContent>
                     <ChildContent>
                         <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
-                        <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                        <MudText>@((MarkupString)surgery.Conclusion.VersionText)</MudText>
                     </ChildContent>
                 </MudExpansionPanel>
             }
         }
     </div>
 </MudPaper>
-
+<style>
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .greenText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Green
+    }
+</style>
 
 @code {
     public bool showProgress = true;
@@ -47,6 +56,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        StateContainer.ShowDrawer = true;
         Surgeries = await GetSurgeryListAsync();
     }
 
