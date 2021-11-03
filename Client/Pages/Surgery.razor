@@ -1,11 +1,48 @@
 ﻿@page "/surgery"
 @inject IPatientsService PatientService
 @inject HttpClient Http
-<h3>Surgery</h3>
+
+
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Операции
+        </MudText>
+        @if (Surgeries != null)
+        {
+            foreach (SurgeryDto sugery in Surgeries)
+            {
+                string sTime = sugery.StartDate != null ? sugery.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                string eTime = sugery.EndDate != null ? sugery.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudGrid>
+                            <MudItem xs="8">
+                                <MudText Typo="Typo.h5">@sugery.SurgeryName</MudText>
+                                <MudText Class="grayText" Typo="Typo.body1">@sugery.MainExecutorFIO</MudText>
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                        <!--<MudText>@consult.Conclusion.VersionText</MudText>-->
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        }
+    </div>
+</MudPaper>
 
 
 @code {
-
+    public bool showProgress = true;
     public List<SurgeryDto> Surgeries { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -18,10 +55,12 @@
         List<SurgeryDto> result = null;
         try
         {
+            showProgress = true;
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Surgery/SurgeryList");
             httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<List<SurgeryDto>>();
+            showProgress = false;
         }
         catch (Exception ex)
         {

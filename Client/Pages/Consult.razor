@@ -22,7 +22,12 @@
                             <MudExpansionPanel>
                                 <TitleContent>
                                     <MudGrid>
-                                        <MudItem xs="8">
+                                        <MudItem xs="1">
+                                            <div class="rowIcon">
+                                                <MudIcon Icon="@(consult.EndDate != null ? DoctorIcons.Square : DoctorIcons.Check)"></MudIcon>
+                                            </div>
+                                        </MudItem>
+                                        <MudItem xs="7">
                                             <MudText Typo="Typo.h5">@consult.ConsultanceName</MudText>
                                             <MudText Class="grayText" Typo="Typo.body1">@consult.MainExecutorFIO @consult.ProducingPointName</MudText>
                                         </MudItem>
@@ -55,7 +60,12 @@
                                 <MudExpansionPanel>
                                     <TitleContent>
                                         <MudGrid>
-                                            <MudItem xs="8">
+                                            <MudItem xs="1">
+                                                <div class="rowIcon">
+                                                    <MudIcon Icon="@(consult.EndDate != null ? DoctorIcons.Square : DoctorIcons.Check)"></MudIcon>
+                                                </div>
+                                            </MudItem>
+                                            <MudItem xs="7">
                                                 <MudText Typo="Typo.h5">@consult?.ConsultanceName</MudText>
                                                 <MudText Class="grayText" Typo="Typo.body1">@consult?.MainExecutorFIO @consult?.ProducingPointName</MudText>
                                             </MudItem>
@@ -105,7 +115,12 @@
                                 <MudExpansionPanel>
                                     <TitleContent>
                                         <MudGrid>
-                                            <MudItem xs="8">
+                                            <MudItem xs="1">
+                                                <div class="rowIcon">
+                                                    <MudIcon Icon="@(consult.EndDate != null ? DoctorIcons.Square : DoctorIcons.Check)"></MudIcon>
+                                                </div>
+                                            </MudItem>
+                                            <MudItem xs="7">
                                                 <MudText Typo="Typo.h5">@consult?.ConsultanceName</MudText>
                                                 <MudText Class="grayText" Typo="Typo.body1">@consult?.MainExecutorFIO @consult?.ProducingPointName</MudText>
                                             </MudItem>
@@ -135,13 +150,18 @@
     .grayText {
         color: @DoctorAppWeb.Client.Shared.Colors.Gray
     }
-        .greenText {
+    .greenText {
         color: @DoctorAppWeb.Client.Shared.Colors.Green
     }
     .searchButton {
         width: 100%;
         margin-top: 3px;
         margin-bottom: 2px;
+    }
+    .rowIcon {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
     }
 </style>
 
@@ -186,6 +206,7 @@
 
     private async Task HandleSearch()
     {
+        // allConsult.AllConsultanceList = allConsult.AllConsultanceList.Select(group => group.ConsultanceList.Select()).ToArray();
         // todo: search
         /*
           .Where(group =>
