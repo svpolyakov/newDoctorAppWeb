@@ -21,16 +21,14 @@
                     {
                         @foreach (IndicantChartDto indChart in indCharts)
                         {
-                            <div class="flexSpacer" />
                             <MudGrid>
-                                <MudText Typo="Typo.h5">
-                                    @indChart.Caption
-                                </MudText>
-                            </MudGrid>
-                            <MudGrid>
-                                <MudItem lg="10" sm="12">
-                                    <MudChart ChartType="ChartType.Line" ChartSeries="@LineChartSeries(indChart)" XAxisLabels="@ChartLabels(indChart)"
-                                              ChartOptions="@LineChartOptions(indChart)" LegendPosition="Position.Right" />
+                                <MudItem Style="margin-bottom: 10px" xs="12">
+                                    <MudText Typo="Typo.h5">
+                                        @indChart.Caption
+                                    </MudText>
+                                    <LineChart Id="@indChart.Caption"
+                                               Data="@LineChartSeries(indChart).ToArray()"
+                                               Labels="@ChartLabels(indChart).ToArray()"></LineChart>
                                 </MudItem>
                             </MudGrid>
                         }
@@ -107,7 +105,7 @@
     }
 </style>
 
-@code {
+@code {   
     private const string dateColName = "Дата - время";
 
     private DateTime? maxValueDate;
@@ -176,23 +174,19 @@
         return chartLabels;
     }
 
-    private List<ChartSeries> LineChartSeries(IndicantChartDto indChartDto)
+    private List<double> LineChartSeries(IndicantChartDto indChartDto)
     {
         List<ChartSeries> chartSeriesList = new List<ChartSeries>();
+
+        List<double> data = new List<double>();
         foreach (PatientNumericIndicantDto patIndicantDto in indChartDto.PatientIndicant)
         {
-            ChartSeries chartSeries = new ChartSeries();
-            chartSeries.Name = patIndicantDto.Name;
-            chartSeries.Data = new double[patIndicantDto.Indicant.Count()];
-            int index = 0;
             foreach (NumericIndicantValueDto numIndicantValueDto in patIndicantDto.Indicant.OrderBy(x => x.ValueDate))
             {
-                chartSeries.Data[index] = (double)numIndicantValueDto.NumericValue;
-                index++;
+                data.Add((double)numIndicantValueDto.NumericValue);
             }
-            chartSeriesList.Add(chartSeries);
         }
-        return chartSeriesList;
+        return data;
     }
 
     protected IEnumerable<string> PrepareIndicantTableHeaders()
@@ -264,6 +258,7 @@
         showProgress = true;
         StateContainer.ShowDrawer = true;
         customSettings = await GetCustomSettings();
+        customSettings.MaxPeriodData = 666;
         indicants = await GetIndicants();
         indCharts = await GetIndicantCharts();
         baseChartPalette = await Task.Run(PrepareIndicantChartPalettes);

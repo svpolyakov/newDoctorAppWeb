@@ -1,0 +1,53 @@
+@inject IJSRuntime JSRuntime
+
+<div style="overflow-x: auto">
+    <canvas style="min-width: 700px" id="@Id"></canvas>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public double[] Data { get; set; }
+
+    [Parameter]
+    public string[] Labels { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var config = new
+        {
+            Type = "line",
+            MaintainAspectRatio = false,
+            Options = new {
+                Plugins = new {
+                    Legend = new
+                    {
+                        Display = false
+                    }
+                }
+            },
+            Data = new
+            {
+                Datasets = new[]
+                {
+                    new {
+                        Data = Data,
+                        Label = Id,
+                        Tension = 0.1,
+                        BorderColor = DoctorAppWeb.Client.Shared.Colors.Green,
+                    }
+                },
+                Labels = Labels,
+
+            }
+        };
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("setup", Id, config);
+        }
+    }
+}

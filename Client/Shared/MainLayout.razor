@@ -26,7 +26,7 @@
         <div class="logoContainer"><img class="logo" src="logoWhite.svg"></div>
         @if (StateContainer.AppTitle?.Length > 0 && !isMenuVisible)
         {
-            <MudIconButton Class="whiteButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoToPatientList())"></MudIconButton><div class="flexSpacer" />
+            <MudIconButton Class="whiteButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoBack())"></MudIconButton><div class="flexSpacer" />
         }
         @if (!isMenuVisible)
         {
@@ -44,7 +44,7 @@
     </MudDrawer>
 
     <MudMainContent Style="min-height: 100vh; padding-top: 2rem;">
-        @if (StateContainer.AppTitle?.Length > 0) { 
+        @if (StateContainer.CurrentPatient != null) { 
             <PatientHeader />
         }
         @Body
@@ -121,7 +121,7 @@
     Version version = typeof(Program).Assembly.GetName().Version;
     bool isDrawerOpen = false;
     bool isMenuVisible = false;
-//    string menuIcon = Icons.Material.Filled.Menu;
+    //    string menuIcon = Icons.Material.Filled.Menu;
 
     protected override void OnInitialized()
     {
@@ -133,9 +133,20 @@
         StateContainer.OnChange -= StateHasChanged;
     }
 
-    public async Task GoToPatientList()
+    public async Task GoBack()
     {
-        navigationManager.NavigateTo("persons");
+        // if previous patient is set
+        if (StateContainer.PreviousPatient != null && StateContainer.CurrentPatient == null)
+        {
+            StateContainer.CurrentPatient = StateContainer.PreviousPatient;
+            string titleInfo = StateContainer.CurrentPatient.Lastname + " " + StateContainer.CurrentPatient.Firstname + " " + StateContainer.CurrentPatient.Patronymic + " " + StateContainer.CurrentPatient.Birthday + " (" + StateContainer.CurrentPatient.Age + ") " + StateContainer.CurrentPatient.StayDep + " " + StateContainer.CurrentPatient.ServiceCaseNumber;
+            StateContainer.AppTitle = titleInfo;
+            navigationManager.NavigateTo(StateContainer.CurrentPage);
+        } else
+        {
+            // go to prev patient
+            navigationManager.NavigateTo("persons");
+        }
     }
 
     public async Task CustomizationTree()

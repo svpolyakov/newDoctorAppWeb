@@ -25,6 +25,15 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <!-- Chart.js added as a client side lib -->
+    <script>
+        window.setup = (id, config) => {
+            var ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, config);
+        }
+    </script>
+    <script src="lib/Chart.js/chart.js"></script>
+    <!-- Drag touch polyfill -->
     <script src="DragDropTouch.js"></script>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="_content/Blazored.Modal/blazored.modal.js"></script>

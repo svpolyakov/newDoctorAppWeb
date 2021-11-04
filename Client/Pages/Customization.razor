@@ -195,6 +195,9 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.AppTitle = "Настройка кастомизации";
+        StateContainer.ShowDrawer = false;
+        StateContainer.CurrentPatient = null;
+
         await ReFillTree();
     }
 

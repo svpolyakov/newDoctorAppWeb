@@ -382,6 +382,7 @@
     {
         StateContainer.ShowDrawer = false;
         StateContainer.AppTitle = "";
+        StateContainer.CurrentPatient = null;
         showProgress = true;
 
         await localStorage.RemoveItemAsync("CurrentPatientID");

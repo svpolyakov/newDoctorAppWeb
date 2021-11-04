@@ -11,7 +11,39 @@
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ"></MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ"></MudTabPanel>
-                <MudTabPanel Text="АРХИВ"></MudTabPanel>
+                <MudTabPanel Text="АРХИВ">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                          OnClearButtonClick="HandleSearch"
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="Название медикамента"
+                                          Margin="Margin.Dense"
+                                          Variant="Variant.Outlined"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                        </MudItem>
+                    </MudGrid>
+                    @if (allMeds != null)
+                    {
+                        foreach (PatientMedicamentDto medGroup in allMeds.AllMedicamentList)
+                        {
+                            <div>
+                                <MudText Typo="Typo.h5">@medGroup.ParentServiceName c @medGroup.ServiceSD.Value.ToString("dd.MM.yyyy")</MudText>
+                            </div>
+                            if (medGroup.ServiceMedicamentList != null)
+                                {
+                                    foreach(ServiceMedicamentDto med in medGroup.ServiceMedicamentList)
+                                    {
+
+                                    }
+                                }
+                        }
+                    }
+                </MudTabPanel>
             </MudTabs>
         </div>
     </div>
@@ -20,11 +52,17 @@
 
 @code {
     public bool showProgress = true;
+    PatientMedicamentResultDto dtcMeds;
+    PatientMedicamentResultDto iscMeds;
+    PatientMedicamentResultDto allMeds;
+
+    public string SearchQuery;
+
     protected override async Task OnInitializedAsync()
     {
-        PatientMedicamentResultDto test1 = await GetMedicamentsAsync(SrvType.DTC);
-        PatientMedicamentResultDto test2 = await GetMedicamentsAsync(SrvType.ISC);
-        PatientMedicamentResultDto test3 = await GetMedicamentsAsync(SrvType.All);
+        dtcMeds = await GetMedicamentsAsync(SrvType.DTC);
+        iscMeds = await GetMedicamentsAsync(SrvType.ISC);
+        allMeds = await GetMedicamentsAsync(SrvType.All);
     }
 
     private async Task<PatientMedicamentResultDto> GetMedicamentsAsync(SrvType srvType)
@@ -48,4 +86,6 @@
 
         return result;
     }
+
+    private async Task HandleSearch() { }
 }

@@ -3,9 +3,10 @@ using DoctorAppWeb.Shared.DataModel.MedOrganization;
 public class StateContainer
 {
     private bool showDrawer;
-    private string appTitle;
+    private string appTitle = "";
     private string currentPage;
-    private Patient currentPatient;
+    private Patient currentPatient = null;
+    private Patient prevPatient = null;
 
     public Boolean ShowDrawer
     {
@@ -43,8 +44,17 @@ public class StateContainer
         set
         {
             currentPatient = value;
+            if (value != null)
+            {
+                prevPatient = value;
+            }
             NotifyStateChanged();
         }
+    }
+
+    public Patient PreviousPatient
+    {
+        get => prevPatient;
     }
 
     public event Action OnChange;
