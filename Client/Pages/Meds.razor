@@ -1,6 +1,8 @@
 ﻿@page "/meds"
 @inject IPatientsService PatientService
 @inject HttpClient Http
+@inject StateContainer StateContainer
+
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
@@ -10,32 +12,33 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (dtcMeds != null) {
-                        
-                    <MudTable Items="@dtcMeds.DTCMedicamentList" Dense="true">
-                        <HeaderContent>
-                            <MudTh Class="tableHeader"></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Название</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Применение</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Начато</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Завершено</MudText></MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd>
-                                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
-                                               OnClick="@(() => ShowBtnPress(context))"
-                                               Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
-                            </MudTd>
-                            <MudTd><MudText Typo="Typo.body1">@ParseTitle(context)</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@context.ApplicationMethod</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseStartTime(context)</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseEndTime(context)</MudText></MudTd>
-                        </RowTemplate>
-                        <ChildRowContent>
-                            @if (context.ShowDetails && context.CourseMedicamentList != null && context.CourseMedicamentList[0].MedicamentTherapyList != null)
-                                {
-                                    foreach (MedicamentTherapyInfoDto med in context.CourseMedicamentList[0].MedicamentTherapyList)
+                    @if (dtcMeds != null)
+                    {
+
+                        <MudTable Items="@dtcMeds.DTCMedicamentList" Dense="true">
+                            <HeaderContent>
+                                <MudTh Class="tableHeader"></MudTh>
+                                <MudTh Class="tableHeader"><MudText>Название</MudText></MudTh>
+                                <MudTh Class="tableHeader"><MudText>Применение</MudText></MudTh>
+                                <MudTh Class="tableHeader"><MudText>Начато</MudText></MudTh>
+                                <MudTh Class="tableHeader"><MudText>Завершено</MudText></MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>
+                                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                                                   OnClick="@(() => ShowBtnPress(context))"
+                                                   Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
+                                </MudTd>
+                                <MudTd><MudText Class="@GetRowClass(context)" Typo="Typo.body1">@ParseTitle(context)</MudText></MudTd>
+                                <MudTd><MudText Class="grayText" Typo="Typo.body1">@context.ApplicationMethod</MudText></MudTd>
+                                <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseStartTime(context)</MudText></MudTd>
+                                <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseEndTime(context)</MudText></MudTd>
+                            </RowTemplate>
+                            <ChildRowContent>
+                                @if (context.ShowDetails && context.CourseMedicamentList != null && context.CourseMedicamentList[0].MedicamentTherapyList != null)
                                     {
+                                        foreach (MedicamentTherapyInfoDto med in context.CourseMedicamentList[0].MedicamentTherapyList)
+                                        {
                                         <MudTr>
                                             <MudTd></MudTd>
                                             <MudTd><MudText Class="grayText innerTDPadding" Typo="Typo.body1">@med.MedicamentName</MudText></MudTd>
@@ -43,11 +46,11 @@
                                             <MudTd></MudTd>
                                             <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseMedEndTime(med)</MudText></MudTd>
                                         </MudTr>
-                                    }
+                                        }
 
-                                }
-                        </ChildRowContent>
-                    </MudTable>
+                                    }
+                            </ChildRowContent>
+                        </MudTable>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
@@ -156,10 +159,15 @@
         color: @DoctorAppWeb.Client.Shared.Colors.Green
     }
     .tableHeader {
-        background-color: @DoctorAppWeb.Client.Shared.Colors.BorderBlue;
+         background-color: @DoctorAppWeb.Client.Shared.Colors.LightBlue;
     }
     .innerTDPadding {
         padding-left: 1rem;
+    }
+    .searchButton {
+        width: 100%;
+        margin-top: 3px;
+        margin-bottom: 2px;
     }
 </style>
 
@@ -177,7 +185,6 @@
     {
         dtcMeds = await GetMedicamentsAsync(SrvType.DTC);
         iscMeds = await GetMedicamentsAsync(SrvType.ISC);
-        //allMeds = await GetMedicamentsAsync(SrvType.All);
         PatientMedicamentResultDto archive = await GetMedicamentsAsync(SrvType.All);
         allMeds = archive;
         fullList = archive.AllMedicamentList.GetRange(0, archive.AllMedicamentList.Count);
@@ -189,6 +196,7 @@
         try
         {
             showProgress = true;
+            StateContainer.ShowDrawer = true;
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Medicaments/Medicaments");
             httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
             httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
@@ -207,7 +215,6 @@
 
     private void ShowBtnPress(ServiceMedicamentDto context)
     {
-        //Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
         context.ShowDetails = !context.ShowDetails;
     }
 
@@ -219,6 +226,19 @@
     private string ParseEndTime(ServiceMedicamentDto context)
     {
         return context.CourseED != null ? context.CourseED.Value.ToString("dd.MM.yyyy HH:mm") : "";
+    }
+
+    private string GetRowClass(ServiceMedicamentDto context)
+    {
+        if (context.CourseMedicamentList != null)
+        {
+            if (context.CourseMedicamentList[0].Prescribed == context.CourseMedicamentList[0].Taken)
+            {
+                return "greenText";
+            }
+        }
+
+        return "";
     }
 
 
@@ -233,7 +253,71 @@
     }
 
 
-    private async Task HandleSearch() {
-        
+    private async Task HandleSearch()
+    {
+        if (String.IsNullOrEmpty(SearchQuery))
+        {
+            allMeds.AllMedicamentList = fullList;
+            return;
+        }
+        List<PatientMedicamentDto> filtered = new List<PatientMedicamentDto>();
+
+        foreach (PatientMedicamentDto medGroup in fullList)
+        {
+            PatientMedicamentDto filteredGroup = new PatientMedicamentDto();
+            filteredGroup.ParentServiceName = medGroup.ParentServiceName;
+            filteredGroup.ServiceED = medGroup.ServiceED;
+            filteredGroup.ServiceSD = medGroup.ServiceSD;
+            filteredGroup.ServiceMedicamentList = new List<ServiceMedicamentDto>();
+
+            foreach (ServiceMedicamentDto medItem in medGroup.ServiceMedicamentList)
+            {
+                if (medItem.CourseMedicamentList != null)
+                {
+                    IEnumerable<CourseMedicamentDto> matches = medItem.CourseMedicamentList.Where(courseItem => courseItem.CourseHeader.ToLower().Contains(SearchQuery.ToLower()));
+                    if (matches.Any())
+                    {
+                        ServiceMedicamentDto filteredItem = new ServiceMedicamentDto();
+                        filteredItem.ApplicationMethod = medItem.ApplicationMethod;
+                        filteredItem.CourseED = medItem.CourseED;
+                        filteredItem.CourseSD = medItem.CourseSD;
+                        filteredItem.GroupHeader = medItem.GroupHeader;
+                        filteredItem.CourseMedicamentList = matches.ToList();
+
+                        filteredGroup.ServiceMedicamentList.Add(filteredItem);
+                    }
+                }
+
+            }
+
+            if (filteredGroup.ServiceMedicamentList.Any())
+            {
+                filtered.Add(filteredGroup);
+            }
+        }
+
+        allMeds.AllMedicamentList = filtered;
+
+        /*
+        List<ISCConsultanceDto> filtered = new List<ISCConsultanceDto>();
+        foreach (ISCConsultanceDto consultGroup in fullList)
+        {
+            IEnumerable<ConsultanceDto> matches = consultGroup.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower()));
+            if (matches.Any())
+            {
+                ISCConsultanceDto filteredGroup = new ISCConsultanceDto();
+
+                filteredGroup.ConsultanceList = matches.ToList();
+                filteredGroup.EndDate = consultGroup.EndDate;
+                filteredGroup.ISCName = consultGroup.ISCName;
+                filteredGroup.StartDate = consultGroup.StartDate;
+
+                filtered.Add(filteredGroup);
+            }
+        }
+
+        allConsult.AllConsultanceList = filtered;
+    }
+        */
     }
 }
