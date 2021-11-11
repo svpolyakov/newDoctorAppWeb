@@ -2177,7 +2177,9 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> CourseSDField;
         
         private string GroupHeaderField;
-        
+
+        public bool ShowDetails;
+
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ApplicationMethod
         {
