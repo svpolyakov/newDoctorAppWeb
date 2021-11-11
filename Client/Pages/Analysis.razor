@@ -1,0 +1,33 @@
+﻿@page "/analysis"
+@inject IPatientsService PatientService
+@inject HttpClient Http
+@inject StateContainer StateContainer
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        List<LabTestDto> test1 = await GetAnalysisAsync(SrvType.All);
+        List<LabTestDto> test2 = await GetAnalysisAsync(SrvType.DTC);
+        List<LabTestDto> test3 = await GetAnalysisAsync(SrvType.ISC);
+    }
+
+    private async Task<List<LabTestDto>> GetAnalysisAsync(SrvType srvType)
+    {
+        List<LabTestDto> result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Analysis/Analysis");
+            httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
+            httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
+            httpRequest.Headers.Add("srvType", srvType.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<List<LabTestDto>>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+}

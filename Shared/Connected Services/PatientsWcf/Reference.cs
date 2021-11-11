@@ -194,6 +194,8 @@ namespace PatientsWcf
         
         private System.Guid PathologyАnamnesisIDField;
         
+        private string PatientTableField;
+        
         private string PatronymicField;
         
         private System.Guid PersonIDField;
@@ -496,6 +498,19 @@ namespace PatientsWcf
             set
             {
                 this.PathologyАnamnesisIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientTable
+        {
+            get
+            {
+                return this.PatientTableField;
+            }
+            set
+            {
+                this.PatientTableField = value;
             }
         }
         
@@ -3333,6 +3348,229 @@ namespace PatientsWcf
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LabTestDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class LabTestDto : object
+    {
+        
+        private string LabTestNameField;
+        
+        private System.Collections.Generic.List<PatientsWcf.ParameterDto> ParameterListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LabTestName
+        {
+            get
+            {
+                return this.LabTestNameField;
+            }
+            set
+            {
+                this.LabTestNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.List<PatientsWcf.ParameterDto> ParameterList
+        {
+            get
+            {
+                return this.ParameterListField;
+            }
+            set
+            {
+                this.ParameterListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ParameterDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ParameterDto : object
+    {
+        
+        private string ParameterNameField;
+        
+        private System.Collections.Generic.List<PatientsWcf.ParameterValueDto> ParameterValueListField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ParameterName
+        {
+            get
+            {
+                return this.ParameterNameField;
+            }
+            set
+            {
+                this.ParameterNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.List<PatientsWcf.ParameterValueDto> ParameterValueList
+        {
+            get
+            {
+                return this.ParameterValueListField;
+            }
+            set
+            {
+                this.ParameterValueListField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ParameterValueDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ParameterValueDto : object
+    {
+        
+        private System.Nullable<System.DateTime> EndDateField;
+        
+        private bool OutOfNormField;
+        
+        private string TextValueField;
+        
+        private System.Nullable<decimal> ValueField;
+        
+        private System.Nullable<decimal> ValueMaximumField;
+        
+        private string ValueMeasureUnitField;
+        
+        private System.Nullable<decimal> ValueMinimumField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> EndDate
+        {
+            get
+            {
+                return this.EndDateField;
+            }
+            set
+            {
+                this.EndDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public bool OutOfNorm
+        {
+            get
+            {
+                return this.OutOfNormField;
+            }
+            set
+            {
+                this.OutOfNormField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string TextValue
+        {
+            get
+            {
+                return this.TextValueField;
+            }
+            set
+            {
+                this.TextValueField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<decimal> Value
+        {
+            get
+            {
+                return this.ValueField;
+            }
+            set
+            {
+                this.ValueField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<decimal> ValueMaximum
+        {
+            get
+            {
+                return this.ValueMaximumField;
+            }
+            set
+            {
+                this.ValueMaximumField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string ValueMeasureUnit
+        {
+            get
+            {
+                return this.ValueMeasureUnitField;
+            }
+            set
+            {
+                this.ValueMeasureUnitField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Nullable<decimal> ValueMinimum
+        {
+            get
+            {
+                return this.ValueMinimumField;
+            }
+            set
+            {
+                this.ValueMinimumField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ConsultanceCommentDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class ConsultanceCommentDto : object
+    {
+        
+        private string ClientCommentField;
+        
+        private System.Guid CounsultanceIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ClientComment
+        {
+            get
+            {
+                return this.ClientCommentField;
+            }
+            set
+            {
+                this.ClientCommentField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid CounsultanceID
+        {
+            get
+            {
+                return this.CounsultanceIDField;
+            }
+            set
+            {
+                this.CounsultanceIDField = value;
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="PatientsWcf.IInpatientDoctor")]
     public interface IInpatientDoctor
@@ -3406,6 +3644,12 @@ namespace PatientsWcf
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetInvestigations", ReplyAction="http://tempuri.org/IInpatientDoctor/GetInvestigationsResponse")]
         System.Threading.Tasks.Task<PatientsWcf.InvestigationsResultDto> GetInvestigationsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetLabTests", ReplyAction="http://tempuri.org/IInpatientDoctor/GetLabTestsResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.LabTestDto>> GetLabTestsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/ResetConsultanceComment", ReplyAction="http://tempuri.org/IInpatientDoctor/ResetConsultanceCommentResponse")]
+        System.Threading.Tasks.Task<PatientsWcf.ConsultanceCommentDto> ResetConsultanceCommentAsync(System.Guid personId, System.Guid consultanceId, string clientComment);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
@@ -3571,6 +3815,16 @@ namespace PatientsWcf
         public System.Threading.Tasks.Task<PatientsWcf.InvestigationsResultDto> GetInvestigationsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType)
         {
             return base.Channel.GetInvestigationsAsync(personId, healthcareServiceId, srvType);
+        }
+        
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.LabTestDto>> GetLabTestsAsync(System.Guid personId, System.Guid healthcareServiceId, PatientsWcf.SrvType srvType)
+        {
+            return base.Channel.GetLabTestsAsync(personId, healthcareServiceId, srvType);
+        }
+        
+        public System.Threading.Tasks.Task<PatientsWcf.ConsultanceCommentDto> ResetConsultanceCommentAsync(System.Guid personId, System.Guid consultanceId, string clientComment)
+        {
+            return base.Channel.ResetConsultanceCommentAsync(personId, consultanceId, clientComment);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()
