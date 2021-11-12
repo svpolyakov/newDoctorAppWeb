@@ -2192,7 +2192,9 @@ namespace PatientsWcf
         private System.Nullable<System.DateTime> CourseSDField;
         
         private string GroupHeaderField;
-        
+
+        public bool ShowDetails;
+
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ApplicationMethod
         {
@@ -3381,6 +3383,8 @@ namespace PatientsWcf
                 this.ParameterListField = value;
             }
         }
+
+        public System.Collections.Generic.List<string> DatesList;
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
