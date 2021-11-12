@@ -3383,6 +3383,8 @@ namespace PatientsWcf
                 this.ParameterListField = value;
             }
         }
+
+        public System.Collections.Generic.List<string> DatesList;
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

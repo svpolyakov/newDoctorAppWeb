@@ -3,12 +3,112 @@
 @inject HttpClient Http
 @inject StateContainer StateContainer
 
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Анализы
+        </MudText>
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ТЕКУЩИЕ">
+                    @if (allAnalysis != null)
+                    {
+                        foreach (LabTestDto analysisGroup in allAnalysis)
+                        {
+                            <div>
+                                <MudText Class="greenText" Typo="Typo.h5">@analysisGroup.LabTestName</MudText>
+                            </div>
+
+                            <MudTable Items="@analysisGroup.ParameterList" Dense="true">
+                                <HeaderContent>
+                                    <MudTh Class="tableHeader stickyLeftCell">Название</MudTh>
+                                    @foreach (string date in analysisGroup.DatesList)
+                                    {
+                                        <MudTh Class="tableHeader">@date</MudTh>
+                                    }
+                                    <MudTh Class="tableHeader stickyRightCell">Норматив</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd Class="stickyLeftCell">@context.ParameterName</MudTd>
+                                    @foreach (string date in analysisGroup.DatesList)
+                                    {
+                                        <MudTd>@GetValueByDate(context, date)</MudTd>
+                                    }
+                                    <MudTd Class="stickyRightCell">нормальных тут нет</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ"></MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+</MudPaper>
+
+<style>
+    .stickyLeftCell {
+        position: sticky;
+        left: -1px;
+        background-color: #fff;
+    }
+    .stickyRightCell {
+        position: sticky;
+        right: -1px;
+        background-color: #fff;
+    }
+    .stickyLeftCell:after, .stickyRightCell:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        border-bottom: 1px solid var(--mud-palette-table-lines);
+    }
+</style>
+
 @code {
+    public bool showProgress = true;
+
+    List<LabTestDto> allAnalysis;
+    List<LabTestDto> iscAnalysis;
+
     protected override async Task OnInitializedAsync()
     {
-        List<LabTestDto> test1 = await GetAnalysisAsync(SrvType.All);
+        StateContainer.ShowDrawer = true;
+        showProgress = true;
+        allAnalysis = await GetAnalysisAsync(SrvType.All);
         List<LabTestDto> test2 = await GetAnalysisAsync(SrvType.DTC);
-        List<LabTestDto> test3 = await GetAnalysisAsync(SrvType.ISC);
+        iscAnalysis = await GetAnalysisAsync(SrvType.ISC);
+
+        foreach (LabTestDto analysisGroup in allAnalysis)
+        {
+            analysisGroup.DatesList = new List<string>();
+            if (analysisGroup.ParameterList != null)
+            {
+                foreach(ParameterDto parameter in analysisGroup.ParameterList)
+                {
+                    if (parameter.ParameterValueList != null)
+                    {
+                        foreach (ParameterValueDto value in parameter.ParameterValueList)
+                        {
+                            string timeValue = value.EndDate.Value.ToString("dd.MM.yyyy HH:mm");
+                            if (!analysisGroup.DatesList.Contains(timeValue))
+                            {
+                                analysisGroup.DatesList.Add(timeValue);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+            analysisGroup.DatesList.Sort();
+        }
+
+        showProgress = false;
     }
 
     private async Task<List<LabTestDto>> GetAnalysisAsync(SrvType srvType)
@@ -28,6 +128,18 @@
 
         }
 
+        return result;
+    }
+
+    private string GetValueByDate(ParameterDto context, string date)
+    {
+
+        IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date);
+        if (!match.Any())
+        {
+            return "";
+        }
+        string result = match.First().TextValue;
         return result;
     }
 }
