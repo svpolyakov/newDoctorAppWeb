@@ -297,27 +297,5 @@
         }
 
         allMeds.AllMedicamentList = filtered;
-
-        /*
-        List<ISCConsultanceDto> filtered = new List<ISCConsultanceDto>();
-        foreach (ISCConsultanceDto consultGroup in fullList)
-        {
-            IEnumerable<ConsultanceDto> matches = consultGroup.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower()));
-            if (matches.Any())
-            {
-                ISCConsultanceDto filteredGroup = new ISCConsultanceDto();
-
-                filteredGroup.ConsultanceList = matches.ToList();
-                filteredGroup.EndDate = consultGroup.EndDate;
-                filteredGroup.ISCName = consultGroup.ISCName;
-                filteredGroup.StartDate = consultGroup.StartDate;
-
-                filtered.Add(filteredGroup);
-            }
-        }
-
-        allConsult.AllConsultanceList = filtered;
-    }
-        */
     }
 }
