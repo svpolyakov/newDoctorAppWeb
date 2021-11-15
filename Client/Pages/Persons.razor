@@ -601,6 +601,9 @@
                             PathologyАnamnesisID = person.PathologyАnamnesisID,
                             SDReceptionCase = person.SDReceptionCase,
                             PersonnelID = person.PersonnelID,
+                            AdmissionInfoDtc = person.AdmissionInfo?["Dtc"],
+                            AdmissionInfoInpatientSrv = person.AdmissionInfo?["InpatientSrv"],
+                            AdmissionInfoReceptCase = person.AdmissionInfo?["ReceptCase"],
                             AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] }
                         };
                         db.Patients.Add(patient);

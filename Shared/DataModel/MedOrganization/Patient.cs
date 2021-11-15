@@ -63,7 +63,9 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public DateTime? SDReceptionCase { get; set; }
         
         public AdmissionInfo AdmissionInfo { get; set; }
-        
+        public string AdmissionInfoDtc { get; set; }
+        public string AdmissionInfoInpatientSrv { get; set; }
+        public string AdmissionInfoReceptCase { get; set; }
         public Guid HealthcareServiceId { get; set; }
         
         public bool IsWorking { get; set; }
