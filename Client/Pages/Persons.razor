@@ -287,20 +287,20 @@
         StateContainer.AppTitle = title;
         PatientService.CurrentPatient = id;
         PatientService.HealthcareServiceId = hcsId;
-        StateContainer.CurrentPage = Pages.WhatsNew;
+        StateContainer.CurrentPage = Pages.Diagnosis;
         StateContainer.CurrentPatient = person;
 
         await localStorage.SetItemAsync("CurrentPatientID", id);
         await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
         await localStorage.SetItemAsync("AppTitle", title);
-        await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
+        await localStorage.SetItemAsync("CurrentPage", Pages.Diagnosis);
         await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
 
         string stringifiedPerson = JsonConvert.SerializeObject(person);
 
         await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
 
-        navigationManager.NavigateTo(Pages.WhatsNew);
+        navigationManager.NavigateTo(Pages.Diagnosis);
     }
 
     void FindPatients()
@@ -410,8 +410,8 @@
             CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
             CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
             string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
-            PatientService.FilterType = 7; //УДАЛИТЬ
-            switch ("AllPatients") //ИСПРАВИТЬ НА ФИЛЬТРТАЙП
+            //PatientService.FilterType = 7; //УДАЛИТЬ
+            switch (filterName) //ИСПРАВИТЬ НА ФИЛЬТРНЕЙМ
             {
                 case "MyPatient": PatientService.FilterType = 1; break;
                 case "InEmergencyRoom": PatientService.FilterType = 2; break;

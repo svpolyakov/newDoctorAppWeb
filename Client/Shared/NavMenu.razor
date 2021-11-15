@@ -3,9 +3,9 @@
 
 
 <MudNavMenu Class="mud-width-full navMenu">
-    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
+    @*<MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.WhatsNew))"
-                Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>
+                Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>*@
     <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Diagnosis ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.Diagnosis))"
                 Icon="@(StateContainer.CurrentPage == Pages.Diagnosis ? DoctorIcons.DiagnosisActive : DoctorIcons.Diagnosis)">Диагнозы</MudNavLink>
@@ -24,9 +24,9 @@
     <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Consult ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.Consult))"
                 Icon="@(StateContainer.CurrentPage == Pages.Consult ? DoctorIcons.ConsultActive : DoctorIcons.Consult)">Консультации</MudNavLink>
-    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Visit ? "navItem activePage" : "navItem")"
+    @*<MudNavLink Class="@(StateContainer.CurrentPage == Pages.Visit ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.Visit))"
-                Icon="@(StateContainer.CurrentPage == Pages.Visit ? DoctorIcons.VisitActive : DoctorIcons.Visit)">Обходы</MudNavLink>
+                Icon="@(StateContainer.CurrentPage == Pages.Visit ? DoctorIcons.VisitActive : DoctorIcons.Visit)">Обходы</MudNavLink>*@
     <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Procedure ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.Procedure))"
                 Icon="@(StateContainer.CurrentPage == Pages.Procedure ? DoctorIcons.ProcedureActive : DoctorIcons.Procedure)">Процедуры</MudNavLink>
