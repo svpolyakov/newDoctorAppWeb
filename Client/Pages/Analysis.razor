@@ -9,41 +9,125 @@
         <MudText Typo="Typo.h5">
             Анализы
         </MudText>
-        <div class="tabWrapper">
+            <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
                     @if (allAnalysis != null)
                     {
                         foreach (LabTestDto analysisGroup in allAnalysis)
                         {
-                            <div>
+                            <div class="groupHeader">
                                 <MudText Class="greenText" Typo="Typo.h5">@analysisGroup.LabTestName</MudText>
                             </div>
 
                             <MudTable Items="@analysisGroup.ParameterList" Dense="true">
                                 <HeaderContent>
-                                    <MudTh Class="tableHeader stickyLeftCell">Название</MudTh>
+                                    <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
                                     @foreach (string date in analysisGroup.DatesList)
                                     {
-                                        <MudTh Class="tableHeader">@date</MudTh>
+                                        <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
                                     }
-                                    <MudTh Class="tableHeader stickyRightCell">Норматив</MudTh>
+                                    <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd Class="stickyLeftCell">@context.ParameterName</MudTd>
                                     @foreach (string date in analysisGroup.DatesList)
-                                    {
+                                            {
                                         <MudTd>@GetValueByDate(context, date)</MudTd>
-                                    }
+                                            }
                                     <MudTd Class="stickyRightCell">нормальных тут нет</MudTd>
                                 </RowTemplate>
                             </MudTable>
                         }
                     }
                 </MudTabPanel>
-                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ"></MudTabPanel>
+                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
+                    @if (allAnalysis != null)
+                    {
+                        <MudExpansionPanels>
+                            @foreach (LabTestDto analysisGroup in allAnalysis)
+                            {
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudText Class="greenText" Typo="Typo.h5">@analysisGroup.LabTestName</MudText>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudTable Items="@analysisGroup.ParameterList" Dense="true">
+                                            <HeaderContent>
+                                                <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
+                                                @foreach (string date in analysisGroup.DatesList)
+                                            {
+                                                <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
+                                            }
+                                                <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd Class="stickyLeftCell tableHeader"><span class="tableHeaderText">@context.ParameterName</span></MudTd>
+                                                @foreach (string date in analysisGroup.DatesList)
+                                                {
+                                                <MudTd>@GetValueByDate(context, date)</MudTd>
+                                                }
+                                                <MudTd Class="stickyRightCell tableHeader"><span class="tableHeaderText">нормальных тут нет</span></MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        </MudExpansionPanels>
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="АРХИВ">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                          OnClearButtonClick="HandleSearch"
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="Название анализа"
+                                          Margin="Margin.Dense"
+                                          Variant="Variant.Outlined"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                        </MudItem>
+                    </MudGrid>
+                    @if (allAnalysis != null)
+                    {
+                        <MudExpansionPanels>
+                            @foreach (LabTestDto analysisGroup in allAnalysis)
+                            {
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudText Class="greenText" Typo="Typo.h5">@analysisGroup.LabTestName</MudText>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudTable Items="@analysisGroup.ParameterList" Dense="true">
+                                            <HeaderContent>
+                                                <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
+                                                @foreach (string date in analysisGroup.DatesList)
+                                                {
+                                                    <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
+                                                }
+                                                <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd Class="stickyLeftCell tableHeader"><span class="tableHeaderText">@context.ParameterName</span></MudTd>
+                                                @foreach (string date in analysisGroup.DatesList)
+                                                        {
+                                                    <MudTd>@GetValueByDate(context, date)</MudTd>
+                                                        }
+                                                <MudTd Class="stickyRightCell tableHeader"><span class="tableHeaderText">нормальных тут нет</span></MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        </MudExpansionPanels>
+                    }
+                </MudTabPanel>
             </MudTabs>
-        </div>
+</div>
     </div>
 </MudPaper>
 
@@ -66,10 +150,29 @@
         width: 100%;
         border-bottom: 1px solid var(--mud-palette-table-lines);
     }
+    .tableHeader {
+        background-color: @DoctorAppWeb.Client.Shared.Colors.LightBlue;
+    }
+    .tableHeaderText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray;
+        font-weight: 600;
+        line-height: 1rem;
+    }
+    .groupHeader {
+        margin-top: 1rem;
+        mardin-bottom: 1rem;
+    }
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .greenText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Green
+    }
 </style>
 
 @code {
     public bool showProgress = true;
+    public string SearchQuery;
 
     List<LabTestDto> allAnalysis;
     List<LabTestDto> iscAnalysis;
@@ -142,4 +245,9 @@
         string result = match.First().TextValue;
         return result;
     }
+
+    private async Task HandleSearch()
+        {
+
+        }
 }
