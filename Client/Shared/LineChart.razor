@@ -47,7 +47,6 @@
         };
         if (firstRender&& !String.IsNullOrEmpty(Id))
         {
-            Console.WriteLine("invoke setup for " + Id);
             await JSRuntime.InvokeVoidAsync("setup", Id, config);
         }
     }

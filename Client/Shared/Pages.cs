@@ -7,6 +7,9 @@ namespace DoctorAppWeb.Client.Shared
 {
     static class Pages
     {
+        public const string Patients = "persons";
+        public const string PatientsCustom = "personsCustom";
+        public const string Customization = "customization";
         public const string WhatsNew = "whatisnew";
         public const string Diagnosis = "diagnosis";
         public const string Indications = "Indications";

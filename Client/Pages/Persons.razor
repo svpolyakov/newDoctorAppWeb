@@ -12,17 +12,6 @@
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper>
     <div class="pageWrapper">
-        <div class="pageHeader">
-            <MudText Typo="Typo.h5">
-                Пациенты
-            </MudText>
-
-            <div class="flexSpacer" />
-
-            <MudIconButton Class="pale-icon" Icon="@Icons.Material.Outlined.Refresh" aria-label="refresh"></MudIconButton>
-            <MudIconButton Class="pale-icon" OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" aria-label="settings"></MudIconButton>
-        </div>
-
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
@@ -277,10 +266,7 @@
 
 
 
-    async Task GoToCustomizationPersons()
-    {
-        navigationManager.NavigateTo(PatientService.CurrentPage + "Custom");
-    }
+
 
     async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
     {
@@ -389,7 +375,8 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = false;
-        StateContainer.AppTitle = "";
+        StateContainer.AppTitle = "Пациенты";
+        StateContainer.CurrentPage = Pages.Patients;
         StateContainer.CurrentPatient = null;
         showProgress = true;
 

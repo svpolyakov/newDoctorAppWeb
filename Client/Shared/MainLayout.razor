@@ -4,33 +4,40 @@
 @inject CustomStateProvider authStateProvider
 @inject IIndexedDbFactory DbFactory
 @inject StateContainer StateContainer
+@inject IJSRuntime JSRuntime
 
 @if (isMenuVisible)
 {
-<div class="menuBlock">
-    <div class="menuBlockItem">
-        <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
+    <div class="menuBlock">
+        <div class="menuBlockItem">
+            <MudButton IconClass="exitIcon" Color="Color.Tertiary" EndIcon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Outlined" OnClick="LogoutClick">Выйти</MudButton>
+        </div>
+        <br>
+        <MudDivider />
+        <br>
+        <div class="menuBlockItem">
+            <MudButton IconClass="customIcon" Color="Color.Tertiary" Variant="Variant.Outlined" OnClick="CustomizationTree">Кастомизация</MudButton>
+        </div>
     </div>
-    <br>
-    <MudDivider />
-    <br>
-    <div class="menuBlockItem">
-        <MudButton IconClass="customIcon" Color="Color.Tertiary" Variant="Variant.Outlined" OnClick="CustomizationTree">Кастомизация</MudButton>
-    </div>
-</div>
 }
 <MudOverlay OnClick="DisplayMenu" @bind-Visible="isMenuVisible" DarkBackground="true" ZIndex="1101" AutoClose="false" />
 
 <MudLayout>
     <MudAppBar Class="appBar">
         <div class="logoContainer"><img class="logo" src="logoWhite.svg"></div>
-        @if (StateContainer.AppTitle?.Length > 0 && !isMenuVisible)
+        @if (StateContainer.AppTitle?.Length > 0 && !isMenuVisible && StateContainer.CurrentPage != Pages.Patients)
         {
-            <MudIconButton Class="whiteButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoBack())"></MudIconButton><div class="flexSpacer" />
+            <MudIconButton Class="whiteButton" Size="Size.Large" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@(() => GoBack())"></MudIconButton>
         }
         @if (!isMenuVisible)
         {
+            <div class="flexSpacer" />
             <MudText>@StateContainer.AppTitle</MudText>
+            @if (StateContainer.CurrentPage == Pages.Patients)
+            {
+                <MudIconButton Class="whiteButton" Icon="@Icons.Material.Outlined.Refresh" aria-label="refresh"></MudIconButton>
+                <MudIconButton Class="whiteButton" OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" aria-label="settings"></MudIconButton>
+            }
         }
 
         <div class="flexSpacer" />
@@ -44,7 +51,8 @@
     </MudDrawer>
 
     <MudMainContent Style="min-height: 100vh; padding-top: 2rem;">
-        @if (StateContainer.CurrentPatient != null) { 
+        @if (StateContainer.CurrentPatient != null)
+        {
             <PatientHeader />
         }
         @Body
@@ -103,7 +111,7 @@
         background-color: @DoctorAppWeb.Client.Shared.Colors.Blue;
     }
 
-    .logoContainer {     
+    .logoContainer {
     }
 
     .logo {
@@ -142,7 +150,8 @@
             string titleInfo = StateContainer.CurrentPatient.Lastname + " " + StateContainer.CurrentPatient.Firstname + " " + StateContainer.CurrentPatient.Patronymic + " " + StateContainer.CurrentPatient.Birthday + " (" + StateContainer.CurrentPatient.Age + ") " + StateContainer.CurrentPatient.StayDep + " " + StateContainer.CurrentPatient.ServiceCaseNumber;
             StateContainer.AppTitle = titleInfo;
             navigationManager.NavigateTo(StateContainer.CurrentPage);
-        } else
+        }
+        else
         {
             // go to prev patient
             navigationManager.NavigateTo("persons");
@@ -152,7 +161,19 @@
     public async Task CustomizationTree()
     {
         isMenuVisible = !isMenuVisible;
-        navigationManager.NavigateTo("customization");
+        StateContainer.CurrentPage = Pages.Customization;
+        navigationManager.NavigateTo(Pages.Customization);
+    }
+
+    async Task GoToCustomizationPersons()
+    {
+        StateContainer.CurrentPage = Pages.PatientsCustom;
+        navigationManager.NavigateTo(Pages.PatientsCustom);
+    }
+
+    async Task Reload()
+    {
+        await JSRuntime.InvokeVoidAsync("window.location.reload()");
     }
 }
 
