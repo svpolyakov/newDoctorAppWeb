@@ -28,7 +28,14 @@
     <!-- Chart.js added as a client side lib -->
     <script>
         window.setup = (id, config) => {
-            var ctx = document.getElementById(id).getContext('2d');
+            var el = document.getElementById(id);
+            if (!el) {
+                return;
+            }
+            var ctx = el.getContext('2d');
+            if (!ctx) {
+                return;
+            }
             new Chart(ctx, config);
         }
     </script>

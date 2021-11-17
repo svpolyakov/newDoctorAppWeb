@@ -3384,7 +3384,7 @@ namespace PatientsWcf
             }
         }
 
-        public System.Collections.Generic.List<string> DatesList;
+        public System.Collections.Generic.List<System.DateTime> DatesList { get; set; }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

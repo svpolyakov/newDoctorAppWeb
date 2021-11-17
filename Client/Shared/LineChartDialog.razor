@@ -1,0 +1,24 @@
+<div class="dlg-chart-wrapper">
+    <LineChart Id="@Title"
+               Data="@Data"
+               Labels="@Labels">
+
+    </LineChart>
+</div>
+
+<style>
+    .dlg-chart-wrapper {
+        padding: 2rem;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public double?[] Data { get; set; }
+
+    [Parameter]
+    public string[] Labels { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+}

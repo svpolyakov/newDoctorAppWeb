@@ -182,11 +182,11 @@
         return chartLabels;
     }
 
-    private List<double> LineChartSeries(IndicantChartDto indChartDto)
+    private List<double?> LineChartSeries(IndicantChartDto indChartDto)
     {
         List<ChartSeries> chartSeriesList = new List<ChartSeries>();
 
-        List<double> data = new List<double>();
+        List<double?> data = new List<double?>();
         foreach (PatientNumericIndicantDto patIndicantDto in indChartDto.PatientIndicant)
         {
             foreach (NumericIndicantValueDto numIndicantValueDto in patIndicantDto.Indicant.OrderBy(x => x.ValueDate))

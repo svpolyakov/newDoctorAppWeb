@@ -10,7 +10,7 @@
     public string Id { get; set; }
 
     [Parameter]
-    public double[] Data { get; set; }
+    public double?[] Data { get; set; }
 
     [Parameter]
     public string[] Labels { get; set; }
@@ -45,8 +45,9 @@
 
             }
         };
-        if (firstRender)
+        if (firstRender&& !String.IsNullOrEmpty(Id))
         {
+            Console.WriteLine("invoke setup for " + Id);
             await JSRuntime.InvokeVoidAsync("setup", Id, config);
         }
     }

@@ -2,6 +2,7 @@
 @inject IPatientsService PatientService
 @inject HttpClient Http
 @inject StateContainer StateContainer
+@inject IDialogService Dialog
 
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
@@ -9,12 +10,12 @@
         <MudText Typo="Typo.h5">
             Анализы
         </MudText>
-            <div class="tabWrapper">
+        <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (allAnalysis != null)
+                    @if (dtcAnalysis != null)
                     {
-                        foreach (LabTestDto analysisGroup in allAnalysis)
+                        foreach (LabTestDto analysisGroup in dtcAnalysis)
                         {
                             <div class="groupHeader">
                                 <MudText Class="greenText" Typo="Typo.h5">@analysisGroup.LabTestName</MudText>
@@ -23,15 +24,25 @@
                             <MudTable Items="@analysisGroup.ParameterList" Dense="true">
                                 <HeaderContent>
                                     <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
-                                    @foreach (string date in analysisGroup.DatesList)
+                                    @foreach (DateTime date in analysisGroup.DatesList)
                                     {
-                                        <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
+                                        <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
                                     }
                                     <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
-                                    <MudTd Class="stickyLeftCell">@context.ParameterName</MudTd>
-                                    @foreach (string date in analysisGroup.DatesList)
+                                    <MudTd Class="stickyLeftCell">
+                                        @if (IsChartAvailable(context))
+                                                {
+                                            <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
+                                                  class="link tableHeaderText">@context.ParameterName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="tableHeaderText">@context.ParameterName</span>
+                                        }
+                                    </MudTd>
+                                    @foreach (DateTime date in analysisGroup.DatesList)
                                             {
                                         <MudTd>@GetValueByDate(context, date)</MudTd>
                                             }
@@ -42,10 +53,10 @@
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                    @if (allAnalysis != null)
+                    @if (iscAnalysis != null)
                     {
                         <MudExpansionPanels>
-                            @foreach (LabTestDto analysisGroup in allAnalysis)
+                            @foreach (LabTestDto analysisGroup in iscAnalysis)
                             {
                                 <MudExpansionPanel>
                                     <TitleContent>
@@ -55,18 +66,28 @@
                                         <MudTable Items="@analysisGroup.ParameterList" Dense="true">
                                             <HeaderContent>
                                                 <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
-                                                @foreach (string date in analysisGroup.DatesList)
-                                            {
-                                                <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
-                                            }
+                                                @foreach (DateTime date in analysisGroup.DatesList)
+                                                {
+                                                    <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
+                                                }
                                                 <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                             </HeaderContent>
                                             <RowTemplate>
-                                                <MudTd Class="stickyLeftCell tableHeader"><span class="tableHeaderText">@context.ParameterName</span></MudTd>
-                                                @foreach (string date in analysisGroup.DatesList)
-                                                {
-                                                <MudTd>@GetValueByDate(context, date)</MudTd>
-                                                }
+                                                <MudTd Class="stickyLeftCell tableHeader">
+                                                    @if (IsChartAvailable(context))
+                                                            {
+                                                        <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
+                                                              class="link tableHeaderText">@context.ParameterName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="tableHeaderText">@context.ParameterName</span>
+                                                    }
+                                                </MudTd>
+                                                @foreach (DateTime date in analysisGroup.DatesList)
+                                                        {
+                                                    <MudTd>@GetValueByDate(context, date)</MudTd>
+                                                        }
                                                 <MudTd Class="stickyRightCell tableHeader"><span class="tableHeaderText">нормальных тут нет</span></MudTd>
                                             </RowTemplate>
                                         </MudTable>
@@ -105,15 +126,25 @@
                                         <MudTable Items="@analysisGroup.ParameterList" Dense="true">
                                             <HeaderContent>
                                                 <MudTh Class="tableHeader stickyLeftCell"><span class="tableHeaderText">Название</span></MudTh>
-                                                @foreach (string date in analysisGroup.DatesList)
+                                                @foreach (DateTime date in analysisGroup.DatesList)
                                                 {
-                                                    <MudTh Class="tableHeader"><span class="tableHeaderText">@date</span></MudTh>
+                                                    <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
                                                 }
                                                 <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                             </HeaderContent>
                                             <RowTemplate>
-                                                <MudTd Class="stickyLeftCell tableHeader"><span class="tableHeaderText">@context.ParameterName</span></MudTd>
-                                                @foreach (string date in analysisGroup.DatesList)
+                                                <MudTd Class="stickyLeftCell tableHeader">
+                                                    @if (IsChartAvailable(context))
+                                                    {
+                                                        <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
+                                                              class="link tableHeaderText">@context.ParameterName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="tableHeaderText">@context.ParameterName</span>
+                                                    }
+                                                </MudTd>
+                                                @foreach (DateTime date in analysisGroup.DatesList)
                                                         {
                                                     <MudTd>@GetValueByDate(context, date)</MudTd>
                                                         }
@@ -127,7 +158,7 @@
                     }
                 </MudTabPanel>
             </MudTabs>
-</div>
+        </div>
     </div>
 </MudPaper>
 
@@ -160,7 +191,7 @@
     }
     .groupHeader {
         margin-top: 1rem;
-        mardin-bottom: 1rem;
+        margin-bottom: 1rem;
     }
     .grayText {
         color: @DoctorAppWeb.Client.Shared.Colors.Gray
@@ -168,50 +199,93 @@
     .greenText {
         color: @DoctorAppWeb.Client.Shared.Colors.Green
     }
+    .link {
+        color: @DoctorAppWeb.Client.Shared.Colors.Blue;
+        cursor: pointer;
+    }
+    .searchButton {
+        width: 100%;
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
 </style>
 
 @code {
     public bool showProgress = true;
     public string SearchQuery;
 
+    private IDialogReference currentDlg;
+
     List<LabTestDto> allAnalysis;
     List<LabTestDto> iscAnalysis;
+    List<LabTestDto> dtcAnalysis;
+
+    List<LabTestDto> fullList;
 
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
         showProgress = true;
-        allAnalysis = await GetAnalysisAsync(SrvType.All);
-        List<LabTestDto> test2 = await GetAnalysisAsync(SrvType.DTC);
+        List<LabTestDto> archive = await GetAnalysisAsync(SrvType.All);
+        dtcAnalysis = await GetAnalysisAsync(SrvType.DTC);
         iscAnalysis = await GetAnalysisAsync(SrvType.ISC);
 
-        foreach (LabTestDto analysisGroup in allAnalysis)
+        if (dtcAnalysis != null)
         {
-            analysisGroup.DatesList = new List<string>();
+
+            FillDatesArray(dtcAnalysis);
+        }
+        if (iscAnalysis != null)
+        {
+            FillDatesArray(iscAnalysis);
+        }
+
+        fullList = archive.GetRange(0, archive.Count);
+        allAnalysis = archive;
+
+        if (allAnalysis != null)
+        {
+            FillDatesArray(allAnalysis);
+        }
+
+        showProgress = false;
+    }
+
+    private void FillDatesArray(List<LabTestDto> list)
+    {
+        foreach (LabTestDto analysisGroup in list)
+        {
+            analysisGroup.DatesList = new List<DateTime>();
             if (analysisGroup.ParameterList != null)
             {
-                foreach(ParameterDto parameter in analysisGroup.ParameterList)
+                foreach (ParameterDto parameter in analysisGroup.ParameterList)
                 {
                     if (parameter.ParameterValueList != null)
                     {
                         foreach (ParameterValueDto value in parameter.ParameterValueList)
                         {
-                            string timeValue = value.EndDate.Value.ToString("dd.MM.yyyy HH:mm");
-                            if (!analysisGroup.DatesList.Contains(timeValue))
+                            if (value.EndDate != null)
                             {
-                                analysisGroup.DatesList.Add(timeValue);
+                                DateTime timeValue = new DateTime(
+                                    value.EndDate.Value.Year,
+                                    value.EndDate.Value.Month,
+                                    value.EndDate.Value.Day,
+                                    value.EndDate.Value.Hour,
+                                    value.EndDate.Value.Minute,
+                                    0);
+                                if (!analysisGroup.DatesList.Contains(timeValue))
+                                {
+                                    analysisGroup.DatesList.Add(timeValue);
+                                }
                             }
                         }
                     }
-
-
                 }
             }
 
+            analysisGroup.DatesList = analysisGroup.DatesList.Distinct().ToList();
             analysisGroup.DatesList.Sort();
         }
-
-        showProgress = false;
     }
 
     private async Task<List<LabTestDto>> GetAnalysisAsync(SrvType srvType)
@@ -234,10 +308,10 @@
         return result;
     }
 
-    private string GetValueByDate(ParameterDto context, string date)
+    private string GetValueByDate(ParameterDto context, DateTime date)
     {
 
-        IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date);
+        IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date.ToString("dd.MM.yyyy HH:mm"));
         if (!match.Any())
         {
             return "";
@@ -246,8 +320,45 @@
         return result;
     }
 
-    private async Task HandleSearch()
+    private bool IsChartAvailable(ParameterDto context)
+    {
+        if (context.ParameterValueList.Count() < 2)
         {
-
+            return false;
         }
+
+        return true;
+    }
+
+    private async Task HandleSearch()
+    {
+        if (String.IsNullOrEmpty(SearchQuery))
+        {
+            allAnalysis = fullList;
+            return;
+        }
+
+        allAnalysis = fullList.Where(group => group.LabTestName.ToLower().Contains(SearchQuery.ToLower())).ToList();
+    }
+
+    private void ShowChart(ParameterDto context, string ParamName)
+    {
+        List<double?> values = new List<double?>();
+        List<string> labels = new List<string>();
+
+        foreach (ParameterValueDto value in context.ParameterValueList)
+        {
+            values.Add(double.Parse(value.TextValue.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture));
+            labels.Add(value.EndDate.Value.ToString("dd.MM.yyyy HH:mm"));
+        }
+
+        var parameters = new DialogParameters
+        {
+            ["Title"] = ParamName,
+            ["Data"] = values.ToArray(),
+            ["Labels"] = labels.ToArray()
+        };
+        DialogOptions options = new DialogOptions() { CloseButton = true };
+        Dialog.Show<LineChartDialog>(ParamName, parameters, options);
+    }
 }
