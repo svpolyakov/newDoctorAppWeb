@@ -1,15 +1,202 @@
 ﻿@page "/research"
 @inject IPatientsService PatientService
 @inject HttpClient Http
-<h3>Research</h3>
+
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Обследования
+        </MudText>
+
+        <div class="tabWrapper">
+            <MudTabs>
+                <MudTabPanel Text="ТЕКУЩИЕ">
+                    @if (dtcResearch != null)
+                    {
+                        foreach (InvestigationDto investigation in dtcResearch.DTCInvestigationList)
+                        {
+                            string sTime = investigation.StartDate != null ? investigation.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                            string eTime = investigation.EndDate != null ? investigation.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                            <MudExpansionPanel>
+                                <TitleContent>
+                                    <MudGrid>
+                                        <MudItem xs="1">
+                                            <div class="rowIcon">
+                                                <MudIcon Icon="@(investigation.EndDate != null ? DoctorIcons.Check : DoctorIcons.Square)"></MudIcon>
+                                            </div>
+                                        </MudItem>
+                                        <MudItem xs="7">
+                                            <MudText Typo="Typo.h5">@investigation.InvestigationName</MudText>
+                                            <MudText Class="grayText" Typo="Typo.body1">@investigation.MainExecutorFIO</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </TitleContent>
+                                <ChildContent>
+                                    @if (investigation.Conclusion != null && !String.IsNullOrEmpty(investigation.Conclusion.VersionText))
+                                    {
+                                        <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                        <MudText>@((MarkupString)investigation.Conclusion.VersionText)</MudText>
+                                    }
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
+                    @if (iscResearch != null)
+                    {
+                        foreach (GroupInvestigationDto investigationGroup in iscResearch.ISCInvestigationList)
+                        {
+                            <MudText Class="greenText" Typo="Typo.body1">@investigationGroup.InvestigationGroupName</MudText>
+                            foreach (InvestigationDto investigation in investigationGroup.InvestigationList)
+                            {
+                                string sTime = investigation.StartDate != null ? investigation.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                string eTime = investigation.EndDate != null ? investigation.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudGrid>
+                                            <MudItem xs="1">
+                                                <div class="rowIcon">
+                                                    <MudIcon Icon="@(investigation.EndDate != null ? DoctorIcons.Check : DoctorIcons.Square)"></MudIcon>
+                                                </div>
+                                            </MudItem>
+                                            <MudItem xs="7">
+                                                <MudText Typo="Typo.h5">@investigation.InvestigationName</MudText>
+                                                <MudText Class="grayText" Typo="Typo.body1">@investigation?.MainExecutorFIO</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        @if (investigation.Conclusion != null && !String.IsNullOrEmpty(investigation.Conclusion.VersionText))
+                                        {
+                                            <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                            <MudText>@((MarkupString)investigation.Conclusion.VersionText)</MudText>
+                                        }
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        }
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="АРХИВ">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                          OnClearButtonClick="HandleSearch"
+                                          Clearable="true"
+                                          FullWidth="true"
+                                          @bind-Value="SearchQuery"
+                                          Label="Название исследования"
+                                          Margin="Margin.Dense"
+                                          Variant="Variant.Outlined"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                        </MudItem>
+                    </MudGrid>
+                    @if (allResearch != null)
+                    {
+                        foreach (GroupInvestigationDto investigationGroup in allResearch.AllInvestigationList)
+                        {
+                            <MudText Class="greenText" Typo="Typo.body1">@investigationGroup.InvestigationGroupName</MudText>
+                            foreach (InvestigationDto investigation in investigationGroup.InvestigationList)
+                            {
+                                string sTime = investigation.StartDate != null ? investigation.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                string eTime = investigation.EndDate != null ? investigation.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudGrid>
+                                            <MudItem xs="1">
+                                                <div class="rowIcon">
+                                                    <MudIcon Icon="@(investigation.EndDate != null ? DoctorIcons.Check : DoctorIcons.Square)"></MudIcon>
+                                                </div>
+                                            </MudItem>
+                                            <MudItem xs="7">
+                                                <MudText Typo="Typo.h5">@investigation?.InvestigationName</MudText>
+                                                <MudText Class="grayText" Typo="Typo.body1">@investigation?.MainExecutorFIO</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@sTime</MudText>
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <MudText Class="grayText" Typo="Typo.body1">@eTime</MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        @if (investigation.Conclusion != null && !String.IsNullOrEmpty(investigation.Conclusion.VersionText))
+                                        {
+                                            <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
+                                            <MudText>@((MarkupString)investigation.Conclusion.VersionText)</MudText>
+                                        }
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            }
+                        }
+                    }
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+</MudPaper>
+
+<style>
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .greenText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Green
+    }
+    .searchButton {
+        width: 100%;
+        margin-top: 3px;
+        margin-bottom: 2px;
+    }
+    .rowIcon {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
+
 
 @code {
+    public bool showProgress = true;
+    public InvestigationsResultDto dtcResearch;
+    public InvestigationsResultDto iscResearch;
+    public InvestigationsResultDto allResearch;
+
+    List<GroupInvestigationDto> fullList = new List<GroupInvestigationDto>();
+
+    public string SearchQuery;
 
     protected override async Task OnInitializedAsync()
     {
-        InvestigationsResultDto test1 = await GetInvestigationsAsync(SrvType.DTC);
-        InvestigationsResultDto test2 = await GetInvestigationsAsync(SrvType.ISC);
-        InvestigationsResultDto test3 = await GetInvestigationsAsync(SrvType.All);
+        showProgress = true;
+
+        dtcResearch = await GetInvestigationsAsync(SrvType.DTC);
+        iscResearch = await GetInvestigationsAsync(SrvType.ISC);
+        allResearch = await GetInvestigationsAsync(SrvType.All);
+
+        InvestigationsResultDto archive = await GetInvestigationsAsync(SrvType.All);
+
+        fullList = archive.AllInvestigationList.GetRange(0, archive.AllInvestigationList.Count);
+        allResearch = archive;
+
+        showProgress = false;
     }
 
     private async Task<InvestigationsResultDto> GetInvestigationsAsync(SrvType srvType)
@@ -30,5 +217,30 @@
         }
 
         return result;
+    }
+
+    private async Task HandleSearch()
+    {
+        if (String.IsNullOrEmpty(SearchQuery))
+        {
+            allResearch.AllInvestigationList = fullList;
+            return;
+        }
+        List<GroupInvestigationDto> filtered = new List<GroupInvestigationDto>();
+        foreach (GroupInvestigationDto investigationGroup in fullList)
+        {
+            IEnumerable<InvestigationDto> matches = investigationGroup.InvestigationList.Where(invsestigation => invsestigation.InvestigationName.ToLower().Contains(SearchQuery.ToLower()));
+            if (matches.Any())
+            {
+                GroupInvestigationDto filteredGroup = new GroupInvestigationDto();
+
+                filteredGroup.InvestigationList = matches.ToList();
+                filteredGroup.InvestigationGroupName = investigationGroup.InvestigationGroupName;
+
+                filtered.Add(filteredGroup);
+            }
+        }
+
+        allResearch.AllInvestigationList = filtered;
     }
 }
