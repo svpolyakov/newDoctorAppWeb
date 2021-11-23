@@ -97,5 +97,10 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public string InpatientSrv { get; set; }
         public string Dtc { get; set; }
         public string ReceptCase { get; set; }
+
+        public override string ToString()
+        {
+            return InpatientSrv + " " + Dtc + " " + ReceptCase;
+        }
     }
 }
