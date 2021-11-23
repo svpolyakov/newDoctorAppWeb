@@ -1,0 +1,144 @@
+@inject StateContainer StateContainer
+@inject IPatientsService PatientService
+@inject HttpClient Http
+
+<Progress isVisible="@showProgress"></Progress>
+<div>
+    <MudTabs>
+        <MudTabPanel Text="@all">
+            @foreach (ServiceMedDocDto serviceMedDoc in docList)
+            {
+                foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                {
+                    <MudExpansionPanel>
+                        <TitleContent>
+                            <div style="display:flex">
+                                <div>
+                                    <MudText Class="blueText" Typo="Typo.h5">@doc.TypeName</MudText>
+                                    <MudText Typo="Typo.body1">@doc.Author</MudText>
+                                </div>
+                                <div class="flexSpacer" />
+                                <div>
+                                    <MudText Typo="Typo.body1" Class="grayText">@doc.CreateDate.Value.ToString("dd.MM.yyyy")</MudText>
+                                </div>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            @((MarkupString)doc.Document.VersionText)
+                        </ChildContent>
+                    </MudExpansionPanel>
+                }
+             }
+        </MudTabPanel>
+        <MudTabPanel Text="@archive">
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { HandleSearch(); } })"
+                                  OnClearButtonClick="HandleSearch"
+                                  Clearable="true"
+                                  FullWidth="true"
+                                  @bind-Value="SearchQuery"
+                                  Label="Õ‡Á‚‡ÌËÂ ‰ÓÍÛÏÂÌÚ‡"
+                                  Margin="Margin.Dense"
+                                  Variant="Variant.Outlined"></MudTextField>
+                </MudItem>
+                <MudItem xs="2">
+                    <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
+                </MudItem>
+            </MudGrid>
+        </MudTabPanel>
+    </MudTabs>
+
+
+
+    <style>
+    .flexSpacer {
+        flex: 1;
+    }
+    .grayText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Gray
+    }
+    .greenText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Green
+    }
+    .blueText {
+        color: @DoctorAppWeb.Client.Shared.Colors.Blue
+    }
+    </style>
+
+            
+</div>
+
+@code {
+
+    public bool showProgress = true;
+    public List<ServiceMedDocDto> docList = new List<ServiceMedDocDto>();
+
+    public string all = "œŒ ¬—≈… √Œ—œ»“¿À»«¿÷»»";
+    public string archive = "¿–’»¬";
+
+    public string SearchQuery;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("OnInitializedAsync");
+        await GetInfoMedDocList();
+    }
+
+    private async Task<List<ServiceMedDocDto>> GetInfoMedDocList()
+    {
+        List<ServiceMedDocDto> result = null;
+        try
+        {
+            showProgress = true;
+            Console.WriteLine("GetInfoMedDocList 1");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDocList");
+            httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
+            httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            Console.WriteLine("GetInfoMedDocList 2");
+            docList = await httpResponse.Content.ReadFromJsonAsync<List<ServiceMedDocDto>>();
+            Console.WriteLine("GetInfoMedDocList 3");
+
+            foreach(ServiceMedDocDto serviceMedDoc in docList) {
+                foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                {
+                    doc.Document = await GetInfoMedDoc(doc.EpicrisisVersionID);
+                }
+            }
+
+            showProgress = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("fail");
+        }
+
+        return result;
+    }
+
+    private async Task<MedDocDto> GetInfoMedDoc(Guid epicrisisVersionId)
+    {
+        MedDocDto result = null;
+        try
+        {
+            showProgress = true;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDoc");
+            httpRequest.Headers.Add("epicrisisVersionId", epicrisisVersionId.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<MedDocDto>();
+            showProgress = false;
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+
+    private async Task HandleSearch()
+        {
+
+        }
+}

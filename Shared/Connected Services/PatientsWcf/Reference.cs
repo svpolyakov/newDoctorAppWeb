@@ -2001,6 +2001,8 @@ namespace PatientsWcf
                 this.TypeNameField = value;
             }
         }
+
+        public MedDocDto Document { get; set; }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

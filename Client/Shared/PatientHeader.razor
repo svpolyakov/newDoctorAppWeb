@@ -27,6 +27,7 @@
 
             <div class="patientInfoButtonsBlock">
                 <MudButton OnClick="ShowAnamnesis" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез жизни</MudButton>
+                <MudButton OnClick="ShowMedDocs" Color="Color.Secondary" Variant="Variant.Outlined">Медицинские документы</MudButton>
             </div>
         </MudPaper>
     }
@@ -94,7 +95,13 @@
 
     void ShowAnamnesis()
     {
-        DialogOptions options = new DialogOptions() { CloseButton = true};
+        DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
         Dialog.Show<Anamnesis>("Анамнез жизни", options);
+    }
+
+    void ShowMedDocs()
+    {
+        DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        Dialog.Show<MedDocs>("Медицинские документы", options);
     }
 }

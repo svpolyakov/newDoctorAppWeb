@@ -492,47 +492,7 @@
         StateHasChanged();
     }
 
-    private async Task<List<ServiceMedDocDto>> GetInfoMedDocList()
-    {
-        List<ServiceMedDocDto> result = null;
-        try
-        {
-            showProgress = true;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDocList");
-            httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
-            httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
-            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
-            result = await httpResponse.Content.ReadFromJsonAsync<List<ServiceMedDocDto>>();
-            showProgress = false;
-        }
-        catch (Exception ex)
-        {
-
-        }
-
-        return result;
-    }
-
-    private async Task<MedDocDto> GetInfoMedDoc(Guid epicrisisVersionId)
-    {
-        MedDocDto result = null;
-        try
-        {
-            showProgress = true;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDoc");
-            httpRequest.Headers.Add("epicrisisVersionId", epicrisisVersionId.ToString());
-            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
-            result = await httpResponse.Content.ReadFromJsonAsync<MedDocDto>();
-            showProgress = false;
-        }
-        catch (Exception ex)
-        {
-
-        }
-
-        return result;
-    }
-
+    
     private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
     {
         try
