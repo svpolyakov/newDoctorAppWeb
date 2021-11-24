@@ -193,7 +193,7 @@
 
         InvestigationsResultDto archive = await GetInvestigationsAsync(SrvType.All);
 
-        fullList = archive.AllInvestigationList.GetRange(0, archive.AllInvestigationList.Count);
+        fullList = archive?.AllInvestigationList?.GetRange(0, archive.AllInvestigationList.Count);
         allResearch = archive;
 
         showProgress = false;
