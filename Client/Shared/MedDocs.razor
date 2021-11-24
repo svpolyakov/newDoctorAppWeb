@@ -81,7 +81,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("OnInitializedAsync");
         await GetInfoMedDocList();
     }
 
@@ -91,14 +90,11 @@
         try
         {
             showProgress = true;
-            Console.WriteLine("GetInfoMedDocList 1");
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDocList");
             httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
             httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
-            Console.WriteLine("GetInfoMedDocList 2");
             docList = await httpResponse.Content.ReadFromJsonAsync<List<ServiceMedDocDto>>();
-            Console.WriteLine("GetInfoMedDocList 3");
 
             foreach(ServiceMedDocDto serviceMedDoc in docList) {
                 foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
@@ -111,7 +107,6 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine("fail");
         }
 
         return result;
