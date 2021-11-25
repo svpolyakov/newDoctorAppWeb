@@ -97,6 +97,12 @@
 
                 @foreach (var field in CustomGridPerson)
                 {
+                    if (field.NameColumnEn == "InResuscitation")
+                    {
+                        field.NameColumnEn = "InResuscitationString";
+                    }
+
+
                     if (field.WhereToDisplay)
                     {
                         <MudTd>
@@ -119,6 +125,7 @@
                     string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
                     string iconClass = context.SexEnum == 1 ? "darkBlue" : "darkRed";
                     string icon = context.SexEnum == 1 ? Icons.Material.Filled.Male : Icons.Material.Filled.Female;
+                    string diagnosis = !String.IsNullOrEmpty(@context.Diagnos) ? @context.Diagnos : "данные не указаны";
                     <MudTr>
                         <MudTd class="green" colspan="@CustomGridPerson.Count">
                             <div class="descriprion">
@@ -133,12 +140,12 @@
                                     <MudItem xs="12">
                                         <span class="descriprion-title" Color="Color.Secondary">Поступление: </span><span class="descriprion-content">@context.AdmissionInfo</span>
                                     </MudItem>
-
+                                    
                                     <MudItem xs="8">
                                         <span class="descriprion-title" Color="Color.Secondary">Дата рождения, возраст: </span><span class="descriprion-content">@context.Birthday (@context.AgeDescription)</span><MudIcon Class="@iconClass" Icon="@icon" />
                                     </MudItem>
                                     <MudItem xs="4">
-                                        <span class="descriprion-title" Color="Color.Secondary">Диагноз: </span><span class="descriprion-content">@context.Diagnos ? @context.Diagnos : "данные не указаны"</span>
+                                        <span class="descriprion-title" Color="Color.Secondary">Диагноз: </span><span class="descriprion-content">@diagnosis</span>
                                     </MudItem>
                                 </MudGrid>
                             </div>
@@ -469,7 +476,7 @@
         StateHasChanged();
     }
 
-
+    
     private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
     {
         try
@@ -528,7 +535,8 @@
                             AdmissionInfoDtc = person.AdmissionInfo?["Dtc"],
                             AdmissionInfoInpatientSrv = person.AdmissionInfo?["InpatientSrv"],
                             AdmissionInfoReceptCase = person.AdmissionInfo?["ReceptCase"],
-                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] }
+                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] },
+                            InResuscitationString = person.InResuscitation ? "да" : "нет"
                         };
                         db.Patients.Add(patient);
                         patients.Add(patient);

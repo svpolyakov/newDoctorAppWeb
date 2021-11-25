@@ -82,6 +82,8 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         
         public Guid PersonnelID { get; set; }
         public bool ShowDetails { get; set; }
+
+        public string InResuscitationString { get; set; }
         public string GetPropertyValue(string propertyName)
         {
             try
