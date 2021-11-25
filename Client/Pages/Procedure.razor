@@ -197,9 +197,11 @@
         dtcProcedures = await GetProceduresAsync(SrvType.DTC);
         iscProcedures = await GetProceduresAsync(SrvType.ISC);
 
-        allProcedures = archive;
-        fullList = archive.GetRange(0, archive.Count);
-
+        if (archive != null)
+        {
+            allProcedures = archive;
+            fullList = archive.GetRange(0, archive.Count);
+        }
         showProgress = false;
     }
 

@@ -133,7 +133,7 @@
                                     <MudItem xs="12">
                                         <span class="descriprion-title" Color="Color.Secondary">Поступление: </span><span class="descriprion-content">@context.AdmissionInfo</span>
                                     </MudItem>
-                                    
+
                                     <MudItem xs="8">
                                         <span class="descriprion-title" Color="Color.Secondary">Дата рождения, возраст: </span><span class="descriprion-content">@context.Birthday (@context.AgeDescription)</span><MudIcon Class="@iconClass" Icon="@icon" />
                                     </MudItem>
@@ -469,7 +469,7 @@
         StateHasChanged();
     }
 
-    
+
     private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
     {
         try
