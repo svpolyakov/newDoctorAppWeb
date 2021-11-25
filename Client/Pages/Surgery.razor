@@ -9,7 +9,7 @@
         <MudText Typo="Typo.h5">
             Операции
         </MudText>
-        @if (Surgeries != null)
+        @if (Surgeries != null && Surgeries.Any())
         {
             foreach (SurgeryDto surgery in Surgeries)
             {
@@ -38,6 +38,10 @@
                     </ChildContent>
                 </MudExpansionPanel>
             }
+        }
+        else
+        {
+            <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Surgery</MudText>
         }
     </div>
 </MudPaper>

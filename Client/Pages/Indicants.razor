@@ -17,7 +17,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ГРАФИКИ">
-                    @if (indCharts != null)
+                    @if (indCharts != null && indCharts.Any())
                     {
                         @foreach (IndicantChartDto indChart in indCharts)
                         {
@@ -33,9 +33,13 @@
                             </MudGrid>
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="ТАБЛИЦА">
-                    @if (indicants != null)
+                    @if (indicants != null && indicants.Any())
                     {
                         <MudTable Items="@indicants" Hover="false" Breakpoint="Breakpoint.Sm">
                             <HeaderContent>
@@ -68,6 +72,10 @@
                                 <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:" />
                             </PagerContent>
                         </MudTable>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>

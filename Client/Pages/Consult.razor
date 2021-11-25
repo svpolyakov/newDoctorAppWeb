@@ -13,7 +13,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (dtcConsult != null)
+                    @if (dtcConsult != null && dtcConsult.DTCConsultanceList.Any())
                     {
                         foreach (ConsultanceDto consult in dtcConsult.DTCConsultanceList)
                         {
@@ -49,9 +49,13 @@
                             </MudExpansionPanel>
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                    @if (iscConsult != null)
+                    @if (iscConsult != null && iscConsult.ISCConsultanceList.Any())
                     {
                         foreach (DTCConsultanceDto consultGroup in iscConsult.ISCConsultanceList)
                         {
@@ -60,7 +64,7 @@
                             {
                                 string sTime = consult.StartDate != null ? consult.StartDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
                                 string eTime = consult.EndDate != null ? consult.EndDate.Value.ToString("dd.MM.yyyy HH:mm") : "";
-                                    <MudExpansionPanel>
+                                <MudExpansionPanel>
                                     <TitleContent>
                                         <MudGrid>
                                             <MudItem xs="1">
@@ -91,6 +95,10 @@
                             }
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
                     <MudGrid>
@@ -108,7 +116,7 @@
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                     </MudGrid>
-                    @if (allConsult != null)
+                    @if (allConsult != null && allConsult.AllConsultanceList.Any())
                     {
                         foreach (ISCConsultanceDto consultGroup in allConsult.AllConsultanceList)
                         {
@@ -149,6 +157,10 @@
                                 </MudExpansionPanel>
                             }
                         }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>

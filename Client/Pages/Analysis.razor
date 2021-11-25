@@ -13,7 +13,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (dtcAnalysis != null)
+                    @if (dtcAnalysis != null && dtcAnalysis.Any())
                     {
                         foreach (LabTestDto analysisGroup in dtcAnalysis)
                         {
@@ -36,11 +36,11 @@
                                                 {
                                             <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
                                                   class="link tableHeaderText">@context.ParameterName</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="tableHeaderText">@context.ParameterName</span>
-                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                <span class="tableHeaderText">@context.ParameterName</span>
+                                                    }
                                     </MudTd>
                                     @foreach (DateTime date in analysisGroup.DatesList)
                                             {
@@ -51,9 +51,13 @@
                             </MudTable>
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                    @if (iscAnalysis != null)
+                    @if (iscAnalysis != null && iscAnalysis.Any())
                     {
                         <MudExpansionPanels>
                             @foreach (LabTestDto analysisGroup in iscAnalysis)
@@ -78,11 +82,11 @@
                                                             {
                                                         <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
                                                               class="link tableHeaderText">@context.ParameterName</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="tableHeaderText">@context.ParameterName</span>
-                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                            <span class="tableHeaderText">@context.ParameterName</span>
+                                                                }
                                                 </MudTd>
                                                 @foreach (DateTime date in analysisGroup.DatesList)
                                                         {
@@ -95,6 +99,10 @@
                                 </MudExpansionPanel>
                             }
                         </MudExpansionPanels>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
@@ -113,7 +121,7 @@
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                     </MudGrid>
-                    @if (allAnalysis != null)
+                    @if (allAnalysis != null && allAnalysis.Any())
                     {
                         <MudExpansionPanels>
                             @foreach (LabTestDto analysisGroup in allAnalysis)
@@ -135,14 +143,14 @@
                                             <RowTemplate>
                                                 <MudTd Class="stickyLeftCell tableHeader">
                                                     @if (IsChartAvailable(context))
-                                                    {
+                                                            {
                                                         <span @onclick="@(e =>  ShowChart(context, context.ParameterName))"
                                                               class="link tableHeaderText">@context.ParameterName</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="tableHeaderText">@context.ParameterName</span>
-                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                            <span class="tableHeaderText">@context.ParameterName</span>
+                                                                }
                                                 </MudTd>
                                                 @foreach (DateTime date in analysisGroup.DatesList)
                                                         {
@@ -155,6 +163,10 @@
                                 </MudExpansionPanel>
                             }
                         </MudExpansionPanels>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -240,8 +252,11 @@
             FillDatesArray(iscAnalysis);
         }
 
-        fullList = archive.GetRange(0, archive.Count);
-        allAnalysis = archive;
+        if (archive != null)
+        {
+            fullList = archive.GetRange(0, archive.Count);
+            allAnalysis = archive;
+        }
 
         if (allAnalysis != null)
         {

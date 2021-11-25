@@ -12,7 +12,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (dtcMeds != null)
+                    @if (dtcMeds != null && dtcMeds.DTCMedicamentList.Any())
                     {
 
                         <MudTable Items="@dtcMeds.DTCMedicamentList" Dense="true">
@@ -52,9 +52,13 @@
                             </ChildRowContent>
                         </MudTable>
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                    @if (iscMeds != null)
+                    @if (iscMeds != null && iscMeds.ISCMedicamentList.Any())
                     {
                         foreach (PatientMedicamentDto medGroup in iscMeds.ISCMedicamentList)
                         {
@@ -89,6 +93,10 @@
                             }
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
                     <MudGrid>
@@ -106,7 +114,7 @@
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                     </MudGrid>
-                    @if (allMeds != null)
+                    @if (allMeds != null && allMeds.AllMedicamentList.Any())
                     {
                         foreach (PatientMedicamentDto medGroup in allMeds.AllMedicamentList)
                         {
@@ -139,6 +147,10 @@
 
                             }
                         }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>

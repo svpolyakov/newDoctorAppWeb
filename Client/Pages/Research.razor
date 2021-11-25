@@ -12,7 +12,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel Text="ТЕКУЩИЕ">
-                    @if (dtcResearch != null)
+                    @if (dtcResearch != null && dtcResearch.DTCInvestigationList.Any())
                     {
                         foreach (InvestigationDto investigation in dtcResearch.DTCInvestigationList)
                         {
@@ -48,9 +48,13 @@
                             </MudExpansionPanel>
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                    @if (iscResearch != null)
+                    @if (iscResearch != null && iscResearch.ISCInvestigationList.Any())
                     {
                         foreach (GroupInvestigationDto investigationGroup in iscResearch.ISCInvestigationList)
                         {
@@ -90,6 +94,10 @@
                             }
                         }
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
                     <MudGrid>
@@ -107,7 +115,7 @@
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                     </MudGrid>
-                    @if (allResearch != null)
+                    @if (allResearch != null && allResearch.AllInvestigationList.Any())
                     {
                         foreach (GroupInvestigationDto investigationGroup in allResearch.AllInvestigationList)
                         {
@@ -146,6 +154,10 @@
                                 </MudExpansionPanel>
                             }
                         }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>

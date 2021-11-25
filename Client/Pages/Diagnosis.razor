@@ -17,7 +17,7 @@
         <div class="tabWrapper">
             <MudTabs>
                 <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="ТЕКУЩИЕ">
-                    @if (diagnosis != null)
+                    @if (diagnosis != null && diagnosis.Any())
                     {
                         foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
                         {
@@ -38,6 +38,10 @@
                             </div>
                         }
                     }
+                    else
+                        {
+                            <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
+                        }
                 </MudTabPanel>
                 <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="АРХИВ">
                     <MudGrid>
@@ -55,7 +59,7 @@
                             <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                     </MudGrid>
-                    @if (diagnosis != null)
+                    @if (diagnosis != null && diagnosis.Any())
                     {
                         foreach (DepartmentPatientDiagnosInfoDto diag in diagnosis)
                         {
@@ -69,6 +73,10 @@
                                 </MudGrid>
                             }
                         }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
                     }
                 </MudTabPanel>
 
