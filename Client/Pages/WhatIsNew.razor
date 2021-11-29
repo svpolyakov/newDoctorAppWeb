@@ -28,5 +28,95 @@
         StateContainer.ShowDrawer = true;
         //PatientService.CurrentPatient;
         //await JSRuntime.InvokeVoidAsync("visibleMenu", true);
+    }
+
+    private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices()
+    {
+        List<NewServiceInfoDto> result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewHealthcareServices");
+            httpRequest.Headers.Add("healthcareServiceId", PatientService.HealthcareServiceId.ToString());
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<List<NewServiceInfoDto>>();
         }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+
+    private async Task<NewFiagnosInfoDto> GetNewPatientDiagnos()
+    {
+        NewFiagnosInfoDto result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewPatientDiagnos");
+            httpRequest.Headers.Add("diagnosId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ ДИАГНОЗ_ИД
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<NewFiagnosInfoDto>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+
+    private async Task<List<NewParameterInfoDto>> GetNewLabTest()
+    {
+        List<NewParameterInfoDto> result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewLabTest");
+            httpRequest.Headers.Add("labTestId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ LABTEST_ИД
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<List<NewParameterInfoDto>>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+
+    public async Task<InvestigationDto> GetNewInvestigation()
+    {
+        InvestigationDto result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewInvestigation");
+            httpRequest.Headers.Add("investigationId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ Investg_ИД
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<InvestigationDto>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+
+    public async Task<ConsultanceDto> GetNewConsultance()
+    {
+        ConsultanceDto result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewConsultance");
+            httpRequest.Headers.Add("consultanceId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ consultanceId
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceDto>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
 }
