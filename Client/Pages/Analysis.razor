@@ -28,7 +28,6 @@
                                     {
                                         <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
                                     }
-                                    <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd Class="stickyLeftCell">
@@ -43,10 +42,15 @@
                                                     }
                                     </MudTd>
                                     @foreach (DateTime date in analysisGroup.DatesList)
-                                            {
-                                        <MudTd>@GetValueByDate(context, date)</MudTd>
-                                            }
-                                    <MudTd Class="stickyRightCell">нормальных тут нет</MudTd>
+                                    {
+                                        string[] value = GetValueByDate(context, date);
+                                        string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
+
+                                        <MudTd>
+                                            <MudText Class="@valueClassName">@value[0]</MudText>
+                                            <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                        </MudTd>
+                                     }
                                 </RowTemplate>
                             </MudTable>
                         }
@@ -74,7 +78,6 @@
                                                 {
                                                     <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
                                                 }
-                                                <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                             </HeaderContent>
                                             <RowTemplate>
                                                 <MudTd Class="stickyLeftCell tableHeader">
@@ -90,9 +93,15 @@
                                                 </MudTd>
                                                 @foreach (DateTime date in analysisGroup.DatesList)
                                                         {
-                                                    <MudTd>@GetValueByDate(context, date)</MudTd>
+                                                            string[] value = GetValueByDate(context, date);
+                                                            string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
+
+                                                    <MudTd>
+                                                        <MudText Class="@valueClassName">@value[0]</MudText>
+                                                        <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                                    </MudTd>
                                                         }
-                                                <MudTd Class="stickyRightCell tableHeader"><span class="tableHeaderText">нормальных тут нет</span></MudTd>
+
                                             </RowTemplate>
                                         </MudTable>
                                     </ChildContent>
@@ -138,7 +147,6 @@
                                                 {
                                                     <MudTh Class="tableHeader"><span class="tableHeaderText">@date.ToString("dd.MM.yyyy HH:mm")</span></MudTh>
                                                 }
-                                                <MudTh Class="tableHeader stickyRightCell"><span class="tableHeaderText">Норматив</span></MudTh>
                                             </HeaderContent>
                                             <RowTemplate>
                                                 <MudTd Class="stickyLeftCell tableHeader">
@@ -154,9 +162,14 @@
                                                 </MudTd>
                                                 @foreach (DateTime date in analysisGroup.DatesList)
                                                         {
-                                                    <MudTd>@GetValueByDate(context, date)</MudTd>
+                                                            string[] value = GetValueByDate(context, date);
+                                                            string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
+
+                                                    <MudTd>
+                                                        <MudText Class="@valueClassName">@value[0]</MudText>
+                                                        <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                                    </MudTd>
                                                         }
-                                                <MudTd Class="stickyRightCell tableHeader"><span class="tableHeaderText">нормальных тут нет</span></MudTd>
                                             </RowTemplate>
                                         </MudTable>
                                     </ChildContent>
@@ -211,6 +224,9 @@
     .greenText {
         color: @DoctorAppWeb.Client.Shared.Colors.Green
     }
+    .redText {
+        color: @DoctorAppWeb.Client.Shared.Colors.DarkRed;
+    }
     .link {
         color: @DoctorAppWeb.Client.Shared.Colors.Blue;
         cursor: pointer;
@@ -219,6 +235,9 @@
         width: 100%;
         margin-top: 3px;
         margin-bottom: 2px;
+    }
+    .nowrap {
+        white-space: nowrap;
     }
 </style>
 
@@ -323,16 +342,41 @@
         return result;
     }
 
-    private string GetValueByDate(ParameterDto context, DateTime date)
+    private string[] GetValueByDate(ParameterDto context, DateTime date)
     {
 
+        string[] result = new string[2];
         IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date.ToString("dd.MM.yyyy HH:mm"));
         if (!match.Any())
         {
-            return "";
+            return result;
         }
-        string result = match.First().TextValue;
+
+        ParameterValueDto param = match.First();
+
+        result[0] = !String.IsNullOrEmpty(param.TextValue) ? param.TextValue : param.Value.ToString();
+        if (!String.IsNullOrEmpty(param.ValueMeasureUnit))
+        {
+            result[0] += " " + param.ValueMeasureUnit;
+        }
+        if (param.ValueMinimum != null && param.ValueMaximum != null)
+        {
+            result[1] += param.ValueMinimum + "-"+ param.ValueMaximum;
+        }
         return result;
+    }
+
+    private bool IsOutOfNorm(ParameterDto context, DateTime date)
+    {
+        IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date.ToString("dd.MM.yyyy HH:mm"));
+        if (!match.Any())
+        {
+            return false;
+        }
+
+        ParameterValueDto param = match.First();
+
+        return param.OutOfNorm;
     }
 
     private bool IsChartAvailable(ParameterDto context)
