@@ -3,9 +3,9 @@
 
 
 <MudNavMenu Class="mud-width-full navMenu">
-    @*<MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
+    <MudNavLink Class="@(StateContainer.CurrentPage == Pages.WhatsNew ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.WhatsNew))"
-                Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>*@
+                Icon="@(StateContainer.CurrentPage == Pages.WhatsNew ? DoctorIcons.WhatsNewActive : DoctorIcons.WhatsNew)">Что нового</MudNavLink>
     <MudNavLink Class="@(StateContainer.CurrentPage == Pages.Diagnosis ? "navItem activePage" : "navItem")"
                 OnClick="@(() => GoToPage(Pages.Diagnosis))"
                 Icon="@(StateContainer.CurrentPage == Pages.Diagnosis ? DoctorIcons.DiagnosisActive : DoctorIcons.Diagnosis)">Диагнозы</MudNavLink>
