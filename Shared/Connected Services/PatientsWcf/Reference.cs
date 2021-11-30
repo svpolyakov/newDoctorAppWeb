@@ -3711,13 +3711,28 @@ namespace PatientsWcf
         NotDefined = 0,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Service = 1,
+        Consultance = 1,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Diagnos = 2,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Indicant = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Investigation = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Surgery = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        LabTest = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Physiotherapy = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PharmaTherapy = 8,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
