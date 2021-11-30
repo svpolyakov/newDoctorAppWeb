@@ -1,4 +1,6 @@
 ﻿@page "/analysis"
+
+@using System.Text.RegularExpressions
 @inject IPatientsService PatientService
 @inject HttpClient Http
 @inject StateContainer StateContainer
@@ -42,15 +44,15 @@
                                                     }
                                     </MudTd>
                                     @foreach (DateTime date in analysisGroup.DatesList)
-                                    {
-                                        string[] value = GetValueByDate(context, date);
-                                        string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
+                                            {
+                                                string[] value = GetValueByDate(context, date);
+                                                string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
 
                                         <MudTd>
-                                            <MudText Class="@valueClassName">@value[0]</MudText>
-                                            <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                            <MudText Class="@valueClassName">@value[0] @((MarkupString)value[1])</MudText>
+                                            <MudText Class="grayText" Typo="Typo.caption">@value[2]</MudText>
                                         </MudTd>
-                                     }
+                                            }
                                 </RowTemplate>
                             </MudTable>
                         }
@@ -97,8 +99,8 @@
                                                             string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
 
                                                     <MudTd>
-                                                        <MudText Class="@valueClassName">@value[0]</MudText>
-                                                        <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                                        <MudText Class="@valueClassName">@value[0] @((MarkupString)value[1])</MudText>
+                                                        <MudText Class="grayText" Typo="Typo.caption">@value[2]</MudText>
                                                     </MudTd>
                                                         }
 
@@ -166,8 +168,8 @@
                                                             string valueClassName = IsOutOfNorm(context, date) ? "redText nowrap" : "nowrap";
 
                                                     <MudTd>
-                                                        <MudText Class="@valueClassName">@value[0]</MudText>
-                                                        <MudText Class="grayText" Typo="Typo.caption">@value[1]</MudText>
+                                                        <MudText Class="@valueClassName">@value[0] @((MarkupString)value[1])</MudText>
+                                                        <MudText Class="grayText" Typo="Typo.caption">@value[2]</MudText>
                                                     </MudTd>
                                                         }
                                             </RowTemplate>
@@ -345,7 +347,7 @@
     private string[] GetValueByDate(ParameterDto context, DateTime date)
     {
 
-        string[] result = new string[2];
+        string[] result = new string[3];
         IEnumerable<ParameterValueDto> match = context.ParameterValueList.Where(value => value.EndDate.Value.ToString("dd.MM.yyyy HH:mm") == date.ToString("dd.MM.yyyy HH:mm"));
         if (!match.Any())
         {
@@ -357,11 +359,20 @@
         result[0] = !String.IsNullOrEmpty(param.TextValue) ? param.TextValue : param.Value.Value.ToString("0.####");
         if (!String.IsNullOrEmpty(param.ValueMeasureUnit))
         {
-            result[0] += " " + param.ValueMeasureUnit;
+            string pattern = @"\d{2}\D(\d+)(\/.+)";
+           
+            if (Regex.IsMatch(param.ValueMeasureUnit, pattern))
+            { 
+                result[1] = Regex.Replace(param.ValueMeasureUnit, pattern, "10<sup>$1</sup>$2");
+            }
+            else
+            {
+                result[1] = param.ValueMeasureUnit;
+            }
         }
         if (param.ValueMinimum != null && param.ValueMaximum != null)
         {
-            result[1] += param.ValueMinimum.Value.ToString("0.####") + "-"+ param.ValueMaximum.Value.ToString("0.####");
+            result[2] += param.ValueMinimum.Value.ToString("0.####") + "-" + param.ValueMaximum.Value.ToString("0.####");
         }
         return result;
     }
@@ -414,7 +425,7 @@
 
         foreach (ParameterValueDto value in context.ParameterValueList)
         {
-            values.Add((double) value.Value);
+            values.Add((double)value.Value);
             minThValues.Add((double)value.ValueMinimum);
             maxThValues.Add((double)value.ValueMaximum);
 
