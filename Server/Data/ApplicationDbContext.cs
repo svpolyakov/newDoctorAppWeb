@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DoctorAppWeb.Server.Data
 {
-    public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
+/*    public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<UserInfo> Developers { get; set; }
 
@@ -21,5 +21,5 @@ namespace DoctorAppWeb.Server.Data
         {
         }
         
-    }
+    } */
 }
