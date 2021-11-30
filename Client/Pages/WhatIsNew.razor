@@ -22,8 +22,8 @@
 
 @code {
 
-        List<NewFiagnosInfoDto> diagnosis = new List<NewFiagnosInfoDto>();
-        List<NewServiceInfoDto> newHcs = new List<NewServiceInfoDto>();
+    List<NewFiagnosInfoDto> diagnosis = new List<NewFiagnosInfoDto>();
+    List<NewServiceInfoDto> newHcs = new List<NewServiceInfoDto>();
 
 
     //private async Task GetWhatNewsFull()
@@ -135,4 +135,10 @@
 
         return result;
     }
+
+    //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем
+    private async Task SendComment(Guid personId, Guid consultanceId, string clientComment)
+        {
+
+        }
 }

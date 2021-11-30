@@ -257,7 +257,7 @@
                 CustomAuthorization authorization = db.CustomAuthorizations.FirstOrDefault(x => x.Login == userName);
                 if (authorization == null && !HasDbUserInfo)
                 {
-                    Tuple<UserInfoDto, CustomizationInfoDto> userInfo = await Http.GetFromJsonAsync<Tuple<UserInfoDto, CustomizationInfoDto>>("Tools/" + userName);
+                    Tuple<UserInfoDto, CustomizationInfoDto> userInfo = await Http.GetFromJsonAsync<Tuple<UserInfoDto, CustomizationInfoDto>>("Tools/Login?Login=" + userName);
                     db.CustomAuthorizations.Add(new CustomAuthorization
                     {
                         Login = userName,

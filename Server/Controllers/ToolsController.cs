@@ -13,17 +13,17 @@ namespace DoctorAppWeb.Server.Controllers
     [Route("[controller]")]
     public class ToolsController : Controller
     {
-        [HttpGet("{Login}")]
-        public Tuple<UserInfoDto, CustomizationInfoDto> Get(string Login)
+        [HttpGet("Login")]
+        public async Task<Tuple<UserInfoDto, CustomizationInfoDto>> GetLoginAsync([FromQuery] string Login)
         {
             InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-            return new Tuple<UserInfoDto, CustomizationInfoDto>(inpatientDoctorClient.GetUserInfoAsync(Login).Result, inpatientDoctorClient.GetCustomizationAsync(Login, null).Result);            
+            return new Tuple<UserInfoDto, CustomizationInfoDto>(await inpatientDoctorClient.GetUserInfoAsync(Login), await inpatientDoctorClient.GetCustomizationAsync(Login, null));            
         }
 
-        [HttpGet]
-        public ConnectionStatus Get()
-        {
-            return new ConnectionStatus { Status = "Ok" };
-        }
+        //[HttpGet]
+        //public ConnectionStatus Get()
+        //{
+        //    return new ConnectionStatus { Status = "Ok" };
+        //}
     }
 }
