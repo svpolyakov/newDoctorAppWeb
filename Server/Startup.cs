@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DoctorAppWeb.Server
 {
@@ -25,7 +26,7 @@ namespace DoctorAppWeb.Server
         {
             services.AddScoped<IIndexedDbFactory, IndexedDbFactory>();
             services.AddDataWCFService();
-            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: opt => { 
+/*          services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: opt => { 
                 opt.EnableRetryOnFailure(maxRetryCount: 20, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
             }));
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
@@ -43,7 +44,17 @@ namespace DoctorAppWeb.Server
                     context.Response.StatusCode = 401;
                     return Task.CompletedTask;
                 };
+            });*/
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.Cookie.HttpOnly = false;
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
             });
+
             services.AddControllers().AddNewtonsoftJson();
             services.AddControllersWithViews();
             services.AddRazorPages();

@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace DoctorAppWeb.Server.Models
 {
-    public class ApplicationUser : IdentityUser
+//    public class ApplicationUser : IdentityUser
+    public class ApplicationUser 
     {
+        public  string Id { get; set; }
+        public string UserName { get; set; }
+        public string SecurityStamp { get; set; }
         //[PersonalData]
         //public Guid UserId { get; set; }
         //[PersonalData]
