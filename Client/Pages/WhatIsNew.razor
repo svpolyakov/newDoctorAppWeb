@@ -22,6 +22,22 @@
 
 @code {
 
+        List<NewFiagnosInfoDto> diagnosis = new List<NewFiagnosInfoDto>();
+        List<NewServiceInfoDto> newHcs = new List<NewServiceInfoDto>();
+
+
+    //private async Task GetWhatNewsFull()
+    //{
+    //    newHcs = await GetNewHealthcareServices();
+    //    foreach (NewServiceInfoDto serviceInfoDto in newHcs)
+    //    {
+    //        switch (serviceInfoDto.InfoType)
+    //        {
+    //            case NewServiceInfoType.Diagnos: diagnosis.Add(await GetNewPatientDiagnos(serviceInfoDto.InfoId)); break;
+    //                    //case NewServiceInfoType.
+    //        }
+    //    }
+    //}
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,7 +46,7 @@
         //await JSRuntime.InvokeVoidAsync("visibleMenu", true);
     }
 
-    private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices()
+    private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices() //ОК
     {
         List<NewServiceInfoDto> result = null;
         try
@@ -48,13 +64,13 @@
         return result;
     }
 
-    private async Task<NewFiagnosInfoDto> GetNewPatientDiagnos()
+    private async Task<NewFiagnosInfoDto> GetNewPatientDiagnos(Guid id)
     {
         NewFiagnosInfoDto result = null;
         try
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewPatientDiagnos");
-            httpRequest.Headers.Add("diagnosId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ ДИАГНОЗ_ИД
+            httpRequest.Headers.Add("diagnosId", id.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<NewFiagnosInfoDto>();
         }
