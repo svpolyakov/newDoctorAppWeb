@@ -1,6 +1,8 @@
 <div class="dlg-chart-wrapper">
     <LineChart Id="@Title"
                Data="@Data"
+               MinThreshold="@MinThreshold"
+               MaxThreshold="@MaxThreshold"
                Labels="@Labels">
 
     </LineChart>
@@ -15,6 +17,12 @@
 @code {
     [Parameter]
     public double?[] Data { get; set; }
+
+    [Parameter]
+    public double?[] MinThreshold { get; set; }
+
+    [Parameter]
+    public double?[] MaxThreshold { get; set; }
 
     [Parameter]
     public string[] Labels { get; set; }

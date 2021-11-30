@@ -13,6 +13,12 @@
     public double?[] Data { get; set; }
 
     [Parameter]
+    public double?[] MinThreshold { get; set; }
+
+    [Parameter]
+    public double?[] MaxThreshold { get; set; }
+
+    [Parameter]
     public string[] Labels { get; set; }
 
 
@@ -39,6 +45,18 @@
                         Label = Id,
                         Tension = 0.1,
                         BorderColor = DoctorAppWeb.Client.Shared.Colors.Green,
+                    },
+                     new {
+                        Data = MinThreshold,
+                        Label = Id,
+                        Tension = 0.1,
+                        BorderColor = DoctorAppWeb.Client.Shared.Colors.LightRed,
+                    },
+                     new {
+                        Data = MaxThreshold,
+                        Label = Id,
+                        Tension = 0.1,
+                        BorderColor = DoctorAppWeb.Client.Shared.Colors.LightRed,
                     }
                 },
                 Labels = Labels,

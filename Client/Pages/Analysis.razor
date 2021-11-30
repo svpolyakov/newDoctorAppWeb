@@ -354,14 +354,14 @@
 
         ParameterValueDto param = match.First();
 
-        result[0] = !String.IsNullOrEmpty(param.TextValue) ? param.TextValue : param.Value.ToString();
+        result[0] = !String.IsNullOrEmpty(param.TextValue) ? param.TextValue : param.Value.Value.ToString("0.####");
         if (!String.IsNullOrEmpty(param.ValueMeasureUnit))
         {
             result[0] += " " + param.ValueMeasureUnit;
         }
         if (param.ValueMinimum != null && param.ValueMaximum != null)
         {
-            result[1] += param.ValueMinimum + "-"+ param.ValueMaximum;
+            result[1] += param.ValueMinimum.Value.ToString("0.####") + "-"+ param.ValueMaximum.Value.ToString("0.####");
         }
         return result;
     }
@@ -386,6 +386,11 @@
             return false;
         }
 
+        if (context.ParameterValueList[0].Value == null || context.ParameterValueList[0].ValueMaximum == null || context.ParameterValueList[0].ValueMinimum == null)
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -403,11 +408,16 @@
     private void ShowChart(ParameterDto context, string ParamName)
     {
         List<double?> values = new List<double?>();
+        List<double?> minThValues = new List<double?>();
+        List<double?> maxThValues = new List<double?>();
         List<string> labels = new List<string>();
 
         foreach (ParameterValueDto value in context.ParameterValueList)
         {
-            values.Add(double.Parse(value.TextValue.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture));
+            values.Add((double) value.Value);
+            minThValues.Add((double)value.ValueMinimum);
+            maxThValues.Add((double)value.ValueMaximum);
+
             labels.Add(value.EndDate.Value.ToString("dd.MM.yyyy HH:mm"));
         }
 
@@ -415,6 +425,8 @@
         {
             ["Title"] = ParamName,
             ["Data"] = values.ToArray(),
+            ["MinThreshold"] = minThValues.ToArray(),
+            ["MaxThreshold"] = maxThValues.ToArray(),
             ["Labels"] = labels.ToArray()
         };
         DialogOptions options = new DialogOptions() { CloseButton = true };
