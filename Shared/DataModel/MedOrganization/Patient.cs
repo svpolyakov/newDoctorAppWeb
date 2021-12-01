@@ -40,6 +40,9 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         
         public string Bed { get; set; }
         
+        public string Allergic { get; set; }
+        public string Diet { get; set; }
+
         public string ServiceCaseNumber { get; set; }
         
         public DateTime? SDDepTreatmentCase { get; set; }

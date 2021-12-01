@@ -273,6 +273,19 @@
         navigationManager.NavigateTo(Pages.Diagnosis);
     }
 
+    private async Task<InfoWindow> GetInfo(Patient person)
+    {
+        InfoWindow infoWindow = new InfoWindow();
+        infoWindow.Admitted = person.AdmissionInfoDtc + person.AdmissionInfoInpatientSrv;
+        infoWindow.Allergic = person.Allergic;
+        infoWindow.IsWorking = person.IsWorkingStr;
+        infoWindow.LifeAnamnesis = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.LifeAnamnesisID);
+        infoWindow.PathologyАnamnesis = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.PathologyАnamnesisID);
+        infoWindow.AnamnesisMKB = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.DiagnosAnamnesisID);
+        infoWindow.Diet = person.Diet;
+        return infoWindow;
+    }
+
     void FindPatients()
     {
         List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
@@ -476,7 +489,7 @@
         StateHasChanged();
     }
 
-    
+
     private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
     {
         try
@@ -532,6 +545,8 @@
                             PathologyАnamnesisID = person.PathologyАnamnesisID,
                             SDReceptionCase = person.SDReceptionCase,
                             PersonnelID = person.PersonnelID,
+                            Allergic = person.Allergic,
+                            Diet = person.PatientTable,
                             AdmissionInfoDtc = person.AdmissionInfo?["Dtc"],
                             AdmissionInfoInpatientSrv = person.AdmissionInfo?["InpatientSrv"],
                             AdmissionInfoReceptCase = person.AdmissionInfo?["ReceptCase"],

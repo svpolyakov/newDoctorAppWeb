@@ -20,6 +20,25 @@ namespace DoctorAppWeb.Server.Controllers
             return new Tuple<UserInfoDto, CustomizationInfoDto>(await inpatientDoctorClient.GetUserInfoAsync(Login), await inpatientDoctorClient.GetCustomizationAsync(Login, null));            
         }
 
+        [HttpGet("Comment")]
+        public async Task<ConsultanceCommentDto> GetCommentAsync([FromHeader] Guid personId, [FromHeader] Guid consultanceId, [FromHeader] string clientComment)
+        {
+            return await new InpatientDoctorClient().ResetConsultanceCommentAsync(personId, consultanceId, clientComment);
+        }
+
+        [HttpGet("Anamnesis")]
+        public async Task<AnamnesisInfoDto> GetAnamnesisAsync([FromQuery] Guid id)
+        {
+            try
+            {
+                return await new InpatientDoctorClient().GetAnamnesisAsync(id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         //[HttpGet]
         //public ConnectionStatus Get()
         //{

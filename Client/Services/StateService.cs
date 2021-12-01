@@ -1,4 +1,5 @@
 ﻿using System;
+using DoctorAppWeb.Shared.DataModel.Application;
 using DoctorAppWeb.Shared.DataModel.MedOrganization;
 public class StateContainer
 {
@@ -51,6 +52,8 @@ public class StateContainer
             NotifyStateChanged();
         }
     }
+
+    public InfoWindow InfoWindow { get; set; }
 
     public Patient PreviousPatient
     {
