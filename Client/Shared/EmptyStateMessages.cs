@@ -7,21 +7,21 @@ namespace DoctorAppWeb.Client.Shared
 {
     static class EmptyStateMessages
     {
-        public const string MyPatients = "У текущего пользователя нет пациентов";
-        public const string MyDepPatients = "Нет поступивших пациентов";
-        public const string EmergencyPatients = "Нет пациентов в приемном";
-        public const string AllPatients = "Пациенты отсутствуют";
+        public const string MyPatients = "РЈ С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµС‚ РїР°С†РёРµРЅС‚РѕРІ";
+        public const string MyDepPatients = "РќРµС‚ РїРѕСЃС‚СѓРїРёРІС€РёС… РїР°С†РёРµРЅС‚РѕРІ";
+        public const string EmergencyPatients = "РќРµС‚ РїР°С†РёРµРЅС‚РѕРІ РІ РїСЂРёРµРјРЅРѕРј";
+        public const string AllPatients = "РџР°С†РёРµРЅС‚С‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
 
-        public const string Diagnosis = "Диагнозы отсутствуют";
-        public const string Indications = "Показатели отсутствуют";
-        public const string Analysis = "Анализы отсутствуют";
-        public const string Meds = "Медикаменты отсутствуют";
-        public const string Research = "Исследования отсутствуют";
-        public const string Consult = "Консультации отсутствуют";
-        public const string Visit = "Визиты отсутствуют";
-        public const string Procedure = "Процедуры отсутствуют";
-        public const string Surgery = "Операции отсутствуют";
+        public const string Diagnosis = "Р”РёР°РіРЅРѕР·С‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Indications = "РџРѕРєР°Р·Р°С‚РµР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Analysis = "РђРЅР°Р»РёР·С‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Meds = "РњРµРґРёРєР°РјРµРЅС‚С‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Research = "РСЃСЃР»РµРґРѕРІР°РЅРёСЏ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Consult = "РљРѕРЅСЃСѓР»СЊС‚Р°С†РёРё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Visit = "Р’РёР·РёС‚С‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Procedure = "РџСЂРѕС†РµРґСѓСЂС‹ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
+        public const string Surgery = "РћРїРµСЂР°С†РёРё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚";
 
-        public const string MedDocs = "Документы не найдены";
+        public const string MedDocs = "Р”РѕРєСѓРјРµРЅС‚С‹ РЅРµ РЅР°Р№РґРµРЅС‹";
     }
 }
