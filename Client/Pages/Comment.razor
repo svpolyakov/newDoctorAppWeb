@@ -1,5 +1,5 @@
 @page "/comment"
-
+@inject HttpClient Http
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
         <MudText Typo="Typo.h5">
@@ -20,7 +20,7 @@
     }
 
     //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем
-        private async Task<ConsultanceCommentDto> GetOrSetComment(Guid personId, Guid consultanceId, string clientComment)
+    private async Task<ConsultanceCommentDto> GetOrSetComment(Guid personId, Guid consultanceId, string clientComment)
     {
         ConsultanceCommentDto result = null;
         try
