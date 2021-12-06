@@ -1,8 +1,11 @@
 ﻿@inject StateContainer StateContainer
 @inject IDialogService Dialog
+@inject NavigationManager navigationManager
 
-<MudDialogProvider Position="DialogPosition.CenterLeft" MaxWidth="MaxWidth.Large" />
 <div class="patientInfo">
+    <div class="addCommentWrapper">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToComment">add comment</MudButton>
+    </div>
     <MudPaper class="@(isOpen ? "patientInfoToggle activeToggle" : "patientInfoToggle")">
         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
                        OnClick="ToggleOpen"
@@ -18,16 +21,34 @@
 
             <div class="patientInfoData">
                 <div style="display: flex">
-                    <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">&nbsp;@StateContainer.CurrentPatient.SDInpatientServiceCase</MudText>
+                    <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">&nbsp;@((MarkupString)StateContainer.InfoWindow.Admitted)</MudText>
                 </div>
                 <div style="display: flex">
-                    <MudText Class="blueText">@StateContainer.CurrentPatient.IsWorkingStr</MudText>
+                    <MudText Class="blueText">@StateContainer.InfoWindow.IsWorking</MudText>
                 </div>
+                @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Allergic))
+                {
+                    <div style="display: flex">
+                        <MudText Class="blueText">Аллергия на:</MudText><MudText Class="grayText">&nbsp;@StateContainer.InfoWindow.Allergic</MudText>
+                    </div>
+                }
+                @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Diet))
+                {
+                    <div style="display: flex">
+                        <MudText Class="blueText">Диета:</MudText><MudText Class="grayText">&nbsp;@StateContainer.InfoWindow.Diet</MudText>
+                    </div>
+                }
             </div>
-
             <div class="patientInfoButtonsBlock">
-                <MudButton OnClick="ShowAnamnesis" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез жизни</MudButton>
-                <MudButton OnClick="ShowMedDocs" Color="Color.Secondary" Variant="Variant.Outlined">Медицинские документы</MudButton>
+                <MudButton Class="headerBtn" OnClick="ShowMedDocs" Color="Color.Secondary" Variant="Variant.Outlined">Медицинские документы</MudButton>
+                @if (StateContainer.InfoWindow.LifeAnamnesis != null && !String.IsNullOrEmpty(StateContainer.InfoWindow.LifeAnamnesis.Anamnestext))
+                {
+                    <MudButton Class="headerBtn" OnClick="ShowAnamnesis" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез жизни</MudButton>
+                }
+                @if (StateContainer.InfoWindow.AnamnesisMKB != null && !String.IsNullOrEmpty(StateContainer.InfoWindow.AnamnesisMKB.Anamnestext))
+                {
+                    <MudButton Class="headerBtn" OnClick="ShowAnamnesisMKB" Color="Color.Secondary" Variant="Variant.Outlined">Анамнез заболевания @StateContainer.InfoWindow.AnamnesisMKB.AnamnesType</MudButton>
+                }
             </div>
         </MudPaper>
     }
@@ -83,6 +104,13 @@
     .patientInfoButtonsBlock {
         margin-top: 1rem;
     }
+    .headerBtn {
+        margin-right: 1rem;
+    }
+    .addCommentWrapper {
+        position: absolute;
+        right: 1.2rem;
+    }
 </style>
 
 @code {
@@ -95,13 +123,50 @@
 
     void ShowAnamnesis()
     {
+        string Anamnestext;
+        if (StateContainer.InfoWindow.LifeAnamnesis == null || String.IsNullOrEmpty(StateContainer.InfoWindow.LifeAnamnesis.Anamnestext))
+        {
+            Anamnestext = "";
+        }
+        else
+        {
+            Anamnestext = StateContainer.InfoWindow.LifeAnamnesis.Anamnestext;
+        }
+        var parameters = new DialogParameters
+        {
+            ["Anamnestext"] = Anamnestext
+        };
         DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-        Dialog.Show<Anamnesis>("Анамнез жизни", options);
+        Dialog.Show<Anamnesis>("Анамнез жизни", parameters, options);
+    }
+
+    void ShowAnamnesisMKB()
+    {
+        string Anamnestext;
+        if (StateContainer.InfoWindow.AnamnesisMKB == null || String.IsNullOrEmpty(StateContainer.InfoWindow.AnamnesisMKB.Anamnestext))
+        {
+            Anamnestext = "";
+        }
+        else
+        {
+            Anamnestext = StateContainer.InfoWindow.AnamnesisMKB.Anamnestext;
+        }
+        var parameters = new DialogParameters
+        {
+            ["Anamnestext"] = Anamnestext
+        };
+        DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, FullWidth = true, Position = DialogPosition.Center };
+        Dialog.Show<Anamnesis>("Анамнез заболевания", parameters, options);
     }
 
     void ShowMedDocs()
     {
-        DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        DialogOptions options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, FullWidth = true, Position = DialogPosition.Center };
         Dialog.Show<MedDocs>("Медицинские документы", options);
+    }
+
+    void ToComment()
+    {
+        navigationManager.NavigateTo(Pages.Comment);
     }
 }

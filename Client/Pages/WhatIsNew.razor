@@ -48,9 +48,14 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
+        await GetNewHealthcareServices();
+        await GetNewLabTest();
+        await GetNewInvestigation();
+        await GetNewConsultance();
+
         //PatientService.CurrentPatient;
         //await JSRuntime.InvokeVoidAsync("visibleMenu", true);
-    }
+        }
 
     private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices() //ОК
     {
@@ -133,27 +138,6 @@
             httpRequest.Headers.Add("consultanceId", id.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceDto>();
-        }
-        catch (Exception ex)
-        {
-
-        }
-
-        return result;
-    }
-
-    //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем
-    private async Task<ConsultanceCommentDto> GetOrSetComment(Guid personId, Guid consultanceId, string clientComment)
-    {
-        ConsultanceCommentDto result = null;
-        try
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment");
-            httpRequest.Headers.Add("consultanceId", consultanceId.ToString());
-            httpRequest.Headers.Add("personId", personId.ToString());
-            httpRequest.Headers.Add("clientComment", clientComment);
-            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
-            result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceCommentDto>();
         }
         catch (Exception ex)
         {

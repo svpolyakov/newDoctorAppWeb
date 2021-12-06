@@ -1,0 +1,16 @@
+@page "/comment"
+
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Добавить комментарий
+        </MudText>
+
+        <MudPaper>
+            <MudTextField T="string" Label="Multiline" Variant="Variant.Text" Text="@sampleText" Lines="5" />
+        </MudPaper>
+    </div>
+</MudPaper>
+@code {
+    public string sampleText = "";
+}

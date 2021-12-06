@@ -20,6 +20,6 @@ namespace DoctorAppWeb.Client.Shared
         public const string Visit = "Visit";
         public const string Procedure = "Procedure";
         public const string Surgery = "Surgery";
-
+        public const string Comment = "Comment";
     }
 }
