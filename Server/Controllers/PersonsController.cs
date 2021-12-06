@@ -29,6 +29,7 @@ namespace DoctorAppWeb.Server.Controllers
             if(parseResult != 0 && Enum.IsDefined(typeof(FilterPersonTypeDto), parseResult))
             {
                 using InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+                inpatientDoctorClient.InnerChannel.OperationTimeout = new TimeSpan(0, 5, 0);
                 return await inpatientDoctorClient.GetPatientsAsync( new PersonQueryParamsDto { PersonQueryType = (FilterPersonTypeDto)parseResult } , login);
             }
             return null;

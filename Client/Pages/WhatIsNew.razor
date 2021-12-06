@@ -22,22 +22,28 @@
 
 @code {
 
-    List<NewFiagnosInfoDto> diagnosis = new List<NewFiagnosInfoDto>();
+    List<NewFiagnosInfoDto> newDiagnosis = new List<NewFiagnosInfoDto>();
     List<NewServiceInfoDto> newHcs = new List<NewServiceInfoDto>();
+    List<NewParameterInfoDto> newLabTest = new List<NewParameterInfoDto>();
+    List<ConsultanceDto> newConsultance = new List<ConsultanceDto>();
+    Dictionary<int, List<NewParameterInfoDto>> labtest = new Dictionary<int, List<NewParameterInfoDto>>();
+    List<InvestigationDto> investigationDtos = new List<InvestigationDto>();
 
 
-    //private async Task GetWhatNewsFull()
-    //{
-    //    newHcs = await GetNewHealthcareServices();
-    //    foreach (NewServiceInfoDto serviceInfoDto in newHcs)
-    //    {
-    //        switch (serviceInfoDto.InfoType)
-    //        {
-    //            case NewServiceInfoType.Diagnos: diagnosis.Add(await GetNewPatientDiagnos(serviceInfoDto.InfoId)); break;
-    //                    //case NewServiceInfoType.
-    //        }
-    //    }
-    //}
+    private async Task GetWhatNewsFull()
+    {
+        newHcs = await GetNewHealthcareServices();
+        foreach (NewServiceInfoDto serviceInfoDto in newHcs)
+        {
+            switch (serviceInfoDto.InfoType)
+            {
+                case NewServiceInfoType.Diagnos: newDiagnosis.Add(await GetNewPatientDiagnos(serviceInfoDto.InfoId)); break;
+                case NewServiceInfoType.Consultance: newConsultance.Add(await GetNewConsultance(serviceInfoDto.InfoId)); break;
+                case NewServiceInfoType.LabTest: labtest.Add(labtest.Keys.Any() ? labtest.Count + 1 : 0, await GetNewLabTest(serviceInfoDto.InfoId)); break;
+                case NewServiceInfoType.Investigation: investigationDtos.Add(await GetNewInvestigation(serviceInfoDto.InfoId));
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,13 +88,13 @@
         return result;
     }
 
-    private async Task<List<NewParameterInfoDto>> GetNewLabTest()
+    private async Task<List<NewParameterInfoDto>> GetNewLabTest(Guid id)
     {
         List<NewParameterInfoDto> result = null;
         try
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewLabTest");
-            httpRequest.Headers.Add("labTestId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ LABTEST_ИД
+            httpRequest.Headers.Add("labTestId", id.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<List<NewParameterInfoDto>>();
         }
@@ -100,13 +106,13 @@
         return result;
     }
 
-    public async Task<InvestigationDto> GetNewInvestigation()
+    public async Task<InvestigationDto> GetNewInvestigation(Guid id)
     {
         InvestigationDto result = null;
         try
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewInvestigation");
-            httpRequest.Headers.Add("investigationId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ Investg_ИД
+            httpRequest.Headers.Add("investigationId", id.ToString()); //ИЗВЛЕЧЬ Investg_ИД
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<InvestigationDto>();
         }
@@ -118,13 +124,13 @@
         return result;
     }
 
-    public async Task<ConsultanceDto> GetNewConsultance()
+    public async Task<ConsultanceDto> GetNewConsultance(Guid id)
     {
         ConsultanceDto result = null;
         try
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "News/NewConsultance");
-            httpRequest.Headers.Add("consultanceId", PatientService.HealthcareServiceId.ToString()); //ИЗВЛЕЧЬ consultanceId
+            httpRequest.Headers.Add("consultanceId", id.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceDto>();
         }
