@@ -40,7 +40,7 @@
                 case NewServiceInfoType.Diagnos: newDiagnosis.Add(await GetNewPatientDiagnos(serviceInfoDto.InfoId)); break;
                 case NewServiceInfoType.Consultance: newConsultance.Add(await GetNewConsultance(serviceInfoDto.InfoId)); break;
                 case NewServiceInfoType.LabTest: labtest.Add(labtest.Keys.Any() ? labtest.Count + 1 : 0, await GetNewLabTest(serviceInfoDto.InfoId)); break;
-                case NewServiceInfoType.Investigation: investigationDtos.Add(await GetNewInvestigation(serviceInfoDto.InfoId));
+                case NewServiceInfoType.Investigation: investigationDtos.Add(await GetNewInvestigation(serviceInfoDto.InfoId)); break;
             }
         }
     }
