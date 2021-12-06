@@ -48,14 +48,14 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
-        await GetNewHealthcareServices();
-        await GetNewLabTest();
-        await GetNewInvestigation();
-        await GetNewConsultance();
+        //await GetNewHealthcareServices();
+        //await GetNewLabTest();
+        //await GetNewInvestigation();
+        //await GetNewConsultance();
 
         //PatientService.CurrentPatient;
         //await JSRuntime.InvokeVoidAsync("visibleMenu", true);
-        }
+    }
 
     private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices() //ОК
     {
