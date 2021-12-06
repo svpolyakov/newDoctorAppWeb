@@ -8,6 +8,8 @@ public class StateContainer
     private string currentPage;
     private Patient currentPatient = null;
     private Patient prevPatient = null;
+    private InfoWindow info = null;
+    private InfoWindow prevInfo = null;
 
     public Boolean ShowDrawer
     {
@@ -53,7 +55,23 @@ public class StateContainer
         }
     }
 
-    public InfoWindow InfoWindow { get; set; }
+    public InfoWindow InfoWindow
+    {
+        get => info; set
+        {
+            info = value;
+            if (value != null)
+            {
+                prevInfo = value;
+            }
+            NotifyStateChanged();
+        }
+    }
+
+    public InfoWindow PrevInfoWindow
+    {
+        get => prevInfo;
+    }
 
     public Patient PreviousPatient
     {

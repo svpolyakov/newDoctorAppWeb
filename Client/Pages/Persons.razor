@@ -247,96 +247,119 @@
 </style>
 
 @code{
-
-
-
-
-
-    async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
-    {
-        StateContainer.AppTitle = title;
-        PatientService.CurrentPatient = id;
-        PatientService.HealthcareServiceId = hcsId;
-        StateContainer.CurrentPage = Pages.Diagnosis;
-        StateContainer.CurrentPatient = person;
-
-        await localStorage.SetItemAsync("CurrentPatientID", id);
-        await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
-        await localStorage.SetItemAsync("AppTitle", title);
-        await localStorage.SetItemAsync("CurrentPage", Pages.Diagnosis);
-        await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
-
-        string stringifiedPerson = JsonConvert.SerializeObject(person);
-
-        await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
-
-        navigationManager.NavigateTo(Pages.Diagnosis);
-    }
-
-    private async Task<InfoWindow> GetInfo(Patient person)
-    {
-        InfoWindow infoWindow = new InfoWindow();
-        infoWindow.Admitted = person.AdmissionInfoDtc + person.AdmissionInfoInpatientSrv;
-        infoWindow.Allergic = person.Allergic;
-        infoWindow.IsWorking = person.IsWorkingStr;
-        infoWindow.LifeAnamnesis = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.LifeAnamnesisID);
-        infoWindow.PathologyАnamnesis = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.PathologyАnamnesisID);
-        infoWindow.AnamnesisMKB = await Http.GetFromJsonAsync<AnamnesisInfoDto>("Tools/Anamnesis?id=" + person.DiagnosAnamnesisID);
-        infoWindow.Diet = person.Diet;
-        return infoWindow;
-    }
-
-    void FindPatients()
-    {
-        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-        List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
-
-        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
         {
-            tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
+            StateContainer.AppTitle = title;
+            PatientService.CurrentPatient = id;
+            PatientService.HealthcareServiceId = hcsId;
+            StateContainer.CurrentPage = Pages.WhatsNew;
+            StateContainer.CurrentPatient = person;
+
+            Console.WriteLine('1');
+
+            InfoWindow patientInfo = await GetInfo(person);
+
+            Console.WriteLine('2');
+
+            await localStorage.SetItemAsync("CurrentPatientID", id);
+            await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
+            await localStorage.SetItemAsync("AppTitle", title);
+            await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
+            await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
+
+            string stringifiedPerson = JsonConvert.SerializeObject(person);
+
+            await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
+
+            string stringifiedInfo = JsonConvert.SerializeObject(patientInfo);
+
+            await localStorage.SetItemAsync("CurrentPatientInfo", stringifiedInfo);
+            //Console.WriteLine('3');
+
+            navigationManager.NavigateTo(Pages.WhatsNew);
         }
 
-        if (!string.IsNullOrWhiteSpace(SelectedDepartment))
+        private async Task<InfoWindow> GetInfo(Patient person)
         {
-            // filtering doctors by department
-            Doctors = Doctors
-            .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
-                .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
-            .Count() > 0);
+            InfoWindow infoWindow = new InfoWindow();
+            infoWindow.Admitted = person.AdmissionInfoDtc + person.AdmissionInfoInpatientSrv;
+            infoWindow.Allergic = person.Allergic;
+            infoWindow.IsWorking = person.IsWorkingStr;
 
-            tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+            HttpResponseMessage lifeAnamnesys = await Http.GetAsync("Tools/Anamnesis?id=" + person.LifeAnamnesisID);
+            HttpResponseMessage pathologyАnamnesis = await Http.GetAsync("Tools/Anamnesis?id=" + person.PathologyАnamnesisID);
+            HttpResponseMessage diagnosAnamnesisID = await Http.GetAsync("Tools/Anamnesis?id=" + person.DiagnosAnamnesisID);
 
-        }
-        else
-        {
-            Doctors = FullDoctorsList;
-        }
+            if (lifeAnamnesys.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                infoWindow.LifeAnamnesis = await lifeAnamnesys.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
+            }
+            if (pathologyАnamnesis.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                infoWindow.PathologyАnamnesis = await pathologyАnamnesis.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
+            }
+            if (diagnosAnamnesisID.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                infoWindow.AnamnesisMKB = await diagnosAnamnesisID.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
+            }
 
-        if (!string.IsNullOrWhiteSpace(SelectedDoctor))
-        {
-            // filtering departments by doctor
-            var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
-            var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
-            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
+            infoWindow.Diet = person.Diet;
 
-            // todo: the implementation is incorrect due to bad data in "Doctor" property
-            tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
-            //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
-        }
-        else
-        {
-            Departments = FullDepartmentList;
+            StateContainer.InfoWindow = infoWindow;
+            return infoWindow;
         }
 
-        tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-        AllPersons = tempPatientsResult.ToArray();
-    }
+        void FindPatients()
+        {
+            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+            List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
 
-    private void ShowBtnPress(Guid id)
-    {
-        Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
-        tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
-    }
+            if (!string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(SelectedDepartment))
+            {
+                // filtering doctors by department
+                Doctors = Doctors
+                .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
+                    .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
+                .Count() > 0);
+
+                tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
+
+            }
+            else
+            {
+                Doctors = FullDoctorsList;
+            }
+
+            if (!string.IsNullOrWhiteSpace(SelectedDoctor))
+            {
+                // filtering departments by doctor
+                var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
+                var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
+                Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
+
+                // todo: the implementation is incorrect due to bad data in "Doctor" property
+                tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
+                //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
+            }
+            else
+            {
+                Departments = FullDepartmentList;
+            }
+
+            tempPatientsResult = tempPatientsResult ?? new List<Patient>();
+            AllPersons = tempPatientsResult.ToArray();
+        }
+
+        private void ShowBtnPress(Guid id)
+        {
+            Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
+            tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
+        }
 
     //Стили
     private string MyPatientsStyle { get; set; }

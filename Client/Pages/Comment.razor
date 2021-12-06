@@ -1,0 +1,42 @@
+@page "/comment"
+
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Добавить комментарий
+        </MudText>
+
+        <MudPaper>
+            <MudTextField T="string" Label="Multiline" Variant="Variant.Text" Text="@sampleText" Lines="5" />
+        </MudPaper>
+    </div>
+</MudPaper>
+@code {
+    public string sampleText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем
+        private async Task<ConsultanceCommentDto> GetOrSetComment(Guid personId, Guid consultanceId, string clientComment)
+    {
+        ConsultanceCommentDto result = null;
+        try
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment");
+            httpRequest.Headers.Add("consultanceId", consultanceId.ToString());
+            httpRequest.Headers.Add("personId", personId.ToString());
+            httpRequest.Headers.Add("clientComment", clientComment);
+            HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
+            result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceCommentDto>();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return result;
+    }
+}

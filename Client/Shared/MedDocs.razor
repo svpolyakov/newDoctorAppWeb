@@ -3,32 +3,47 @@
 @inject HttpClient Http
 
 <Progress isVisible="@showProgress"></Progress>
-<div>
+<div class="docsWrapper">
     <MudTabs>
         <MudTabPanel Text="@all">
-            @foreach (ServiceMedDocDto serviceMedDoc in docList)
+            @if (docList.Any())
             {
-                foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                foreach (ServiceMedDocDto serviceMedDoc in docList)
                 {
-                    <MudExpansionPanel>
-                        <TitleContent>
-                            <div style="display:flex">
-                                <div>
-                                    <MudText Class="blueText" Typo="Typo.h5">@doc.TypeName</MudText>
-                                    <MudText Typo="Typo.body1">@doc.Author</MudText>
-                                </div>
-                                <div class="flexSpacer" />
-                                <div>
-                                    <MudText Typo="Typo.body1" Class="grayText">@doc.CreateDate.Value.ToString("dd.MM.yyyy")</MudText>
-                                </div>
-                            </div>
-                        </TitleContent>
-                        <ChildContent>
-                            @((MarkupString)doc.Document.VersionText)
-                        </ChildContent>
-                    </MudExpansionPanel>
+                    if (serviceMedDoc.MedDocList.Any())
+                    {
+                        foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                        {
+                            <MudExpansionPanel>
+                                <TitleContent>
+                                    <div style="display:flex">
+                                        <div>
+                                            <MudText Class="blueText" Typo="Typo.h5">@doc.TypeName</MudText>
+                                            <MudText Typo="Typo.body1">@doc.Author</MudText>
+                                        </div>
+                                        <div class="flexSpacer" />
+                                        <div>
+                                            <MudText Typo="Typo.body1" Class="grayText">@doc.CreateDate.Value.ToString("dd.MM.yyyy")</MudText>
+                                        </div>
+                                    </div>
+                                </TitleContent>
+                                <ChildContent>
+                                    @((MarkupString)doc.Document.VersionText)
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.MedDocs</MudText>
+                    }
+
                 }
-             }
+            }
+            else
+            {
+                <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.MedDocs</MudText>
+            }
         </MudTabPanel>
         <MudTabPanel Text="@archive">
             <MudGrid>
@@ -46,6 +61,45 @@
                     <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                 </MudItem>
             </MudGrid>
+
+            @if (archiveDocList.Any())
+            {
+                foreach (ServiceMedDocDto serviceMedDoc in archiveDocList)
+                {
+                    if (serviceMedDoc.MedDocList.Any())
+                    {
+                        foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                        {
+                            <MudExpansionPanel>
+                                <TitleContent>
+                                    <div style="display:flex">
+                                        <div>
+                                            <MudText Class="blueText" Typo="Typo.h5">@doc.TypeName</MudText>
+                                            <MudText Typo="Typo.body1">@doc.Author</MudText>
+                                        </div>
+                                        <div class="flexSpacer" />
+                                        <div>
+                                            <MudText Typo="Typo.body1" Class="grayText">@doc.CreateDate.Value.ToString("dd.MM.yyyy")</MudText>
+                                        </div>
+                                    </div>
+                                </TitleContent>
+                                <ChildContent>
+                                    @((MarkupString)doc.Document.VersionText)
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.MedDocs</MudText>
+                    }
+
+                }
+            }
+            else
+            {
+                <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.MedDocs</MudText>
+            }
         </MudTabPanel>
     </MudTabs>
 
@@ -64,6 +118,9 @@
     .blueText {
         color: @DoctorAppWeb.Client.Shared.Colors.Blue
     }
+    .docsWrapper {
+        padding: 1rem;
+    }
     </style>
 
             
@@ -73,6 +130,8 @@
 
     public bool showProgress = true;
     public List<ServiceMedDocDto> docList = new List<ServiceMedDocDto>();
+    public List<ServiceMedDocDto> archiveDocList = new List<ServiceMedDocDto>();
+    public List<ServiceMedDocDto> archiveDocFullList = new List<ServiceMedDocDto>();
 
     public string all = "ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ";
     public string archive = "АРХИВ";
@@ -91,7 +150,7 @@
         {
             showProgress = true;
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDocList");
-            httpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
+            httpRequest.Headers.Add("personId", Guid.Empty.ToString());
             httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             docList = await httpResponse.Content.ReadFromJsonAsync<List<ServiceMedDocDto>>();
@@ -102,6 +161,22 @@
                     doc.Document = await GetInfoMedDoc(doc.EpicrisisVersionID);
                 }
             }
+
+            var archHttpRequest = new HttpRequestMessage(HttpMethod.Get, "Info/MedDocList");
+            archHttpRequest.Headers.Add("personId", StateContainer.CurrentPatient.PersonID.ToString());
+            archHttpRequest.Headers.Add("hcsId", Guid.Empty.ToString());
+            HttpResponseMessage archHttpResponse = await Http.SendAsync(archHttpRequest);
+            archiveDocList = await archHttpResponse.Content.ReadFromJsonAsync<List<ServiceMedDocDto>>();
+
+            foreach (ServiceMedDocDto serviceMedDoc in archiveDocList)
+            {
+                foreach (MedDocVersionDto doc in serviceMedDoc.MedDocList)
+                {
+                    doc.Document = await GetInfoMedDoc(doc.EpicrisisVersionID);
+                }
+            }
+
+            archiveDocFullList = archiveDocList.GetRange(0, archiveDocList.Count());
 
             showProgress = false;
         }
@@ -133,7 +208,15 @@
     }
 
     private async Task HandleSearch()
+    {
+        if (String.IsNullOrEmpty(SearchQuery))
         {
-
+            archiveDocList = archiveDocFullList;
+            return;
         }
+
+        archiveDocList = archiveDocFullList.Where(docList =>
+            docList.MedDocList.Where(doc => doc.TypeName.ToLower().Contains(SearchQuery.ToLower())).Any()
+        ).ToList();
+    }
 }
