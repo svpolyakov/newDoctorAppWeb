@@ -1,5 +1,10 @@
 @page "/comment"
 @inject HttpClient Http
+@inject StateContainer StateContainer
+
+<div class="saveCommentWrapper">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary">save comment</MudButton>
+</div>
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
         <MudText Typo="Typo.h5">
@@ -7,16 +12,27 @@
         </MudText>
 
         <MudPaper>
-            <MudTextField T="string" Label="Multiline" Variant="Variant.Text" Text="@sampleText" Lines="5" />
+            <MudTextField T="string" Label="Multiline" Variant="Variant.Text" Text="@commentText" Lines="5" />
         </MudPaper>
     </div>
 </MudPaper>
+
+<style>
+    .saveCommentWrapper {
+        position: absolute;
+        right: 1.2rem;
+        top: 2.5rem;
+    }
+</style>
+
 @code {
-    public string sampleText = "";
+    public string commentText = "";
+    public ConsultanceCommentDto comment;
 
     protected override async Task OnInitializedAsync()
     {
-
+        comment = await GetOrSetComment(StateContainer.CurrentPatient.PersonID, Guid.Empty, "");
+        commentText = comment.ClientComment;
     }
 
     //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем

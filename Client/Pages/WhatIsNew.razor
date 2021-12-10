@@ -7,21 +7,18 @@
 @inject NavigationManager navigationManager
 @inject StateContainer StateContainer
 
+<Progress isVisible="@showProgress"></Progress>
+<MudPaper Class="innerPageWrapper">
+    <div class="pageWrapper">
+        <MudText Typo="Typo.h5">
+            Что нового
+        </MudText>
 
-<div>Добавить комментарий</div>
-<br />
-<br />
-<div><h4>Что нового</h4></div>
-<br />
-<div><input type="search" style="width: 96%;"><button style="background-color:#3F51B5;"><img src="Search.svg" width="50" height="24"></button></div>
-<br />
-<div>
-    
-</div>
-
+    </div>
+</MudPaper>
 
 @code {
-
+    public bool showProgress = true;
     List<NewFiagnosInfoDto> newDiagnosis = new List<NewFiagnosInfoDto>();
     List<NewServiceInfoDto> newHcs = new List<NewServiceInfoDto>();
     List<NewParameterInfoDto> newLabTest = new List<NewParameterInfoDto>();
@@ -48,13 +45,9 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
-        //await GetNewHealthcareServices();
-        //await GetNewLabTest();
-        //await GetNewInvestigation();
-        //await GetNewConsultance();
-
-        //PatientService.CurrentPatient;
-        //await JSRuntime.InvokeVoidAsync("visibleMenu", true);
+        showProgress = true;
+        //await GetWhatNewsFull();
+        showProgress = false;
     }
 
     private async Task<List<NewServiceInfoDto>> GetNewHealthcareServices() //ОК

@@ -4,7 +4,10 @@
 
 <div class="patientInfo">
     <div class="addCommentWrapper">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToComment">add comment</MudButton>
+        @if (StateContainer.CurrentPage != Pages.Comment)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToComment">add comment</MudButton>
+        }
     </div>
     <MudPaper class="@(isOpen ? "patientInfoToggle activeToggle" : "patientInfoToggle")">
         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
@@ -167,6 +170,8 @@
 
     void ToComment()
     {
+        isOpen = false;
+        StateContainer.CurrentPage = Pages.Comment;
         navigationManager.NavigateTo(Pages.Comment);
     }
 }
