@@ -10,6 +10,7 @@ public class StateContainer
     private Patient prevPatient = null;
     private InfoWindow info = null;
     private InfoWindow prevInfo = null;
+    private int personsFilterType = 0;
 
     public Boolean ShowDrawer
     {
@@ -64,6 +65,15 @@ public class StateContainer
             {
                 prevInfo = value;
             }
+            NotifyStateChanged();
+        }
+    }
+
+    public int PersonsFilterType
+    {
+        get => personsFilterType; set
+        {
+            personsFilterType = value;
             NotifyStateChanged();
         }
     }

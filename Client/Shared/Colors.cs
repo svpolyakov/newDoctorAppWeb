@@ -11,6 +11,7 @@ namespace DoctorAppWeb.Client.Shared
         public static string LightBlue { get { return "#F0F1F9"; } }
         public static string DarkBlue { get{ return "#303F9F"; } }
         public static string DarkRed { get { return "#621B16"; } }
+        public static string Red { get { return "#F44336"; } }
         public static string LightRed { get { return "#c42929"; } }
         public static string LightestBlue { get { return "rgba(197, 202, 233, 0.5)"; } }
         public static string BorderBlue { get { return "#3f51b580"; } }

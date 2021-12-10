@@ -13,14 +13,14 @@
 <MudPaper>
     <div class="pageWrapper">
         <div class="tabWrapper">
-            <MudTabs>
-                <MudTabPanel OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
+            <MudTabs ActivePanelIndex="@StateContainer.PersonsFilterType">
+                <MudTabPanel ID="1" OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
                 </MudTabPanel>
-                <MudTabPanel OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
+                <MudTabPanel ID="4" OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
                 </MudTabPanel>
-                <MudTabPanel OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
+                <MudTabPanel ID="2" OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
                 </MudTabPanel>
-                <MudTabPanel OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
+                <MudTabPanel ID="7" OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Spacing="1" Class="filtersWrapper">
                         <MudItem xs="10">
                             <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
@@ -247,119 +247,114 @@
 </style>
 
 @code{
-        async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
+    async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
+    {
+        StateContainer.AppTitle = title;
+        PatientService.CurrentPatient = id;
+        PatientService.HealthcareServiceId = hcsId;
+        StateContainer.CurrentPage = Pages.WhatsNew;
+        StateContainer.CurrentPatient = person;
+
+        InfoWindow patientInfo = await GetInfo(person);
+
+        await localStorage.SetItemAsync("CurrentPatientID", id);
+        await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
+        await localStorage.SetItemAsync("AppTitle", title);
+        await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
+        await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
+
+        string stringifiedPerson = JsonConvert.SerializeObject(person);
+
+        await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
+
+        string stringifiedInfo = JsonConvert.SerializeObject(patientInfo);
+
+        await localStorage.SetItemAsync("CurrentPatientInfo", stringifiedInfo);
+
+        navigationManager.NavigateTo(Pages.WhatsNew);
+    }
+
+    private async Task<InfoWindow> GetInfo(Patient person)
+    {
+        InfoWindow infoWindow = new InfoWindow();
+        infoWindow.Admitted = person.AdmissionInfoDtc + person.AdmissionInfoInpatientSrv;
+        infoWindow.Allergic = person.Allergic;
+        infoWindow.IsWorking = person.IsWorkingStr;
+
+        HttpResponseMessage lifeAnamnesys = await Http.GetAsync("Tools/Anamnesis?id=" + person.LifeAnamnesisID);
+        HttpResponseMessage pathologyАnamnesis = await Http.GetAsync("Tools/Anamnesis?id=" + person.PathologyАnamnesisID);
+        HttpResponseMessage diagnosAnamnesisID = await Http.GetAsync("Tools/Anamnesis?id=" + person.DiagnosAnamnesisID);
+
+        if (lifeAnamnesys.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            StateContainer.AppTitle = title;
-            PatientService.CurrentPatient = id;
-            PatientService.HealthcareServiceId = hcsId;
-            StateContainer.CurrentPage = Pages.WhatsNew;
-            StateContainer.CurrentPatient = person;
-
-            Console.WriteLine('1');
-
-            InfoWindow patientInfo = await GetInfo(person);
-
-            Console.WriteLine('2');
-
-            await localStorage.SetItemAsync("CurrentPatientID", id);
-            await localStorage.SetItemAsync("HealthcareServiceId", hcsId);
-            await localStorage.SetItemAsync("AppTitle", title);
-            await localStorage.SetItemAsync("CurrentPage", Pages.WhatsNew);
-            await localStorage.SetItemAsync("CurrentPersonID", person.PersonID);
-
-            string stringifiedPerson = JsonConvert.SerializeObject(person);
-
-            await localStorage.SetItemAsync("CurrentPatient", stringifiedPerson);
-
-            string stringifiedInfo = JsonConvert.SerializeObject(patientInfo);
-
-            await localStorage.SetItemAsync("CurrentPatientInfo", stringifiedInfo);
-            //Console.WriteLine('3');
-
-            navigationManager.NavigateTo(Pages.WhatsNew);
+            infoWindow.LifeAnamnesis = await lifeAnamnesys.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
+        }
+        if (pathologyАnamnesis.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            infoWindow.PathologyАnamnesis = await pathologyАnamnesis.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
+        }
+        if (diagnosAnamnesisID.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            infoWindow.AnamnesisMKB = await diagnosAnamnesisID.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
         }
 
-        private async Task<InfoWindow> GetInfo(Patient person)
+        infoWindow.Diet = person.Diet;
+
+        StateContainer.InfoWindow = infoWindow;
+        return infoWindow;
+    }
+
+    void FindPatients()
+    {
+        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+        List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
+
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
         {
-            InfoWindow infoWindow = new InfoWindow();
-            infoWindow.Admitted = person.AdmissionInfoDtc + person.AdmissionInfoInpatientSrv;
-            infoWindow.Allergic = person.Allergic;
-            infoWindow.IsWorking = person.IsWorkingStr;
-
-            HttpResponseMessage lifeAnamnesys = await Http.GetAsync("Tools/Anamnesis?id=" + person.LifeAnamnesisID);
-            HttpResponseMessage pathologyАnamnesis = await Http.GetAsync("Tools/Anamnesis?id=" + person.PathologyАnamnesisID);
-            HttpResponseMessage diagnosAnamnesisID = await Http.GetAsync("Tools/Anamnesis?id=" + person.DiagnosAnamnesisID);
-
-            if (lifeAnamnesys.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                infoWindow.LifeAnamnesis = await lifeAnamnesys.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
-            }
-            if (pathologyАnamnesis.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                infoWindow.PathologyАnamnesis = await pathologyАnamnesis.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
-            }
-            if (diagnosAnamnesisID.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                infoWindow.AnamnesisMKB = await diagnosAnamnesisID.Content.ReadFromJsonAsync<AnamnesisInfoDto>();
-            }
-
-            infoWindow.Diet = person.Diet;
-
-            StateContainer.InfoWindow = infoWindow;
-            return infoWindow;
+            tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
         }
 
-        void FindPatients()
+        if (!string.IsNullOrWhiteSpace(SelectedDepartment))
         {
-            List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-            List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
+            // filtering doctors by department
+            Doctors = Doctors
+            .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
+                .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
+            .Count() > 0);
 
-            if (!string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
-            }
+            tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
 
-            if (!string.IsNullOrWhiteSpace(SelectedDepartment))
-            {
-                // filtering doctors by department
-                Doctors = Doctors
-                .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
-                    .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
-                .Count() > 0);
-
-                tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
-
-            }
-            else
-            {
-                Doctors = FullDoctorsList;
-            }
-
-            if (!string.IsNullOrWhiteSpace(SelectedDoctor))
-            {
-                // filtering departments by doctor
-                var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
-                var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
-                Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
-
-                // todo: the implementation is incorrect due to bad data in "Doctor" property
-                tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
-                //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
-            }
-            else
-            {
-                Departments = FullDepartmentList;
-            }
-
-            tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-            AllPersons = tempPatientsResult.ToArray();
+        }
+        else
+        {
+            Doctors = FullDoctorsList;
         }
 
-        private void ShowBtnPress(Guid id)
+        if (!string.IsNullOrWhiteSpace(SelectedDoctor))
         {
-            Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
-            tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
+            // filtering departments by doctor
+            var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
+            var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
+            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
+
+            // todo: the implementation is incorrect due to bad data in "Doctor" property
+            tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
+            //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
         }
+        else
+        {
+            Departments = FullDepartmentList;
+        }
+
+        tempPatientsResult = tempPatientsResult ?? new List<Patient>();
+        AllPersons = tempPatientsResult.ToArray();
+    }
+
+    private void ShowBtnPress(Guid id)
+    {
+        Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
+        tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
+    }
 
     //Стили
     private string MyPatientsStyle { get; set; }
@@ -385,7 +380,6 @@
     private List<CustomGridPerson> CustomGridPerson { get; set; }
     private List<CustomGroupPerson> CustomGroupPerson { get; set; }
     public bool showProgress = true;
-
 
     /// <summary>
     /// Кол-во пациентов, удовлетворяющих поисковому выражению
@@ -428,6 +422,9 @@
             }
         }
         PatientService.CurrentPage = "persons";
+
+        PatientService.FilterType = StateContainer.PersonsFilterType;
+
         if (PatientService.FilterType == 0 || !PatientService.FilterType.HasValue)
         {
             PatientService.FilterType = 1;
@@ -465,6 +462,7 @@
         DepPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         MyPatientsStyle = StyleForFilter;
         PatientService.FilterType = 1;
+        StateContainer.PersonsFilterType = 1;
         await ShowData();
         showProgress = false;
     }
@@ -476,6 +474,7 @@
         MyPatientsStyle = EmergencyPatientStyle = AllPatientStyle = null;
         DepPatientsStyle = StyleForFilter;
         PatientService.FilterType = 4;
+        StateContainer.PersonsFilterType = 4;
         await ShowData();
         showProgress = false;
     }
@@ -487,6 +486,7 @@
         DepPatientsStyle = MyPatientsStyle = AllPatientStyle = null;
         EmergencyPatientStyle = StyleForFilter;
         PatientService.FilterType = 2;
+        StateContainer.PersonsFilterType = 2;
         await ShowData();
         showProgress = false;
     }
@@ -497,6 +497,7 @@
         DepPatientsStyle = MyPatientsStyle = EmergencyPatientStyle = null;
         AllPatientStyle = StyleForFilter;
         PatientService.FilterType = 7;
+        StateContainer.PersonsFilterType = 7;
         await ShowData();
         showProgress = false;
     }
