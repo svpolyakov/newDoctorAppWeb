@@ -51,7 +51,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
@@ -97,7 +97,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
@@ -160,7 +160,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Consult</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -200,6 +200,7 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.Consult;
 
         dtcConsult = await GetPatientConsultanceAsync(SrvType.DTC);
         iscConsult = await GetPatientConsultanceAsync(SrvType.ISC);

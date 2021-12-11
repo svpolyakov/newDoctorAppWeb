@@ -90,9 +90,10 @@
         string currentPage = await localStorage.GetItemAsync<string>("CurrentPage");
 
         string currentPatient = await localStorage.GetItemAsync<string>("CurrentPatient");
+        string infoWindow = await localStorage.GetItemAsync<string>("CurrentPatientInfo");
 
         if (string.IsNullOrEmpty(idS) || string.IsNullOrEmpty(hcsIdS) || string.IsNullOrEmpty(appTitle) ||
-            string.IsNullOrEmpty(currentPage) || string.IsNullOrEmpty(currentPatient))
+        string.IsNullOrEmpty(currentPage) || string.IsNullOrEmpty(currentPatient))
         {
             return;
         }
@@ -107,6 +108,8 @@
         StateContainer.CurrentPage = currentPage;
 
         StateContainer.CurrentPatient = JsonConvert.DeserializeObject<Patient>(currentPatient);
+
+        StateContainer.InfoWindow = JsonConvert.DeserializeObject<InfoWindow>(infoWindow);
 
     }
 }

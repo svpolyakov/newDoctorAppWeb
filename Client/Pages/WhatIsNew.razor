@@ -13,8 +13,80 @@
         <MudText Typo="Typo.h5">
             Что нового
         </MudText>
+        <!--analysis-->
+        @if (newLabTest.Count() > 0)
+        {
+            foreach (NewParameterInfoDto labTest in newLabTest)
+            {
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudGrid>
+                            <MudItem xs="10">
+                                <MudText>@labTest.Description</MudText>
+                                @if (!String.IsNullOrEmpty(labTest.OutOfNorm))
+                                {
+                                    <MudText>@labTest.OutOfNorm</MudText>
+                                }
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudText>@labTest.EndDate.Value.ToString("dd.MM.yyyy")</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </TitleContent>
+                    <ChildContent>
 
-    </div>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+
+        }
+
+        <!--diagnosis-->
+        @if (newDiagnosis.Count() > 0)
+        {
+            foreach (NewFiagnosInfoDto diagnosis in newDiagnosis)
+            {
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudGrid>
+                            <MudItem xs="10">
+                                <MudText>@diagnosis.MKBDiagnosisCode @diagnosis.DiagnosText</MudText>
+                            </MudItem>
+                            <MudItem xs="2">
+                                @diagnosis.WhenStartedDate.Value.ToString("dd.MM.yyyy")
+                            </MudItem>
+                        </MudGrid>
+                    </TitleContent>
+                    <ChildContent>
+                        <div><MudText Class="grayText">@diagnosis.DiagnosisImportance @diagnosis.IllnessType @diagnosis.CureStagesDiagnos @diagnosis.DiagnosisAccuracy</MudText></div>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        }
+        <!--hcs-->
+        @if (newHcs.Count() > 0)
+        {
+            foreach (NewServiceInfoDto hcs in newHcs)
+            {
+                <MudExpansionPanel>
+                    <TitleContent>
+                    </TitleContent>
+                    <ChildContent>
+
+                    </ChildContent>
+                </MudExpansionPanel>
+
+            } }
+
+
+                <MudExpansionPanel>
+                    <TitleContent>
+                    </TitleContent>
+                    <ChildContent>
+
+                    </ChildContent>
+                </MudExpansionPanel>
+            </div>
 </MudPaper>
 
 @code {
@@ -45,8 +117,9 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.WhatsNew;
         showProgress = true;
-        //await GetWhatNewsFull();
+        await GetWhatNewsFull();
         showProgress = false;
     }
 

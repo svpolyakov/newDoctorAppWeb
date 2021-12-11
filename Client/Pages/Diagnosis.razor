@@ -40,7 +40,7 @@
                     }
                     else
                         {
-                            <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
+                            <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
                         }
                 </MudTabPanel>
                 <MudTabPanel OnClick="@(() => HandleArchiveToggle())" Text="АРХИВ">
@@ -76,7 +76,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Diagnosis</MudText>
                     }
                 </MudTabPanel>
 
@@ -120,6 +120,7 @@
     {
         showProgress = true;
         StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.Diagnosis;
         diagnosis = await GetDiagnoses();
         showProgress = false;
     }

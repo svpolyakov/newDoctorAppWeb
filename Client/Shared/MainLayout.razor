@@ -155,7 +155,11 @@
         }
         else
         {
-            // go to prev patient
+            if (StateContainer.CurrentPage == Pages.Comment)
+            {
+             //   navigationManager.NavigateTo(StateContainer.P);
+            }
+            // go to list
             navigationManager.NavigateTo("persons");
         }
     }

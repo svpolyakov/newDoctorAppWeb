@@ -1,6 +1,7 @@
 ﻿@page "/research"
 @inject IPatientsService PatientService
 @inject HttpClient Http
+@inject StateContainer StateContainer
 
 <Progress isVisible="@showProgress"></Progress>
 <MudPaper Class="innerPageWrapper">
@@ -50,7 +51,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
@@ -96,7 +97,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
@@ -157,7 +158,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Research</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -198,6 +199,8 @@
     protected override async Task OnInitializedAsync()
     {
         showProgress = true;
+        StateContainer.CurrentPage = Pages.Research;
+        StateContainer.ShowDrawer = true;
 
         dtcResearch = await GetInvestigationsAsync(SrvType.DTC);
         iscResearch = await GetInvestigationsAsync(SrvType.ISC);

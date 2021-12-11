@@ -35,7 +35,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ТАБЛИЦА">
@@ -75,7 +75,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Indications</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -273,6 +273,7 @@
     {
         showProgress = true;
         StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.Indications;
         customSettings = await GetCustomSettings();
         customSettings.MaxPeriodData = 666;
         indicants = await GetIndicants();

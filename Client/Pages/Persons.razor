@@ -13,7 +13,7 @@
 <MudPaper>
     <div class="pageWrapper">
         <div class="tabWrapper">
-            <MudTabs ActivePanelIndex="@StateContainer.PersonsFilterType">
+            <MudTabs ActivePanelIndex="@GetTabIndex()">
                 <MudTabPanel ID="1" OnClick="@(() => FilterMyPatientsClick())" Text="МОИ">
                 </MudTabPanel>
                 <MudTabPanel ID="4" OnClick="@(() => FilterToMyDepartmentPatientsClick())" Text="ПОСТУПИВШИЕ">
@@ -70,93 +70,101 @@
             </MudTabs>
         </div>
 
-        <MudTable AllowUnsorted="false" Items="@AllPersons" Hover="false" Dense="true">
-            <HeaderContent>
-                <MudTh Class="tableHeader"></MudTh>
-                @foreach (var field in CustomGridPerson)
-                {
-                    if (field.WhereToDisplay)
+        @if (AllPersons != null && AllPersons.Any())
+        {
+            <MudTable AllowUnsorted="false" Items="@AllPersons" Hover="false" Dense="true">
+                <HeaderContent>
+                    <MudTh Class="tableHeader"></MudTh>
+                    @foreach (var field in CustomGridPerson)
                     {
-                        <MudTh Class="tableHeader">
-                            <MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.GetPropertyValue(field.NameColumnEn))">
-                                <span class="tableHeaderText">@field.NameColumnRu</span>
-                            </MudTableSortLabel>
-                        </MudTh>
+                        if (field.WhereToDisplay)
+                        {
+                            <MudTh Class="tableHeader">
+                                <MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.GetPropertyValue(field.NameColumnEn))">
+                                    <span class="tableHeaderText">@field.NameColumnRu</span>
+                                </MudTableSortLabel>
+                            </MudTh>
+                        }
+
                     }
-
-                }
-                <MudTh Class="stickyCell tableHeader"></MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
-                                   OnClick="@(() => ShowBtnPress(context.PersonID))"
-                                   Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
-                </MudTd>
+                    <MudTh Class="stickyCell tableHeader"></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                                       OnClick="@(() => ShowBtnPress(context.PersonID))"
+                                       Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
+                    </MudTd>
 
 
-                @foreach (var field in CustomGridPerson)
-                {
-                    if (field.NameColumnEn == "InResuscitation")
-                    {
-                        field.NameColumnEn = "InResuscitationString";
-                    }
+                    @foreach (var field in CustomGridPerson)
+                        {
+                            if (field.NameColumnEn == "InResuscitation")
+                            {
+                                field.NameColumnEn = "InResuscitationString";
+                            }
 
 
-                    if (field.WhereToDisplay)
-                    {
-                        <MudTd>
-                            <MudText Typo="Typo.body1">@context.GetPropertyValue(field.NameColumnEn)</MudText>
-                        </MudTd>
-                    }
-                }
-                <MudTd Class="stickyCell stickyWhiteBg">
-                    <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
+                            if (field.WhereToDisplay)
+                            {
+                            <MudTd>
+                                <MudText Typo="Typo.body1">@context.GetPropertyValue(field.NameColumnEn)</MudText>
+                            </MudTd>
+                            }
+                        }
+                    <MudTd Class="stickyCell stickyWhiteBg">
+                        <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
                                                                                  string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId, context);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
-                        <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
-                    </MudIconButton>
-                </MudTd>
-            </RowTemplate>
-            <ChildRowContent>
-                @if (context.ShowDetails)
-                {
-                    string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
-                    string iconClass = context.SexEnum == 1 ? "darkBlue" : "darkRed";
-                    string icon = context.SexEnum == 1 ? Icons.Material.Filled.Male : Icons.Material.Filled.Female;
-                    string diagnosis = !String.IsNullOrEmpty(@context.Diagnos) ? @context.Diagnos : "данные не указаны";
-                    <MudTr>
-                        <MudTd class="green" colspan="@CustomGridPerson.Count">
-                            <div class="descriprion">
-                                <MudGrid>
-                                    <MudItem xs="8">
-                                        <span class="descriprion-title" Color="Color.Secondary">Врач: </span><span class="descriprion-content">@context.Doctor</span>
-                                    </MudItem>
-                                    <MudItem xs="4">
-                                        <span class="descriprion-content">@context.Bed</span>
-                                    </MudItem>
+                            <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
+                        </MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <ChildRowContent>
+                    @if (context.ShowDetails)
+                        {
+                            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
+                            string iconClass = context.SexEnum == 1 ? "darkBlue" : "darkRed";
+                            string icon = context.SexEnum == 1 ? Icons.Material.Filled.Male : Icons.Material.Filled.Female;
+                            string diagnosis = !String.IsNullOrEmpty(@context.Diagnos) ? @context.Diagnos : "данные не указаны";
+                        <MudTr>
+                            <MudTd class="green" colspan="@CustomGridPerson.Count">
+                                <div class="descriprion">
+                                    <MudGrid>
+                                        <MudItem xs="8">
+                                            <span class="descriprion-title" Color="Color.Secondary">Врач: </span><span class="descriprion-content">@context.Doctor</span>
+                                        </MudItem>
+                                        <MudItem xs="4">
+                                            <span class="descriprion-content">@context.Bed</span>
+                                        </MudItem>
 
-                                    <MudItem xs="12">
-                                        <span class="descriprion-title" Color="Color.Secondary">Поступление: </span><span class="descriprion-content">@context.AdmissionInfo</span>
-                                    </MudItem>
-                                    
-                                    <MudItem xs="8">
-                                        <span class="descriprion-title" Color="Color.Secondary">Дата рождения, возраст: </span><span class="descriprion-content">@context.Birthday (@context.AgeDescription)</span><MudIcon Class="@iconClass" Icon="@icon" />
-                                    </MudItem>
-                                    <MudItem xs="4">
-                                        <span class="descriprion-title" Color="Color.Secondary">Диагноз: </span><span class="descriprion-content">@diagnosis</span>
-                                    </MudItem>
-                                </MudGrid>
-                            </div>
-                        </MudTd>
-                    </MudTr>
+                                        <MudItem xs="12">
+                                            <span class="descriprion-title" Color="Color.Secondary">Поступление: </span><span class="descriprion-content">@context.AdmissionInfo</span>
+                                        </MudItem>
+
+                                        <MudItem xs="8">
+                                            <span class="descriprion-title" Color="Color.Secondary">Дата рождения, возраст: </span><span class="descriprion-content">@context.Birthday (@context.AgeDescription)</span><MudIcon Class="@iconClass" Icon="@icon" />
+                                        </MudItem>
+                                        <MudItem xs="4">
+                                            <span class="descriprion-title" Color="Color.Secondary">Диагноз: </span><span class="descriprion-content">@diagnosis</span>
+                                        </MudItem>
+                                    </MudGrid>
+                                </div>
+                            </MudTd>
+                        </MudTr>
                         }
-            </ChildRowContent>
-            <PagerContent>
-                <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:" />
-            </PagerContent>
-        </MudTable>
+                </ChildRowContent>
+                <PagerContent>
+                    <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:" />
+                </PagerContent>
+            </MudTable>
+        }
+        else
+        {
+            <MudText Class="emptyState" Typo="Typo.h5">@GetEmptyStateMessage()</MudText>
+        }
+
     </div>
 </MudPaper>
 
@@ -247,6 +255,49 @@
 </style>
 
 @code{
+
+    public int GetTabIndex()
+    {
+        if (StateContainer.PersonsFilterType == 1)
+        {
+            return 0;
+        }
+        if (StateContainer.PersonsFilterType == 4)
+        {
+            return 1;
+        }
+        if (StateContainer.PersonsFilterType == 2)
+        {
+            return 2;
+        }
+        if (StateContainer.PersonsFilterType == 7)
+        {
+            return 3;
+        }
+
+        return 0;
+    }
+
+    public string GetEmptyStateMessage()
+    {
+        if (StateContainer.PersonsFilterType == 1) {
+            return DoctorAppWeb.Client.Shared.EmptyStateMessages.MyPatients;
+        }
+        if (StateContainer.PersonsFilterType == 4)
+        {
+            return DoctorAppWeb.Client.Shared.EmptyStateMessages.MyDepPatients;
+        }
+        if (StateContainer.PersonsFilterType == 2)
+        {
+            return DoctorAppWeb.Client.Shared.EmptyStateMessages.EmergencyPatients;
+        }
+        if (StateContainer.PersonsFilterType == 7)
+        {
+            return DoctorAppWeb.Client.Shared.EmptyStateMessages.AllPatients;
+        }
+        return DoctorAppWeb.Client.Shared.EmptyStateMessages.MyPatients;
+    }
+
     async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
     {
         StateContainer.AppTitle = title;
@@ -368,7 +419,7 @@
     Task<AuthenticationState> AuthenticationState { get; set; }
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
-    private Patient[] AllPersons;
+    public Patient[] AllPersons;
     public string SelectedDepartment = " ";
     public string SelectedDoctor = " ";
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
@@ -443,6 +494,7 @@
     protected void UpdatePagePersons(bool resetLastPageNumber = false)
     {
         AllPersons = PatientService.AllPersons.ToArray();
+        Console.WriteLine(AllPersons.ToString());
 
         // todo: figure out wtf is that
         /*if (string.IsNullOrEmpty(SearchQuery))

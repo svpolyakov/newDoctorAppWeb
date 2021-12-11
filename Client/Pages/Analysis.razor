@@ -59,7 +59,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
@@ -113,7 +113,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
@@ -181,7 +181,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Analysis</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -258,6 +258,7 @@
     protected override async Task OnInitializedAsync()
     {
         StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.Analysis;
         showProgress = true;
         List<LabTestDto> archive = await GetAnalysisAsync(SrvType.All);
         dtcAnalysis = await GetAnalysisAsync(SrvType.DTC);
@@ -360,9 +361,9 @@
         if (!String.IsNullOrEmpty(param.ValueMeasureUnit))
         {
             string pattern = @"\d{2}\D(\d+)(\/.+)";
-           
+
             if (Regex.IsMatch(param.ValueMeasureUnit, pattern))
-            { 
+            {
                 result[1] = Regex.Replace(param.ValueMeasureUnit, pattern, "10<sup>$1</sup>$2");
             }
             else

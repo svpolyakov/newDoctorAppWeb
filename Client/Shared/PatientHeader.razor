@@ -6,7 +6,7 @@
     <div class="addCommentWrapper">
         @if (StateContainer.CurrentPage != Pages.Comment)
         {
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToComment">add comment</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToComment">добавтить комментарий</MudButton>
         }
     </div>
     <MudPaper class="@(isOpen ? "patientInfoToggle activeToggle" : "patientInfoToggle")">
@@ -23,24 +23,35 @@
             <MudText Typo="Typo.h5">Информация о пациенте</MudText>
 
             <div class="patientInfoData">
-                <div style="display: flex">
-                    <MudText Class="blueText">Поступил:</MudText><MudText Class="grayText">&nbsp;@((MarkupString)StateContainer.InfoWindow.Admitted)</MudText>
-                </div>
-                <div style="display: flex">
-                    <MudText Class="blueText">@StateContainer.InfoWindow.IsWorking</MudText>
-                </div>
-                @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Allergic))
-                {
-                    <div style="display: flex">
-                        <MudText Class="blueText">Аллергия на:</MudText><MudText Class="grayText">&nbsp;@StateContainer.InfoWindow.Allergic</MudText>
-                    </div>
-                }
-                @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Diet))
-                {
-                    <div style="display: flex">
-                        <MudText Class="blueText">Диета:</MudText><MudText Class="grayText">&nbsp;@StateContainer.InfoWindow.Diet</MudText>
-                    </div>
-                }
+
+                <MudGrid>
+                    <MudItem xs="2"><MudText Class="blueText">Поступил:</MudText></MudItem>
+                    <MudItem xs="10"><MudText Class="grayText">@((MarkupString)StateContainer.InfoWindow.Admitted)</MudText></MudItem>
+                    
+                    <MudItem xs="12"><MudText Class="blueText">@StateContainer.InfoWindow.IsWorking</MudText></MudItem>
+                    
+                    @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Allergic))
+                    {
+                        <MudItem xs="2">
+                            <MudText Class="blueText">Аллергия:</MudText>
+                        </MudItem>
+                        <MudItem xs="10">
+                            <MudText Class="grayText">@StateContainer.InfoWindow.Allergic</MudText>
+                        </MudItem>
+                    }
+                    
+                    @if (!String.IsNullOrEmpty(StateContainer.InfoWindow.Diet))
+                    {
+                        <MudItem xs="2">
+                            <MudText Class="blueText">Диета:</MudText>
+                        </MudItem>
+                        <MudItem xs="10">
+                            <MudText Class="grayText">@StateContainer.InfoWindow.Diet</MudText>
+                        </MudItem>
+                    }
+
+                    </MudGrid>
+
             </div>
             <div class="patientInfoButtonsBlock">
                 <MudButton Class="headerBtn" OnClick="ShowMedDocs" Color="Color.Secondary" Variant="Variant.Outlined">Медицинские документы</MudButton>

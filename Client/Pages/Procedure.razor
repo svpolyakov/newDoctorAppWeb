@@ -13,84 +13,30 @@
 
         <div class="tabWrapper">
             <MudTabs>
-                <!--
-            <MudTabPanel Text="ТЕКУЩИЕ">
-                @if (dtcProcedures != null)
-                {
 
-                    <MudTable Items="@dtcMeds.DTCMedicamentList" Dense="true">
-                        <HeaderContent>
-                            <MudTh Class="tableHeader"></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Название</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Исполнитель</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Начато</MudText></MudTh>
-                            <MudTh Class="tableHeader"><MudText>Завершено</MudText></MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd>
-                                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown"
-                                               OnClick="@(() => ShowBtnPress(context))"
-                                               Size="Size.Large" class=@(context.ShowDetails ? "expanderButton arrowDown" : "expanderButton")></MudIconButton>
-                            </MudTd>
-                            <MudTd><MudText Class="@GetRowClass(context)" Typo="Typo.body1">@ParseTitle(context)</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@context.ApplicationMethod</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseStartTime(context)</MudText></MudTd>
-                            <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseEndTime(context)</MudText></MudTd>
-                        </RowTemplate>
-                        <ChildRowContent>
-                            @if (context.ShowDetails && context.CourseMedicamentList != null && context.CourseMedicamentList[0].MedicamentTherapyList != null)
-                                {
-                                    foreach (MedicamentTherapyInfoDto med in context.CourseMedicamentList[0].MedicamentTherapyList)
-                                    {
-                                    <MudTr>
-                                        <MudTd></MudTd>
-                                        <MudTd><MudText Class="grayText innerTDPadding" Typo="Typo.body1">@med.MedicamentName</MudText></MudTd>
-                                        <MudTd><MudText Class="grayText" Typo="Typo.body1">@context.ApplicationMethod</MudText></MudTd>
-                                        <MudTd></MudTd>
-                                        <MudTd><MudText Class="grayText" Typo="Typo.body1">@ParseMedEndTime(med)</MudText></MudTd>
-                                    </MudTr>
-                                    }
-
-                                }
-                        </ChildRowContent>
-                    </MudTable>
-                }
-            </MudTabPanel>
-
+            <MudTabPanel Text="ТЕКУЩИЕ"></MudTabPanel>            
 
             <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
-                @if (iscMeds != null)
+                @if (iscProcedures != null)
                 {
-                    foreach (PatientMedicamentDto medGroup in iscMeds.ISCMedicamentList)
+                    foreach (ProcedureResultDto procedure in iscProcedures)
                     {
                         <div>
-                            <MudText Class="greenText" Typo="Typo.h5">@medGroup.ParentServiceName c @medGroup.ServiceSD.Value.ToString("dd.MM.yyyy")</MudText>
+                            <MudText Class="greenText" Typo="Typo.h5">@procedure.DepartmentTreatmentCase.Name c @procedure.DepartmentTreatmentCase.BeginDate.Value.ToString("dd.MM.yyyy")</MudText>
                         </div>
 
-                        foreach (ServiceMedicamentDto medItem in medGroup.ServiceMedicamentList)
+                        foreach (SingleProcedureResultDto singleProcList in procedure.SingleProcedureResultList)
                         {
-                            string itemSD = medItem.CourseSD == null ? "" : "c " + medItem.CourseSD.Value.ToString("dd.MM.yyyy HH:mm");
-                            string itemED = medItem.CourseED == null ? "" : "по " + medItem.CourseED.Value.ToString("dd.MM.yyyy HH:mm");
-                            if (medItem.CourseMedicamentList != null)
-                            {
-                                foreach (CourseMedicamentDto courseItem in medItem.CourseMedicamentList)
-                                {
-                                    <MudGrid>
-                                        <MudItem xs="3">
-                                            <div><MudText Class="grayText">@itemSD</MudText></div>
-                                            <div><MudText Class="grayText">@itemED</MudText></div>
-                                        </MudItem>
-                                        <MudItem xs="6">
-                                            <div><MudText>@courseItem.CourseHeader</MudText></div>
-                                            <div><MudText Class="grayText">@medItem.ApplicationMethod</MudText></div>
-                                        </MudItem>
-                                        <MudItem xs="3">
-                                            <MudText Class="grayText">@courseItem.Taken из @courseItem.Prescribed принято</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                }
-                            }
-
+                            string itemED = singleProcList.EndDate == null ? "" : "по " + singleProcList.EndDate.Value.ToString("dd.MM.yyyy HH:mm");
+                            <MudGrid>
+                                <MudItem xs="3">
+                                    <div><MudText Class="grayText">@itemED</MudText></div>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <div><MudText>@singleProcList.Name</MudText></div>
+                                    <div><MudText Class="grayText">@singleProcList.Executor</MudText></div>
+                                </MudItem>
+                            </MudGrid>
                         }
                     }
                 }
@@ -103,7 +49,7 @@
                                       Clearable="true"
                                       FullWidth="true"
                                       @bind-Value="SearchQuery"
-                                      Label="Название медикамента"
+                                      Label="Название процедуры"
                                       Margin="Margin.Dense"
                                       Variant="Variant.Outlined"></MudTextField>
                     </MudItem>
@@ -111,43 +57,31 @@
                         <MudIconButton @onclick="HandleSearch" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                     </MudItem>
                 </MudGrid>
-                @if (allMeds != null)
+                @if (allProcedures != null)
                 {
-                    foreach (PatientMedicamentDto medGroup in allMeds.AllMedicamentList)
+                    foreach (ProcedureResultDto procedure in allProcedures)
                     {
                         <div>
-                            <MudText Class="greenText" Typo="Typo.h5">@medGroup.ParentServiceName c @medGroup.ServiceSD.Value.ToString("dd.MM.yyyy")</MudText>
+                            <MudText Class="greenText" Typo="Typo.h5">@procedure.InpatientServiceCase.Name c @procedure.InpatientServiceCase.BeginDate.Value.ToString("dd.MM.yyyy")</MudText>
                         </div>
-                        foreach (ServiceMedicamentDto medItem in medGroup.ServiceMedicamentList)
-                        {
-                            string itemSD = medItem.CourseSD == null ? "" : "c " + medItem.CourseSD.Value.ToString("dd.MM.yyyy HH:mm");
-                            string itemED = medItem.CourseED == null ? "" : "по " + medItem.CourseED.Value.ToString("dd.MM.yyyy HH:mm");
-                            if (medItem.CourseMedicamentList != null)
-                            {
-                                foreach (CourseMedicamentDto courseItem in medItem.CourseMedicamentList)
-                                {
-                                    <MudGrid>
-                                        <MudItem xs="3">
-                                            <div><MudText Class="grayText">@itemSD</MudText></div>
-                                            <div><MudText Class="grayText">@itemED</MudText></div>
-                                        </MudItem>
-                                        <MudItem xs="6">
-                                            <div><MudText>@courseItem.CourseHeader</MudText></div>
-                                            <div><MudText Class="grayText">@medItem.ApplicationMethod</MudText></div>
-                                        </MudItem>
-                                        <MudItem xs="3">
-                                            <MudText Class="grayText">@courseItem.Taken из @courseItem.Prescribed принято</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                }
-                            }
 
+                        foreach (SingleProcedureResultDto singleProcList in procedure.SingleProcedureResultList)
+                        {
+                            string itemED = singleProcList.EndDate == null ? "" : "по " + singleProcList.EndDate.Value.ToString("dd.MM.yyyy HH:mm");
+                            <MudGrid>
+                                <MudItem xs="3">
+                                    <div><MudText Class="grayText">@itemED</MudText></div>
+                                </MudItem>
+                                <MudItem xs="9">
+                                    <div><MudText>@singleProcList.Name</MudText></div>
+                                    <div><MudText Class="grayText">@singleProcList.Executor</MudText></div>
+                                </MudItem>
+                            </MudGrid>
                         }
                     }
                 }
             </MudTabPanel>
 
-                -->
             </MudTabs>
         </div>
     </div>
@@ -192,6 +126,8 @@
     protected override async Task OnInitializedAsync()
     {
         showProgress = true;
+        StateContainer.ShowDrawer = true;
+        StateContainer.CurrentPage = Pages.Procedure;
 
         List<ProcedureResultDto> archive = await GetProceduresAsync(SrvType.All);
         dtcProcedures = await GetProceduresAsync(SrvType.DTC);
@@ -225,5 +161,32 @@
         return result;
     }
 
-    private async Task HandleSearch() { }
+    private async Task HandleSearch() {
+        if (String.IsNullOrEmpty(SearchQuery))
+        {
+            allProcedures = fullList;
+            return;
+        }
+
+        List<ProcedureResultDto> filtered = new List<ProcedureResultDto>();
+        foreach (ProcedureResultDto procedure in fullList)
+        {
+            ProcedureResultDto filteredGroup = new ProcedureResultDto();
+
+            filteredGroup.InpatientServiceCase = procedure.InpatientServiceCase;
+            filteredGroup.SingleProcedureResultList = new List<SingleProcedureResultDto>();
+
+            IEnumerable<SingleProcedureResultDto> matched = procedure.SingleProcedureResultList
+            .Where(singleProc => singleProc.Name.ToLower().Contains(SearchQuery.ToLower()));
+
+            if (matched.Any())
+            {
+                filteredGroup.SingleProcedureResultList = matched.ToList();
+
+                filtered.Add(filteredGroup);
+            }
+        }
+
+        allProcedures = filtered;
+    }
 }

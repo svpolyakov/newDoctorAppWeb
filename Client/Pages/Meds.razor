@@ -54,7 +54,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="ПО ВСЕЙ ГОСПИТАЛИЗАЦИИ">
@@ -95,7 +95,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
                     }
                 </MudTabPanel>
                 <MudTabPanel Text="АРХИВ">
@@ -150,7 +150,7 @@
                     }
                     else
                     {
-                        <MudText Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
+                        <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Meds</MudText>
                     }
                 </MudTabPanel>
             </MudTabs>
@@ -209,6 +209,7 @@
         {
             showProgress = true;
             StateContainer.ShowDrawer = true;
+            StateContainer.CurrentPage = Pages.Meds;
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Medicaments/Medicaments");
             httpRequest.Headers.Add("patientId", PatientService.CurrentPatient.ToString());
             httpRequest.Headers.Add("hcsId", PatientService.HealthcareServiceId.ToString());
