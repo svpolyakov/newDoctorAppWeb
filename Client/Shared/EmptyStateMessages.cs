@@ -16,7 +16,7 @@ namespace DoctorAppWeb.Client.Shared
         public const string Indications = "Показатели отсутствуют";
         public const string Analysis = "Анализы отсутствуют";
         public const string Meds = "Медикаменты отсутствуют";
-        public const string Research = "Исследования отсутствуют";
+        public const string Research = "Обследования отсутствуют";
         public const string Consult = "Консультации отсутствуют";
         public const string Visit = "Визиты отсутствуют";
         public const string Procedure = "Процедуры отсутствуют";
