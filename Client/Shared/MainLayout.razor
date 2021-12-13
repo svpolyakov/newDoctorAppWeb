@@ -36,7 +36,7 @@
             <MudText>@StateContainer.AppTitle</MudText>
             @if (StateContainer.CurrentPage == Pages.Patients)
             {
-                <MudIconButton Class="whiteButton" Icon="@Icons.Material.Outlined.Refresh" aria-label="refresh"></MudIconButton>
+                <MudIconButton Class="whiteButton" Icon="@Icons.Material.Outlined.Refresh" aria-label="refresh" @onclick="ClearCache"></MudIconButton>
                 <MudIconButton Class="whiteButton" OnClick="@(() => GoToCustomizationPersons())" Icon="@Icons.Material.Outlined.Settings" aria-label="settings"></MudIconButton>
             }
         }
@@ -142,6 +142,12 @@
         StateContainer.OnChange -= StateHasChanged;
     }
 
+    public async Task ClearCache()
+    {
+        string userName = (await AuthenticationState).User.Identity.Name;
+        await Http.GetAsync("Tools/ResetCache?login=" + userName);
+    }
+
     public async Task GoBack()
     {
         // if previous patient is set
@@ -157,7 +163,7 @@
         {
             if (StateContainer.CurrentPage == Pages.Comment)
             {
-             //   navigationManager.NavigateTo(StateContainer.P);
+                //   navigationManager.NavigateTo(StateContainer.P);
             }
             // go to list
             navigationManager.NavigateTo("persons");

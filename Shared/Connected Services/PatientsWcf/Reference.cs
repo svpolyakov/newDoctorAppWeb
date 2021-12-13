@@ -4039,6 +4039,9 @@ namespace PatientsWcf
     public interface IInpatientDoctor
     {
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/ResetCachePatientList", ReplyAction="http://tempuri.org/IInpatientDoctor/ResetCachePatientListResponse")]
+        System.Threading.Tasks.Task ResetCachePatientListAsync(string login);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatients", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientsResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login);
         
@@ -4178,6 +4181,11 @@ namespace PatientsWcf
         public InpatientDoctorClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
+        }
+        
+        public System.Threading.Tasks.Task ResetCachePatientListAsync(string login)
+        {
+            return base.Channel.ResetCachePatientListAsync(login);
         }
         
         public System.Threading.Tasks.Task<System.Collections.Generic.List<PatientsWcf.PatientDto>> GetPatientsAsync(PatientsWcf.PersonQueryParamsDto personQueryParamsDto, string login)

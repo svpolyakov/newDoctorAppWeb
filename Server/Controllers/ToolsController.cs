@@ -39,6 +39,12 @@ namespace DoctorAppWeb.Server.Controllers
             }
         }
 
+        [HttpGet("ResetCache")]
+        public async Task ResetCacheAsync([FromQuery] string login)
+        {
+            await new InpatientDoctorClient().ResetCachePatientListAsync(login);
+        }
+
         //[HttpGet]
         //public ConnectionStatus Get()
         //{
