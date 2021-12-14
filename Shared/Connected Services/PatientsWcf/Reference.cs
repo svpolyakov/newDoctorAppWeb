@@ -2737,7 +2737,7 @@ namespace PatientsWcf
         
         private string SurgeryNameField;
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public PatientsWcf.ProtocolDto Conclusion
         {
             get
@@ -2750,7 +2750,7 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string DiagnosText
         {
             get
@@ -2776,7 +2776,7 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string MainExecutorFIO
         {
             get
@@ -2789,7 +2789,7 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string ProducingPointName
         {
             get
@@ -2802,7 +2802,7 @@ namespace PatientsWcf
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Collections.Generic.List<PatientsWcf.ProtocolDto> ProtocolList
         {
             get
