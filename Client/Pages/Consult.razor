@@ -205,8 +205,8 @@
         dtcConsult = await GetPatientConsultanceAsync(SrvType.DTC);
         iscConsult = await GetPatientConsultanceAsync(SrvType.ISC);
         PatientConsultanceResultDto archive = await GetPatientConsultanceAsync(SrvType.All);
-
-        fullList = archive.AllConsultanceList.GetRange(0, archive.AllConsultanceList.Count);
+        if(archive != null && archive.AllConsultanceList != null && archive.AllConsultanceList.Any())
+            fullList = archive.AllConsultanceList.GetRange(0, archive.AllConsultanceList.Count);
         allConsult = archive;
 
         showProgress = false;
@@ -236,26 +236,28 @@
     {
         if (String.IsNullOrEmpty(SearchQuery))
         {
-            allConsult.AllConsultanceList = fullList;
+            if(allConsult != null)
+                allConsult.AllConsultanceList = fullList;
             return;
         }
         List<ISCConsultanceDto> filtered = new List<ISCConsultanceDto>();
-        foreach (ISCConsultanceDto consultGroup in fullList)
-        {
-            IEnumerable<ConsultanceDto> matches = consultGroup.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower()));
-            if (matches.Any())
+        if(fullList != null)
+            foreach (ISCConsultanceDto consultGroup in fullList)
             {
-                ISCConsultanceDto filteredGroup = new ISCConsultanceDto();
+                IEnumerable<ConsultanceDto> matches = consultGroup.ConsultanceList.Where(consult => consult.ConsultanceName.ToLower().Contains(SearchQuery.ToLower()));
+                if (matches.Any())
+                {
+                    ISCConsultanceDto filteredGroup = new ISCConsultanceDto();
 
-                filteredGroup.ConsultanceList = matches.ToList();
-                filteredGroup.EndDate = consultGroup.EndDate;
-                filteredGroup.ISCName = consultGroup.ISCName;
-                filteredGroup.StartDate = consultGroup.StartDate;
+                    filteredGroup.ConsultanceList = matches.ToList();
+                    filteredGroup.EndDate = consultGroup.EndDate;
+                    filteredGroup.ISCName = consultGroup.ISCName;
+                    filteredGroup.StartDate = consultGroup.StartDate;
 
-                filtered.Add(filteredGroup);
+                    filtered.Add(filteredGroup);
+                }
             }
-        }
-
-        allConsult.AllConsultanceList = filtered;
+        if(allConsult != null)
+            allConsult.AllConsultanceList = filtered;
     }
 }

@@ -274,7 +274,7 @@
             FillDatesArray(iscAnalysis);
         }
 
-        if (archive != null)
+        if (archive != null && archive.Any())
         {
             fullList = archive.GetRange(0, archive.Count);
             allAnalysis = archive;
@@ -355,10 +355,10 @@
             return result;
         }
 
-        ParameterValueDto param = match.First();
+        ParameterValueDto param = match.FirstOrDefault();
 
-        result[0] = !String.IsNullOrEmpty(param.TextValue) ? param.TextValue : param.Value.Value.ToString("0.####");
-        if (!String.IsNullOrEmpty(param.ValueMeasureUnit))
+        result[0] = !String.IsNullOrEmpty(param?.TextValue) ? param?.TextValue : param?.Value?.ToString("0.####");
+        if (!String.IsNullOrEmpty(param?.ValueMeasureUnit))
         {
             string pattern = @"\d{2}\D(\d+)(\/.+)";
 
@@ -371,7 +371,7 @@
                 result[1] = param.ValueMeasureUnit;
             }
         }
-        if (param.ValueMinimum != null && param.ValueMaximum != null)
+        if (param?.ValueMinimum != null && param?.ValueMaximum != null)
         {
             result[2] += param.ValueMinimum.Value.ToString("0.####") + "-" + param.ValueMaximum.Value.ToString("0.####");
         }
@@ -386,9 +386,9 @@
             return false;
         }
 
-        ParameterValueDto param = match.First();
+        ParameterValueDto param = match.FirstOrDefault();
 
-        return param.OutOfNorm;
+        return param?.OutOfNorm ?? false;
     }
 
     private bool IsChartAvailable(ParameterDto context)
@@ -414,7 +414,7 @@
             return;
         }
 
-        allAnalysis = fullList.Where(group => group.LabTestName.ToLower().Contains(SearchQuery.ToLower())).ToList();
+        allAnalysis = fullList?.Where(group => group.LabTestName.ToLower().Contains(SearchQuery.ToLower())).ToList();
     }
 
     private void ShowChart(ParameterDto context, string ParamName)
