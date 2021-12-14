@@ -43,7 +43,7 @@
                     {
                         <MudTable Items="@indicants" Hover="false" Breakpoint="Breakpoint.Sm">
                             <HeaderContent>
-                                @foreach (var h in PrepareIndicantTableHeaders())
+                                @foreach (var h in headers)
                                 {
                                     @if (h == dateColName)
                                     {
@@ -63,9 +63,21 @@
                             </HeaderContent>
                             <RowTemplate>
                                 <MudTd DataLabel="@dateColName" Class="stickyCell stickyWhiteBg unWrapCell alignRightCell vBorderColumn hBorderRow">@GetValueDate(context.ValueDate)</MudTd>
-                                @foreach (var value in context.Indicant)
+                                @foreach (var h in headers)
+                                {
+                                    @if (h != dateColName)
                                     {
-                                    <MudTd DataLabel="@value.Name" Class="vBorderColumn">@value.Value</MudTd>
+                                        IndicantValueDto value = getValueByHeader(context, h);
+                                        if (value != null)
+                                        {
+                                        <MudTd DataLabel="@value.Name" Class="vBorderColumn">@value.Value</MudTd>
+                                        }
+                                        else
+                                        {
+                                        <MudTd Class="vBorderColumn">-</MudTd>
+                                            }
+
+                                        }
                                     }
                             </RowTemplate>
                             <PagerContent>
@@ -103,7 +115,7 @@
         content: '';
         position: absolute;
         left: 0;
-        bottom: 0;
+        bottom: -1px;
         width: 100%;
         border-bottom: 1px solid var(--mud-palette-table-lines);
     }
@@ -130,10 +142,16 @@
     private Dictionary<string, string[]> baseChartPalette;
     private CustomSettings customSettings { get; set; }
 
+    public IEnumerable<string> headers;
     public bool showProgress = true;
     public IEnumerable<PatientIndicantDto> indicants { get; set; }
     public IEnumerable<IndicantChartDto> indCharts { get; set; }
     public IEnumerable<string> indHeadings { get; set; }
+
+    private IndicantValueDto getValueByHeader(PatientIndicantDto context, string header)
+    {
+        return context.Indicant.Where(iValue => iValue.Name == header).FirstOrDefault();
+    }
 
     private ChartOptions LineChartOptions(IndicantChartDto indChart)
     {
@@ -205,23 +223,28 @@
         return data;
     }
 
-    protected IEnumerable<string> PrepareIndicantTableHeaders()
+    protected void PrepareIndicantTableHeaders()
     {
         List<string> indHeadingList = new List<string> { dateColName };
         if (indicants != null && indicants.Count() > 0)
         {
-            PatientIndicantDto patIndicantDto = indicants.FirstOrDefault();
-            if (patIndicantDto != null && patIndicantDto.Indicant != null)
-            {
-                foreach (IndicantValueDto indValueDto in patIndicantDto.Indicant)
+            foreach (PatientIndicantDto patIndicantDto in indicants) {
+                //PatientIndicantDto patIndicantDto = indicants.FirstOrDefault();
+                if (patIndicantDto != null && patIndicantDto.Indicant != null)
                 {
-                    indHeadingList.Add(indValueDto.Name);
+                    foreach (IndicantValueDto indValueDto in patIndicantDto.Indicant)
+                    {
+                        if (!indHeadingList.Contains(indValueDto.Name))
+                        {
+                            indHeadingList.Add(indValueDto.Name);
+                        }
+                    }
                 }
+                minValueDate = indicants.Min(x => x.ValueDate);
+                maxValueDate = indicants.Max(x => x.ValueDate);
             }
-            minValueDate = indicants.Min(x => x.ValueDate);
-            maxValueDate = indicants.Max(x => x.ValueDate);
         }
-        return indHeadingList.ToArray();
+        headers = indHeadingList;
     }
 
     private string GetHexRandomColor()
@@ -278,6 +301,7 @@
         customSettings.MaxPeriodData = 666;
         indicants = await GetIndicants();
         indCharts = await GetIndicantCharts();
+        PrepareIndicantTableHeaders();
         baseChartPalette = await Task.Run(PrepareIndicantChartPalettes);
         showProgress = false;
     }
