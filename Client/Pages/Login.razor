@@ -190,7 +190,7 @@
             catch (Exception ex)
             {
                 showProgress = false;
-                Snackbar.Add("Login error: " + ex.Message, Severity.Error);
+                Snackbar.Add("Ошибка входа: " + ex.Message, Severity.Error);
                 loginError = true;
                 passwordError = true;
                 error = ex.Message;

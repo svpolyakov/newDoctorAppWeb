@@ -6,6 +6,7 @@
 @inject StateContainer StateContainer
 @inject IJSRuntime JSRuntime
 
+<Progress isVisible="@showProgress"></Progress>
     <MudDialogProvider />
 @if (isMenuVisible)
 {
@@ -131,7 +132,7 @@
     bool isDrawerOpen = false;
     bool isMenuVisible = false;
     //    string menuIcon = Icons.Material.Filled.Menu;
-
+    public bool showProgress = false;
     protected override void OnInitialized()
     {
         StateContainer.OnChange += StateHasChanged;
@@ -144,8 +145,11 @@
 
     public async Task ClearCache()
     {
+        showProgress = true;
         string userName = (await AuthenticationState).User.Identity.Name;
         await Http.GetAsync("Tools/ResetCache?login=" + userName);
+        navigationManager.NavigateTo("persons", true);
+        showProgress = false;
     }
 
     public async Task GoBack()

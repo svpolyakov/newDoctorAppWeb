@@ -20,7 +20,7 @@
                 </MudTabPanel>
                 <MudTabPanel ID="2" OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
                 </MudTabPanel>
-                <MudTabPanel ID="7" OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
+                @*<MudTabPanel ID="7" OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Spacing="1" Class="filtersWrapper">
                         <MudItem xs="10">
                             <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
@@ -66,7 +66,7 @@
                         </MudItem>
                     </MudGrid>
 
-                </MudTabPanel>
+                </MudTabPanel>*@
             </MudTabs>
         </div>
 
@@ -297,14 +297,14 @@
         }
         return DoctorAppWeb.Client.Shared.EmptyStateMessages.MyPatients;
     }
-      
+
 
     async Task GoToPatientInfo(Guid id, string title, Guid hcsId, Patient person)
     {
         StateContainer.AppTitle = title;
         PatientService.CurrentPatient = id;
         PatientService.HealthcareServiceId = hcsId;
-        StateContainer.CurrentPage = Pages.WhatsNew;
+        StateContainer.CurrentPage = Pages.Diagnosis; //WhatNews
         StateContainer.CurrentPatient = person;
 
         InfoWindow patientInfo = await GetInfo(person);
@@ -323,7 +323,7 @@
 
         await localStorage.SetItemAsync("CurrentPatientInfo", stringifiedInfo);
 
-        navigationManager.NavigateTo(Pages.WhatsNew);
+        navigationManager.NavigateTo(Pages.Diagnosis); //WhatNews
     }
 
     private async Task<InfoWindow> GetInfo(Patient person)
@@ -583,8 +583,8 @@
                 using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 {
                     List<Patient> patients = new List<Patient>();
-                    db.Patients.Clear();
-                    await db.SaveChanges();
+                    //db.Patients.Clear();
+                    //await db.SaveChanges();
                     foreach (PatientDto person in result)
                     {
                         Patient patient = new Patient
@@ -630,15 +630,15 @@
                             AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] },
                             InResuscitationString = person.InResuscitation ? "да" : "нет"
                         };
-                        db.Patients.Add(patient);
+                        //db.Patients.Add(patient);
                         patients.Add(patient);
                     }
-                    await db.SaveChanges();
+                    //await db.SaveChanges();
                     return patients;
                 }
             }
         }
-        catch
+        catch(Exception ex)
         {
 
         }

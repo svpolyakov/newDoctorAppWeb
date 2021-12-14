@@ -28,8 +28,11 @@ namespace DoctorAppWeb.Server.Controllers
             string login = Request.Headers["UserLogin"].ToString();
             if(parseResult != 0 && Enum.IsDefined(typeof(FilterPersonTypeDto), parseResult))
             {
-                using InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
-                inpatientDoctorClient.InnerChannel.OperationTimeout = new TimeSpan(0, 5, 0);
+                InpatientDoctorClient inpatientDoctorClient = new InpatientDoctorClient();
+                inpatientDoctorClient.Endpoint.Binding.ReceiveTimeout = new TimeSpan(0, 10, 0);
+                inpatientDoctorClient.Endpoint.Binding.OpenTimeout = new TimeSpan(0, 10, 0);
+                inpatientDoctorClient.Endpoint.Binding.SendTimeout = new TimeSpan(0, 10, 0);
+                inpatientDoctorClient.Endpoint.Binding.CloseTimeout = new TimeSpan(0, 10, 0);
                 return await inpatientDoctorClient.GetPatientsAsync( new PersonQueryParamsDto { PersonQueryType = (FilterPersonTypeDto)parseResult } , login);
             }
             return null;

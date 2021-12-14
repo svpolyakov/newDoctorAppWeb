@@ -97,10 +97,10 @@ namespace DoctorAppWeb.Server.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest("Invalid login");
+                    return BadRequest("Неправильный логин/пароль");
                 }
             }
-            return BadRequest();
+            return BadRequest("Неправильный логин/пароль");
         }
 
         public async Task<UserInfoDto> GetUserInfo(string login)
