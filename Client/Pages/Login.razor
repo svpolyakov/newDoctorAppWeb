@@ -26,35 +26,43 @@
                 <div id="form">
                     <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
                         <DataAnnotationsValidator />
-                        <div>
-                            <MudTextField
-                                          TextChanged="@(() => ResetError("login"))"
-                                          Error="@loginError"
-                                          ErrorText="Неверное имя пользователя или пароль"
-                                          Immediate="true"
-                                          Required="true" 
-                                          FullWidth="true"
-                                          Label="Логин"
-                                          id="inputUsername"
-                                          @bind-Value="loginRequest.UserName"
-                                          RequiredError="Имя пользователя не заполнено" />
-                        </div>
-                        <div>
-                            <MudTextField
-                                          TextChanged="@(() => ResetError("password"))"
-                                          Error="@passwordError"
-                                          ErrorText="Неверное имя пользователя или пароль"
-                                          Immediate="true"
-                                          Required="true"
-                                          FullWidth="true"
-                                          Label="Пароль"
-                                          InputType="InputType.Password"
-                                          id="inputPassword"
-                                          @bind-Value="loginRequest.Password"
-                                          RequiredError="Пароль не заполнен" />
-                        </div>
-                        <div class="buttonWrapper">
-                            <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                        <div style="display: flex">
+                            @if (pageState == 0)
+                            {
+                                <MudTextField TextChanged="@(() => ResetError("login"))"
+                                              OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { Next(); } })"
+                                              Error="@loginError"
+                                              ErrorText="Неверное имя пользователя или пароль"
+                                              Immediate="true"
+                                              Required="true"
+                                              FullWidth="true"
+                                              Label="Логин"
+                                              id="inputUsername"
+                                              @bind-Value="loginRequest.UserName"
+                                              RequiredError="Имя пользователя не заполнено" />
+                                <MudIconButton Disabled="@String.IsNullOrEmpty(loginRequest.UserName)" Icon="@Icons.Filled.Forward" OnClick="@Next" Color="Color.Primary"/>
+                            }
+                            else if (pageState == 1)
+                            {
+                                <MudTextField TextChanged="@(() => ResetError("password"))"
+                                              OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { Next(); } })"
+                                              Error="@passwordError"
+                                              ErrorText="Неверное имя пользователя или пароль"
+                                              Immediate="true"
+                                              Required="true"
+                                              FullWidth="true"
+                                              Label="Пароль"
+                                              InputType="InputType.Password"
+                                              id="inputPassword"
+                                              @bind-Value="loginRequest.Password"
+                                              RequiredError="Пароль не заполнен" />
+                                <MudIconButton Disabled="@String.IsNullOrEmpty(loginRequest.Password)" Icon="@Icons.Filled.Forward" OnClick="@Next" Color="Color.Primary"/>
+                            }
+                            else if (pageState == 2)
+                            {
+                                <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                            }
+
                         </div>
                         <div class="forgotPwdWrapper">
                             <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
@@ -81,12 +89,12 @@
 
         .cardTitle {
             text-align: center;
-            padding-top: 4.2rem;
-            margin-bottom: 4.2rem;
+            padding-top: 2rem;
+            margin-bottom: 2rem;
         }
 
         .buttonWrapper {
-            margin-top: 4.2rem
+            margin-top: 1rem
         }
 
         .forgotPwdWrapper {
@@ -101,6 +109,7 @@
     </style>
 
     @code{
+        public int pageState = 0; // 0 - show login; 1 - show password; 2 - show login button
         public bool showProgress = false;
         public bool loginError = false;
         public bool passwordError = false;
@@ -110,6 +119,10 @@
         bool success;
         string[] errors = { };
         bool isResetDlgVisible = false;
+
+        private void Next() {
+            pageState++;
+        }
 
         private void OpenDialog()
         {

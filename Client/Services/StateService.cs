@@ -11,6 +11,7 @@ public class StateContainer
     private InfoWindow info = null;
     private InfoWindow prevInfo = null;
     private int personsFilterType = 0;
+    private string userName = "";
 
     public Boolean ShowDrawer
     {
@@ -74,6 +75,15 @@ public class StateContainer
         get => personsFilterType; set
         {
             personsFilterType = value;
+            NotifyStateChanged();
+        }
+    }
+
+    public string UserName
+    {
+        get => userName; set
+        {
+            userName = value;
             NotifyStateChanged();
         }
     }
