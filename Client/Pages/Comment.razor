@@ -2,8 +2,9 @@
 @inject HttpClient Http
 @inject StateContainer StateContainer
 
+<Progress isVisible="@showProgress"></Progress>
 <div class="saveCommentWrapper">
-    <MudButton Variant="Variant.Filled" Color="Color.Primary">сохранить комментарий</MudButton>
+    <MudButton OnClick="@(() => SaveComment())" Variant="Variant.Filled" Color="Color.Primary">сохранить комментарий</MudButton>
 </div>
 <MudPaper Class="innerPageWrapper">
     <div class="pageWrapper">
@@ -12,7 +13,7 @@
         </MudText>
 
         <MudPaper>
-            <MudTextField T="string" Label="Текст комментария" Variant="Variant.Text" Text="@commentText" Lines="7" />
+            <MudTextField Label="Текст комментария" Variant="Variant.Text" @bind-Value="@commentText" Lines="7" />
         </MudPaper>
     </div>
 </MudPaper>
@@ -27,12 +28,24 @@
 
 @code {
     public string commentText = "";
+    public Guid consultanceId;
     public ConsultanceCommentDto comment;
+    public bool showProgress;
 
     protected override async Task OnInitializedAsync()
     {
+        showProgress = true;
+        StateContainer.CurrentPage = Pages.Comment;
+        StateContainer.ShowDrawer = true;
         comment = await GetOrSetComment(StateContainer.CurrentPatient.PersonID, Guid.Empty, "");
         commentText = comment.ClientComment;
+        consultanceId = comment.CounsultanceID;
+        showProgress = false;
+    }
+
+    private async void SaveComment()
+    {
+        await GetOrSetComment(StateContainer.CurrentPatient.PersonID, consultanceId, commentText);
     }
 
     //Если consultanceId  пустой (Guid.Empty) но personId заполнен то мы просто выводим последний написанный камент, если наоборот тогда камент отправляем
@@ -45,12 +58,13 @@
             httpRequest.Headers.Add("consultanceId", consultanceId.ToString());
             httpRequest.Headers.Add("personId", personId.ToString());
             httpRequest.Headers.Add("clientComment", clientComment);
+            Console.WriteLine(clientComment);
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceCommentDto>();
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine(ex.ToString());
         }
 
         return result;
