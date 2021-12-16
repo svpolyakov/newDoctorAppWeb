@@ -21,7 +21,7 @@ namespace DoctorAppWeb.Server.Controllers
         }
 
         [HttpGet("Comment")]
-        public async Task<ConsultanceCommentDto> GetCommentAsync([FromHeader] Guid personId, [FromHeader] Guid consultanceId, [FromHeader] string clientComment)
+        public async Task<ConsultanceCommentDto> GetCommentAsync([FromHeader] Guid personId, [FromHeader] Guid consultanceId, [FromQuery] string clientComment)
         {
             return await new InpatientDoctorClient().ResetConsultanceCommentAsync(personId, consultanceId, clientComment);
         }

@@ -54,10 +54,10 @@
         ConsultanceCommentDto result = null;
         try
         {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment?clientComment="+clientComment);
             httpRequest.Headers.Add("consultanceId", consultanceId.ToString());
             httpRequest.Headers.Add("personId", personId.ToString());
-            httpRequest.Headers.Add("clientComment", clientComment);
+            //httpRequest.Headers.Add("clientComment", clientComment);
             Console.WriteLine(clientComment);
             HttpResponseMessage httpResponse = await Http.SendAsync(httpRequest);
             result = await httpResponse.Content.ReadFromJsonAsync<ConsultanceCommentDto>();
