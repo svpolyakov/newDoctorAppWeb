@@ -20,7 +20,7 @@
                 </MudTabPanel>
                 <MudTabPanel ID="2" OnClick="@(() => FilterInEmergencyPatientsClick())" Text="В ПРИЕМНОМ">
                 </MudTabPanel>
-                @*<MudTabPanel ID="7" OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
+                <MudTabPanel ID="7" OnClick="@(() => FilterAllPatientsClick())" Text="ВСЕ ПАЦИЕНТЫ">
                     <MudGrid Spacing="1" Class="filtersWrapper">
                         <MudItem xs="10">
                             <MudTextField OnKeyUp="@((KeyboardEventArgs evt) => { if (evt.Code == "Enter" || evt.Code == "NumpadEnter") { FindPatients(); } })"
@@ -43,9 +43,15 @@
                                        Label="Отделение"
                                        Margin="Margin.Dense"
                                        Variant="Variant.Outlined">
+                                @if (Departments != null)
+                                {
                                 @foreach (Department dep in Departments)
                                 {
+                                    if (dep != null)
+                                    {
                                     <MudSelectItem T="string" Value="@dep.BusinessElementFullName">@dep.BusinessElementFullName</MudSelectItem>
+                                        }
+                                    }
                                 }
                             </MudSelect>
                         </MudItem>
@@ -56,17 +62,23 @@
                                        T="string"
                                        Label="Лечащий врач"
                                        Margin="Margin.Dense"
-                                       Variant="Variant.Outlined">
+                                       Variant="Variant.Outlined">                                
+                                @if (Doctors != null)
+                                {
                                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
                                 {
-                                    string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
+                                    if (doctor != null)
+                                    {
+                                        string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
                                     <MudSelectItem T="string" Value="@doc">@doc</MudSelectItem>
+                                        }
+                                    }
                                 }
                             </MudSelect>
                         </MudItem>
                     </MudGrid>
 
-                </MudTabPanel>*@
+                </MudTabPanel>
             </MudTabs>
         </div>
 
@@ -452,27 +464,35 @@
         await localStorage.RemoveItemAsync("CurrentPage");
         await localStorage.RemoveItemAsync("CurrentPatient");
 
-        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        try
         {
-            Departments = db.Departments;
-            Doctors = db.Doctors;
-
-            FullDoctorsList = db.Doctors;
-            FullDepartmentList = db.Departments;
-
-            CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
-            CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
-            string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
-            //PatientService.FilterType = 7; //УДАЛИТЬ
-            switch (filterName) //ИСПРАВИТЬ НА ФИЛЬТРНЕЙМ
+            using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
             {
-                case "MyPatient": PatientService.FilterType = 1; break;
-                case "InEmergencyRoom": PatientService.FilterType = 2; break;
-                case "ToMyDepartments": PatientService.FilterType = 4; break;
-                case "AllPatients": PatientService.FilterType = 7; break;
-                default: PatientService.FilterType = 1; break;
+                Departments = db.Departments;
+                Doctors = db.Doctors;
+
+                FullDoctorsList = db.Doctors;
+                FullDepartmentList = db.Departments;
+
+                CustomGroupPerson = await ConvertToObjCustomGroup(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgroupperson")?.FormSettings);
+                CustomGridPerson = await ConvertJsonToObjPersonCustomization(db.PagesSettings.FirstOrDefault(x => x.FormID?.ToLower() == "customgridperson")?.FormSettings);
+                string filterName = CustomGroupPerson.FirstOrDefault(x => x.Selected)?.NameButtonEn;
+                //PatientService.FilterType = 7; //УДАЛИТЬ
+                switch (filterName) //ИСПРАВИТЬ НА ФИЛЬТРНЕЙМ
+                {
+                    case "MyPatient": PatientService.FilterType = 1; break;
+                    case "InEmergencyRoom": PatientService.FilterType = 2; break;
+                    case "ToMyDepartments": PatientService.FilterType = 4; break;
+                    case "AllPatients": PatientService.FilterType = 7; break;
+                    default: PatientService.FilterType = 1; break;
+                }
             }
         }
+        catch(Exception ex)
+        {
+
+        }
+
         PatientService.CurrentPage = "persons";
 
         PatientService.FilterType = StateContainer.PersonsFilterType;

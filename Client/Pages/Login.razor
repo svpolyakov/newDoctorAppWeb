@@ -137,40 +137,43 @@
             {
                 //using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 //{
-                //    db.PagesSettings.Clear();
-                //    db.CustomAuthorizations.Clear();
+                //    //db.PagesSettings.Clear();
+                //    //db.CustomAuthorizations.Clear();
                 //    db.Departments.Clear();
                 //    db.Doctors.Clear();
-                //    db.CustomSettings.Clear();
+                //    //db.CustomSettings.Clear();
                 //    await db.SaveChanges();
                 //}
 
                 await authStateProvider.Login(loginRequest);
 
-                //Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
+                Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
                 //var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
                 //request.Headers.Add("UserLogin", loginRequest.UserName);
                 //using var httpResponse = await Http.SendAsync(request);
                 //CustomizationInfoDto result = await httpResponse.Content.ReadFromJsonAsync<CustomizationInfoDto>();
 
-                //using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-                //{
-                //    if (result != null && result.PagesSettings as Dictionary<string, string> != null)
-                //        foreach (KeyValuePair<string, string> webPageInfo in result.PagesSettings as Dictionary<string, string>)
-                //        {
-                //            if (string.IsNullOrWhiteSpace(webPageInfo.Key) || string.IsNullOrWhiteSpace(webPageInfo.Value))
-                //                continue;
-                //            db.PagesSettings.Add(new PagesSettings { FormID = webPageInfo.Key, FormSettings = webPageInfo.Value });
-                //        }
+                using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+                {
+                    //if (result != null && result.PagesSettings as Dictionary<string, string> != null)
+                    //    foreach (KeyValuePair<string, string> webPageInfo in result.PagesSettings as Dictionary<string, string>)
+                    //    {
+                    //        if (string.IsNullOrWhiteSpace(webPageInfo.Key) || string.IsNullOrWhiteSpace(webPageInfo.Value))
+                    //            continue;
+                    //        db.PagesSettings.Add(new PagesSettings { FormID = webPageInfo.Key, FormSettings = webPageInfo.Value });
+                    //    }
 
-                //    foreach (Department dep in departmentsToDoctors.Item1)
-                //        db.Departments.Add(dep);
+                    if (!db.Doctors.Any() || !db.Departments.Any())
+                    {
+                        foreach (Department dep in departmentsToDoctors.Item1)
+                            db.Departments.Add(dep);
 
-                //    foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
-                //        db.Doctors.Add(doc);
+                        foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
+                            db.Doctors.Add(doc);
 
-                //    await db.SaveChanges();
-                //}
+                        await db.SaveChanges();
+                    }
+                }
 
                 //    CustomSettings customSettings = new CustomSettings()
                 //    {
