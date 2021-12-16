@@ -54,7 +54,7 @@
         ConsultanceCommentDto result = null;
         try
         {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment?clientComment="+clientComment);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "Tools/Comment?clientComment=" + System.Uri.EscapeDataString(clientComment));
             httpRequest.Headers.Add("consultanceId", consultanceId.ToString());
             httpRequest.Headers.Add("personId", personId.ToString());
             //httpRequest.Headers.Add("clientComment", clientComment);
