@@ -386,8 +386,13 @@
                 .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
             .Count() > 0);
 
-            tempPatientsResult = tempPatientsResult.Where(x => x.ResponsibleDep?.ToLower() == SelectedDepartment.ToLower()).ToList();
-
+            tempPatientsResult = tempPatientsResult.Where(x =>
+            {
+                string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
+                string selectedResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID?.ToLower();
+                return storeSearchResult == selectedResult;
+            }
+            ).ToList();
         }
         else
         {
