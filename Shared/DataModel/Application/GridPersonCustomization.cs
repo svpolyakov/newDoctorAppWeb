@@ -25,7 +25,7 @@ namespace DoctorAppWeb.Shared.DataModel.Application
             defaults.Add(new List<object>() { "StayDep", "Отделение пребывания", 5, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Diagnos", "Диагноз", 6, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Doctor", "Врач", 7, true, false, false, false, dtUpdate });
-            defaults.Add(new List<object>() { "Room", "Палата", 8, true, false, false, false, dtUpdate });
+            defaults.Add(new List<object>() { "Room", "Палата", 8, true, true, false, true, dtUpdate });
             defaults.Add(new List<object>() { "Bed", "Койка", 9, false, false, false, false, dtUpdate });
             defaults.Add(new List<object>() { "ServiceCaseNumber", "Номер ИБ", 10, true, false, false, true, dtUpdate });
             defaults.Add(new List<object>() { "SDDepTreatmentCase", "Поступил в отделение", 11, true, false, false, false, dtUpdate });
