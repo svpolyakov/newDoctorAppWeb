@@ -35,6 +35,16 @@
                     <ChildContent>
                         <MudText Class="greenText" Typo="Typo.body1">Заключение:</MudText>
                         <MudText>@((MarkupString)surgery.Conclusion.VersionText)</MudText>
+
+                        @if (surgery.ProtocolList.Any())
+                        {
+                            foreach (ProtocolDto protocol in surgery.ProtocolList)
+                            {
+                                <MudText Class="greenText" Typo="Typo.body1">Протокол:</MudText>
+                                <MudText>@((MarkupString)protocol.VersionText)</MudText>
+                            }
+                        }
+
                     </ChildContent>
                 </MudExpansionPanel>
             }

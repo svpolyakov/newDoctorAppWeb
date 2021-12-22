@@ -12,7 +12,7 @@
 @inject IDialogService Dialog
 @inject ISnackbar Snackbar
 <MudDialogProvider />
-<MudSnackbarProvider />
+<MudSnackbarProvider  />
 
     <Progress isVisible="@showProgress"></Progress>
     <MudCard Class="loginBlock">
@@ -56,15 +56,13 @@
                                               id="inputPassword"
                                               @bind-Value="loginRequest.Password"
                                               RequiredError="Пароль не заполнен" />
-                                <MudIconButton Disabled="@String.IsNullOrEmpty(loginRequest.Password)" Icon="@Icons.Filled.Forward" OnClick="@Next" Color="Color.Primary"/>
-                            }
-                            else if (pageState == 2)
-                            {
-                                <MudButton Disabled="@(!success)" Variant="Variant.Filled" Color="Color.Primary" Class="fullWidth" OnClick="@(()=>OnSubmit())">Войти</MudButton>
+                                <MudIconButton Disabled="@String.IsNullOrEmpty(loginRequest.Password)" Icon="@Icons.Filled.Forward" OnClick="@OnSubmit" Color="Color.Primary"/>
                             }
 
                         </div>
                         <div class="forgotPwdWrapper">
+                            <MudIconButton Disabled="@(pageState == 0)" Icon="@Icons.Filled.ArrowBackIos" OnClick="@Prev" Color="Color.Primary" />
+                            <div class="flexSpacer" />
                             <MudButton Color="Color.Secondary" OnClick="@(()=>OpenDialog())">Не помню пароль</MudButton>
                         </div>
                     </EditForm>
@@ -99,12 +97,15 @@
 
         .forgotPwdWrapper {
             display: flex;
-            flex-direction: row-reverse;
+            flex-direction: row;
             margin-top: 1rem;
         }
 
         .loginLogoWrapper {
             padding-right: 1rem;
+        }
+        .flexSpacer {
+            flex: 1;
         }
     </style>
 
@@ -121,7 +122,12 @@
         bool isResetDlgVisible = false;
 
         private void Next() {
-            pageState++;
+            pageState = 1;
+        }
+
+        private void Prev()
+        {
+            pageState = 0;
         }
 
         private void OpenDialog()
@@ -206,7 +212,7 @@
             catch (Exception ex)
             {
                 showProgress = false;
-                Snackbar.Add("Ошибка входа: " + ex.Message, Severity.Error);
+                Snackbar.Add("Ошибка входа: " + ex.Message, Severity.Error, config => { config.ShowCloseIcon = false; config.HideIcon = true; });
                 loginError = true;
                 passwordError = true;
                 error = ex.Message;
