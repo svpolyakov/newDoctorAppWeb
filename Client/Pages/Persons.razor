@@ -388,9 +388,12 @@
 
             tempPatientsResult = tempPatientsResult.Where(x =>
             {
-                string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
+                //string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
                 string selectedResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID?.ToLower();
-                return storeSearchResult == selectedResult;
+                string storeSearchResult = Departments.FirstOrDefault(n => x.ResponsibleDepID?.ToLower() == selectedResult)?.BusinessElementID;
+
+
+                return storeSearchResult != null;
             }
             ).ToList();
         }
@@ -626,6 +629,7 @@
                             VersionID = person.VersionID,
                             StayDep = person.StayDep,
                             ResponsibleDep = person.ResponsibleDep,
+                            ResponsibleDepID = person.ResponsibleDepID.ToString(),
                             InResuscitation = person.InResuscitation,
                             ObservationMode = person.ObservationMode,
                             PhysicalRestraint = person.PhysicalRestraint,
