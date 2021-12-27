@@ -2379,6 +2379,8 @@ namespace PatientsWcf
         
         private System.Collections.Generic.List<PatientsWcf.MultipleProcedureResultDto> MultipleProceduresField;
         
+        private PatientsWcf.SingleProcedureResultDto SingleProcedureField;
+        
         private System.Collections.Generic.List<PatientsWcf.SingleProcedureResultDto> SingleProcedureResultListField;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
@@ -2430,6 +2432,19 @@ namespace PatientsWcf
             set
             {
                 this.MultipleProceduresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public PatientsWcf.SingleProcedureResultDto SingleProcedure
+        {
+            get
+            {
+                return this.SingleProcedureField;
+            }
+            set
+            {
+                this.SingleProcedureField = value;
             }
         }
         
