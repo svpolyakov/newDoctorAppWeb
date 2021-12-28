@@ -164,7 +164,7 @@
                 //    await db.SaveChanges();
                 //}
 
-                await authStateProvider.Login(loginRequest);
+                
 
                 Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>> departmentsToDoctors = await Http.GetFromJsonAsync<Tuple<IEnumerable<Department>, IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor>>>("Departments");
                 //var request = new HttpRequestMessage(HttpMethod.Get, "Customization");
@@ -182,16 +182,16 @@
                     //        db.PagesSettings.Add(new PagesSettings { FormID = webPageInfo.Key, FormSettings = webPageInfo.Value });
                     //    }
 
-                    if (!db.Doctors.Any() || !db.Departments.Any())
-                    {
+                    if(!db.Departments.Any())
                         foreach (Department dep in departmentsToDoctors.Item1)
                             db.Departments.Add(dep);
-
+                    if (!db.Doctors.Any())
                         foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doc in departmentsToDoctors.Item2)
                             db.Doctors.Add(doc);
 
-                        await db.SaveChanges();
-                    }
+                    await db.SaveChanges();
+
+                    await authStateProvider.Login(loginRequest);
                 }
 
                 //    CustomSettings customSettings = new CustomSettings()

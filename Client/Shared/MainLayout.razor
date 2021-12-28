@@ -302,15 +302,15 @@
     }
     async Task LogoutClick()
     {
-        //using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
-        //{
-        //    db.CustomAuthorizations.Clear();
-        //    db.PagesSettings.Clear();
-        //    db.Departments.Clear();
-        //    db.Doctors.Clear();
-        //    await db.SaveChanges();
-        //    HasDbUserInfo = false;
-        //}
+        using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
+        {
+            //db.CustomAuthorizations.Clear();
+            //db.PagesSettings.Clear();
+            db.Departments.Clear();
+            db.Doctors.Clear();
+            await db.SaveChanges();
+            HasDbUserInfo = false;
+        }
         await authStateProvider.Logout();
         navigationManager.NavigateTo("/login");
     }
