@@ -13,12 +13,14 @@ namespace DoctorAppWeb.Shared.DataModel.MedOrganization
         public int ID { get; set; }
         
         public Guid PersonID { get; set; }
+
+        public string FIO { get; set; }
         
-        public string Firstname { get; set; }
+        //public string Firstname { get; set; }
         
-        public string Lastname { get; set; }
+        //public string Lastname { get; set; }
         
-        public string Patronymic { get; set; }
+        //public string Patronymic { get; set; }
         
         public int SexEnum { get; set; }
         

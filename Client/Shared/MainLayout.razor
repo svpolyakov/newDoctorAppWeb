@@ -159,7 +159,7 @@
         {
             StateContainer.CurrentPatient = StateContainer.PreviousPatient;
             StateContainer.InfoWindow = StateContainer.PrevInfoWindow;
-            string titleInfo = StateContainer.CurrentPatient.Lastname + " " + StateContainer.CurrentPatient.Firstname + " " + StateContainer.CurrentPatient.Patronymic + " " + StateContainer.CurrentPatient.Birthday + " (" + StateContainer.CurrentPatient.Age + ") " + StateContainer.CurrentPatient.StayDep + " " + StateContainer.CurrentPatient.ServiceCaseNumber;
+            string titleInfo = StateContainer.CurrentPatient.FIO + " " + StateContainer.CurrentPatient.Birthday + " (" + StateContainer.CurrentPatient.Age + ") " + StateContainer.CurrentPatient.StayDep + " " + StateContainer.CurrentPatient.ServiceCaseNumber;
             StateContainer.AppTitle = titleInfo;
             navigationManager.NavigateTo(StateContainer.CurrentPage);
         }

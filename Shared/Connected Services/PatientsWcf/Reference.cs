@@ -20,11 +20,17 @@ namespace PatientsWcf
         
         private System.Collections.Generic.List<System.Guid> DepartmentListField;
         
+        private PatientsWcf.PageParamDto PageField;
+        
         private System.Collections.Generic.List<string> PersonAttributeListField;
         
         private PatientsWcf.FilterPersonTypeDto PersonQueryTypeField;
         
         private System.Collections.Generic.List<PatientsWcf.PersonnelParamDto> PersonnelListField;
+        
+        private PatientsWcf.SearchParamDto SearchConditionField;
+        
+        private PatientsWcf.SortByParamDto SortByField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Collections.Generic.List<System.Guid> DepartmentList
@@ -36,6 +42,19 @@ namespace PatientsWcf
             set
             {
                 this.DepartmentListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.PageParamDto Page
+        {
+            get
+            {
+                return this.PageField;
+            }
+            set
+            {
+                this.PageField = value;
             }
         }
         
@@ -75,6 +94,158 @@ namespace PatientsWcf
             set
             {
                 this.PersonnelListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.SearchParamDto SearchCondition
+        {
+            get
+            {
+                return this.SearchConditionField;
+            }
+            set
+            {
+                this.SearchConditionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public PatientsWcf.SortByParamDto SortBy
+        {
+            get
+            {
+                return this.SortByField;
+            }
+            set
+            {
+                this.SortByField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PageParamDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class PageParamDto : object
+    {
+        
+        private int OffSetField;
+        
+        private int SizeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int OffSet
+        {
+            get
+            {
+                return this.OffSetField;
+            }
+            set
+            {
+                this.OffSetField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Size
+        {
+            get
+            {
+                return this.SizeField;
+            }
+            set
+            {
+                this.SizeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SearchParamDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class SearchParamDto : object
+    {
+        
+        private System.Guid DepartmentIdField;
+        
+        private System.Guid DoctorIdField;
+        
+        private string FIOCardNumberField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid DepartmentId
+        {
+            get
+            {
+                return this.DepartmentIdField;
+            }
+            set
+            {
+                this.DepartmentIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid DoctorId
+        {
+            get
+            {
+                return this.DoctorIdField;
+            }
+            set
+            {
+                this.DoctorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FIOCardNumber
+        {
+            get
+            {
+                return this.FIOCardNumberField;
+            }
+            set
+            {
+                this.FIOCardNumberField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SortByParamDto", Namespace="http://schemas.datacontract.org/2004/07/InpatientDoctorApp.Dto")]
+    public partial class SortByParamDto : object
+    {
+        
+        private string AttributeNameField;
+        
+        private bool IsDescendingField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AttributeName
+        {
+            get
+            {
+                return this.AttributeNameField;
+            }
+            set
+            {
+                this.AttributeNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsDescending
+        {
+            get
+            {
+                return this.IsDescendingField;
+            }
+            set
+            {
+                this.IsDescendingField = value;
             }
         }
     }
@@ -172,6 +343,8 @@ namespace PatientsWcf
         
         private string DoctorField;
         
+        private string FioField;
+        
         private string FirstnameField;
         
         private System.Guid HealthcareServiceIdField;
@@ -203,6 +376,10 @@ namespace PatientsWcf
         private System.Guid PersonnelIDField;
         
         private string PhysicalRestraintField;
+        
+        private int RecordNumField;
+        
+        private int RecordTotalField;
         
         private string ResponsibleDepField;
         
@@ -355,6 +532,19 @@ namespace PatientsWcf
             set
             {
                 this.DoctorField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Fio
+        {
+            get
+            {
+                return this.FioField;
+            }
+            set
+            {
+                this.FioField = value;
             }
         }
         
@@ -563,6 +753,32 @@ namespace PatientsWcf
             set
             {
                 this.PhysicalRestraintField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RecordNum
+        {
+            get
+            {
+                return this.RecordNumField;
+            }
+            set
+            {
+                this.RecordNumField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RecordTotal
+        {
+            get
+            {
+                return this.RecordTotalField;
+            }
+            set
+            {
+                this.RecordTotalField = value;
             }
         }
         
@@ -4146,6 +4362,12 @@ namespace PatientsWcf
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetNewConsultance", ReplyAction="http://tempuri.org/IInpatientDoctor/GetNewConsultanceResponse")]
         System.Threading.Tasks.Task<PatientsWcf.ConsultanceDto> GetNewConsultanceAsync(System.Guid consultanceId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientBenefits", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientBenefitsResponse")]
+        System.Threading.Tasks.Task<string> GetPatientBenefitsAsync(System.Guid personId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInpatientDoctor/GetPatientObservationTypes", ReplyAction="http://tempuri.org/IInpatientDoctor/GetPatientObservationTypesResponse")]
+        System.Threading.Tasks.Task<string> GetPatientObservationTypesAsync(System.Guid healthcareServiceId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3-preview3.21351.2")]
@@ -4351,6 +4573,16 @@ namespace PatientsWcf
         public System.Threading.Tasks.Task<PatientsWcf.ConsultanceDto> GetNewConsultanceAsync(System.Guid consultanceId)
         {
             return base.Channel.GetNewConsultanceAsync(consultanceId);
+        }
+        
+        public System.Threading.Tasks.Task<string> GetPatientBenefitsAsync(System.Guid personId)
+        {
+            return base.Channel.GetPatientBenefitsAsync(personId);
+        }
+        
+        public System.Threading.Tasks.Task<string> GetPatientObservationTypesAsync(System.Guid healthcareServiceId)
+        {
+            return base.Channel.GetPatientObservationTypesAsync(healthcareServiceId);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

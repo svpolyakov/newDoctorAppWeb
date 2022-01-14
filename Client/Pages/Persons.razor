@@ -126,7 +126,7 @@
                         }
                     <MudTd Class="stickyCell stickyWhiteBg">
                         <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
-                                                                                 string titleInfo = context.Lastname + " " + context.Firstname + " " + context.Patronymic + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
+                                                                                 string titleInfo = context.FIO + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId, context);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
                             <!--<DoctorAppWeb.Client.Pages.IconComponents.ArrowRight />-->
@@ -136,7 +136,7 @@
                 <ChildRowContent>
                     @if (context.ShowDetails)
                         {
-                            string fullName = context.Lastname + " " + context.Firstname + " " + context.Patronymic;
+                            string fullName = context.FIO;
                             string iconClass = context.SexEnum == 1 ? "darkBlue" : "darkRed";
                             string icon = context.SexEnum == 1 ? Icons.Material.Filled.Male : Icons.Material.Filled.Female;
                             string diagnosis = !String.IsNullOrEmpty(@context.Diagnos) ? @context.Diagnos : "данные не указаны";
@@ -370,7 +370,7 @@
 
     void FindPatients()
     {
-        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.Lastname?.ToLower() + x.Firstname?.ToLower() + x.Patronymic?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
+        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.FIO?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
         List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
 
         if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -618,9 +618,7 @@
                         Patient patient = new Patient
                         {
                             PersonID = person.PersonID,
-                            Firstname = person.Firstname,
-                            Lastname = person.Lastname,
-                            Patronymic = person.Patronymic,
+                            FIO = person.Fio,//person.Lastname + " " + person.Firstname + " " + person.Patronymic,
                             Age = person.Age,
                             Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
                             Bed = person.Bed,
