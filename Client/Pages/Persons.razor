@@ -275,8 +275,6 @@
 @code{
 
 
-
-    public SearchParamDto SearchCondition { get; set; } = new SearchParamDto();
     public Guid DepartmentId { get; set; } //Вкладка Все пациенты ИД выбранного департмента присвоить сюда
     public Guid DoctorId { get; set; } //Вкладка Все пациенты ИД выбранного доктора присвоить сюда
     public string FioCardNum { get; set; } //Вкладка Все пациенты строку поиска присвоить сюда
@@ -387,14 +385,21 @@
 
     void FindPatients()
     {
-        List<Tuple<Patient, string>> searchIndex = PatientService.AllPersons.Select(x => new Tuple<Patient, string>(x, x.FIO?.ToLower() + x.ServiceCaseNumber?.ToLower())).ToList();
-        List<Patient> tempPatientsResult = new List<Patient>(PatientService.AllPersons);
+        FioCardNum = SearchQuery;
 
-        if (!string.IsNullOrWhiteSpace(SearchQuery))
-        {
-            tempPatientsResult = searchIndex.Where(x => x.Item2.Contains(SearchQuery.ToLower())).Select(x => x.Item1).ToList();
-        }
+        DepartmentId = Guid.Empty;
+        // if (!string.IsNullOrWhiteSpace(SelectedDepartment)) ///TODO
+        // DepartmentId = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID; 
 
+        DoctorId = Guid.Empty;
+        //if (!string.IsNullOrWhiteSpace(SelectedDoctor)) ///TODO
+        //DoctorId = Doctors.FirstOrDefault(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor))?.PersonId ?? Guid.Empty;  ///TODO
+
+        table.ReloadServerData(); //запускаем перепоиск через таблицу (он запустит ServerReload)
+
+        var tempPatientsResult = LastSearchPersons.ToList();
+
+        //
         if (!string.IsNullOrWhiteSpace(SelectedDepartment))
         {
             // filtering doctors by department
@@ -403,16 +408,16 @@
                 .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
             .Count() > 0);
 
-            tempPatientsResult = tempPatientsResult.Where(x =>
-            {
-                //string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
-                string selectedResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID?.ToLower();
-                string storeSearchResult = Departments.FirstOrDefault(n => x.ResponsibleDepID?.ToLower() == selectedResult)?.BusinessElementID;
+            //tempPatientsResult = tempPatientsResult.Where(x =>
+            //{
+            //    //string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
+            //    string selectedResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID?.ToLower();
+            //    string storeSearchResult = Departments.FirstOrDefault(n => x.ResponsibleDepID?.ToLower() == selectedResult)?.BusinessElementID;
 
 
-                return storeSearchResult != null;
-            }
-            ).ToList();
+            //    return storeSearchResult != null;
+            //}
+            //).ToList();
         }
         else
         {
@@ -426,9 +431,9 @@
             var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
             Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
 
-            // todo: the implementation is incorrect due to bad data in "Doctor" property
-            tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
-            //tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
+            //// todo: the implementation is incorrect due to bad data in "Doctor" property
+            //tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
+            ////tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
         }
         else
         {
@@ -615,6 +620,7 @@
     {
         try
         {
+            var SearchCondition = new SearchParamDto();
             SearchCondition.DepartmentId = DepartmentId;
             SearchCondition.DoctorId = DoctorId;
             SearchCondition.FIOCardNumber = string.Empty;
@@ -650,9 +656,11 @@
                         patients.Add(patient);
                     }
                     //await db.SaveChanges();
+                    LastSearchPersons = patients.ToArray();
                     return new Tuple<int, List<Patient>>(total ?? 0, patients);
                 }
             }
+            LastSearchPersons = new Patient[0];
             return new Tuple<int, List<Patient>>(0, new List<Patient>());
         }
         catch (Exception ex)
@@ -798,7 +806,6 @@
         {
             loaded = true;
         }
-        LastSearchPersons = result.Item2?.ToArray();
         return new TableData<Patient>() { TotalItems = result.Item1, Items = result.Item2 };
     }
 }
