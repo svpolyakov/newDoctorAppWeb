@@ -23,5 +23,6 @@ namespace DoctorAppWeb.Client.Shared
         public const string Surgery = "Операции отсутствуют";
 
         public const string MedDocs = "Документы не найдены";
+        public const string Loading = "Загрузка";
     }
 }

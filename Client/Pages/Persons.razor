@@ -82,9 +82,9 @@
             </MudTabs>
         </div>
 
-        @if (AllPersons != null && AllPersons.Any())
+        @if (CustomGridPerson != null)
         {
-            <MudTable AllowUnsorted="false" Items="@AllPersons" Hover="false" Dense="true">
+            <MudTable AllowUnsorted="false" ServerData="@(new Func<TableState, Task<TableData<Patient>>>(ServerReload))" Hover="false" Dense="true"  @ref="table">
                 <HeaderContent>
                     <MudTh Class="tableHeader"></MudTh>
                     @foreach (var field in CustomGridPerson)
@@ -125,7 +125,7 @@
                             }
                         }
                     <MudTd Class="stickyCell stickyWhiteBg">
-                        <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => {
+                        <MudIconButton Class="goToPatientBtn" Icon="@DoctorIcons.ArrowRight" OnClick="@(() => { if (context == null) return;
                                                                                  string titleInfo = context.FIO + " " + context.Birthday + " (" + context.Age + ") " + context.StayDep + " " + context.ServiceCaseNumber;
                                                                                  GoToPatientInfo(context.PersonID, titleInfo, context.HealthcareServiceId, context);
                                                                                  })" Variant="Variant.Outlined" Color="Color.Secondary">
@@ -134,7 +134,7 @@
                     </MudTd>
                 </RowTemplate>
                 <ChildRowContent>
-                    @if (context.ShowDetails)
+                    @if (context!=null && context.ShowDetails)
                         {
                             string fullName = context.FIO;
                             string iconClass = context.SexEnum == 1 ? "darkBlue" : "darkRed";
@@ -167,6 +167,12 @@
                         </MudTr>
                         }
                 </ChildRowContent>
+                <LoadingContent>
+                    <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Loading</MudText>
+                </LoadingContent>
+                <NoRecordsContent>
+                    <MudText Class="emptyState" Typo="Typo.h5">@GetEmptyStateMessage()</MudText>
+                </NoRecordsContent>
                 <PagerContent>
                     <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:"/>
                 </PagerContent>
@@ -174,7 +180,7 @@
         }
         else
         {
-            <MudText Class="emptyState" Typo="Typo.h5">@GetEmptyStateMessage()</MudText>
+            <MudText Class="emptyState" Typo="Typo.h5">@DoctorAppWeb.Client.Shared.EmptyStateMessages.Loading</MudText>
         }
 
     </div>
@@ -269,13 +275,13 @@
 @code{
 
 
-    //Переменные для получения данных из БД
-    public PageParamDto PageParam { get; set; } //Данные для пагинации (Текущая страница, количество на странице)
-    public SortByParamDto SortBy { get; set; } = new SortByParamDto(); //Если идет сортировка по полю нужно заполнить этот класс
+
     public SearchParamDto SearchCondition { get; set; } = new SearchParamDto();
     public Guid DepartmentId { get; set; } //Вкладка Все пациенты ИД выбранного департмента присвоить сюда
     public Guid DoctorId { get; set; } //Вкладка Все пациенты ИД выбранного доктора присвоить сюда
     public string FioCardNum { get; set; } //Вкладка Все пациенты строку поиска присвоить сюда
+
+    private MudTable<Patient> table;
 
     public int GetTabIndex()
     {
@@ -301,6 +307,8 @@
 
     public string GetEmptyStateMessage()
     {
+        if (table != null && table.Loading || !loaded)
+            return DoctorAppWeb.Client.Shared.EmptyStateMessages.Loading;
         if (StateContainer.PersonsFilterType == 1) {
             return DoctorAppWeb.Client.Shared.EmptyStateMessages.MyPatients;
         }
@@ -428,12 +436,13 @@
         }
 
         tempPatientsResult = tempPatientsResult ?? new List<Patient>();
-        AllPersons = tempPatientsResult.ToArray();
     }
 
     private void ShowBtnPress(Guid id)
     {
-        Patient tmpPerson = AllPersons.First(f => f.PersonID == id);
+        if(LastSearchPersons ==null)
+            return;
+        Patient tmpPerson = LastSearchPersons.First(f => f.PersonID == id);
         tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
     }
 
@@ -449,7 +458,8 @@
     Task<AuthenticationState> AuthenticationState { get; set; }
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
-    public Patient[] AllPersons;
+    public Patient[] LastSearchPersons;
+    private bool loaded;
     public string SelectedDepartment = " ";
     public string SelectedDoctor = " ";
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
@@ -520,19 +530,13 @@
         }
         string userName = (await AuthenticationState).User.Identity.Name;
         PatientService.UserName = userName;
-        PatientService.AllPersons = (await LoadDataToIndexedDb())?.ToList();
-        if (PatientService.AllPersons != null)
-        {
-            PersonsCount = PatientService.AllPersons.Count();
-            UpdatePagePersons();
-        }
         showProgress = false;
     }
 
     protected void UpdatePagePersons(bool resetLastPageNumber = false)
     {
-        AllPersons = PatientService.AllPersons.ToArray();
-        Console.WriteLine(AllPersons.ToString());
+        if (table != null && LastSearchPersons!=null)
+            Console.WriteLine(LastSearchPersons.ToString());
 
         // todo: figure out wtf is that
         /*if (string.IsNullOrEmpty(SearchQuery))
@@ -594,27 +598,23 @@
 
     private async Task ShowData()
     {
-        PatientService.AllPersons = await LoadDataToIndexedDb(true);
-        if (PatientService.AllPersons != null)
+        await table.ReloadServerData();
+
+        if (LastSearchPersons != null)
         {
-            PersonsCount = PatientService.AllPersons.Count();
+            PersonsCount = LastSearchPersons.Count();
             UpdatePagePersons(true);
         }
         StateHasChanged();
     }
 
 
-    private async Task<List<Patient>> LoadDataToIndexedDb(bool force = false)
+
+
+    private async Task<Tuple<int,List<Patient>>> LoadPagingDataToIndexedDb(int page, int pageSize, string sortLabel, bool isDesc, bool force = false)
     {
         try
         {
-            if(PageParam == null)
-            {
-                PageParam = new PageParamDto();
-                PageParam.OffSet = 0;
-                PageParam.Size = 0;
-            }
-
             SearchCondition.DepartmentId = DepartmentId;
             SearchCondition.DoctorId = DoctorId;
             SearchCondition.FIOCardNumber = string.Empty;
@@ -623,16 +623,19 @@
             var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
             request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
-            request.Headers.Add("PageOffSet", PageParam.OffSet.ToString());
-            request.Headers.Add("PageSize", PageParam.Size.ToString());
+
             request.Headers.Add("SearchDepartmentId", SearchCondition.DepartmentId.ToString());
             request.Headers.Add("SearchDoctorId", SearchCondition.DoctorId.ToString());
             request.Headers.Add("SearchFIOCardNumber", SearchCondition.FIOCardNumber);
+            request.Headers.Add("Page", page.ToString());
+            request.Headers.Add("PageSize", pageSize.ToString());
+            request.Headers.Add("SortLabel", sortLabel);
+            request.Headers.Add("IsDescending", isDesc.ToString());
             using var httpResponse = await Http.SendAsync(request);
             IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
+            int? total = null;
             if (result != null && result.Any() || force)
             {
-                PatientService.AllPersons = new List<Patient>();
                 using (var db = await this.DbFactory.Create<IndexedApplicationDb>())
                 {
                     List<Patient> patients = new List<Patient>();
@@ -640,61 +643,77 @@
                     //await db.SaveChanges();
                     foreach (PatientDto person in result)
                     {
-                        Patient patient = new Patient
-                        {
-                            PersonID = person.PersonID,
-                            FIO = person.Fio,//person.Lastname + " " + person.Firstname + " " + person.Patronymic,
-                            Age = person.Age,
-                            Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
-                            Bed = person.Bed,
-                            Room = person.Room,
-                            isChanged = person.isChanged,
-                            VersionID = person.VersionID,
-                            StayDep = person.StayDep,
-                            ResponsibleDep = person.ResponsibleDep,
-                            ResponsibleDepID = person.ResponsibleDepID.ToString(),
-                            InResuscitation = person.InResuscitation,
-                            ObservationMode = person.ObservationMode,
-                            PhysicalRestraint = person.PhysicalRestraint,
-                            ObservationType = person.ObservationType,
-                            ServiceCaseNumber = person.ServiceCaseNumber,
-                            Doctor = person.Doctor,
-                            Diagnos = person.Diagnos,
-                            SDDepTreatmentCase = person.SDDepTreatmentCase,
-                            SDInpatientServiceCase = person.SDInpatientServiceCase.Value.ToString("dd.MM.yyyy HH:mm"),
-                            AgeDescription = person.AgeDescription,
-                            SexEnum = person.SexEnum,
-                            DiagnosAnamnesisID = person.DiagnosAnamnesisID,
-                            LifeAnamnesisID = person.LifeAnamnesisID,
-                            Benefits = person.Benefits,
-                            HealthcareServiceId = person.HealthcareServiceId,
-                            HelpForm = person.HelpForm,
-                            IsWorking = person.IsWorking,
-                            IsWorkingStr = person.IsWorking ? "Работает" : "Не работает",
-                            PathologyАnamnesisID = person.PathologyАnamnesisID,
-                            SDReceptionCase = person.SDReceptionCase,
-                            PersonnelID = person.PersonnelID,
-                            Allergic = person.Allergic,
-                            Diet = person.PatientTable,
-                            AdmissionInfoDtc = person.AdmissionInfo?["Dtc"],
-                            AdmissionInfoInpatientSrv = person.AdmissionInfo?["InpatientSrv"],
-                            AdmissionInfoReceptCase = person.AdmissionInfo?["ReceptCase"],
-                            AdmissionInfo = new AdmissionInfo { Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"], ReceptCase = person.AdmissionInfo?["ReceptCase"] },
-                            InResuscitationString = person.InResuscitation ? "да" : "нет"
-                        };
+                        if (!total.HasValue)
+                            total = person.RecordTotal;
+                        var patient = InitPatient(person);
                         //db.Patients.Add(patient);
                         patients.Add(patient);
                     }
                     //await db.SaveChanges();
-                    return patients;
+                    return new Tuple<int, List<Patient>>(total ?? 0, patients);
                 }
             }
+            return new Tuple<int, List<Patient>>(0, new List<Patient>());
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
 
         }
+        finally
+        {
+        }
         return null;
+    }
+
+    private static Patient InitPatient(PatientDto person)
+    {
+        Patient patient = new Patient
+        {
+            PersonID = person.PersonID,
+            FIO = person.Fio, //person.Lastname + " " + person.Firstname + " " + person.Patronymic,
+            Age = person.Age,
+            Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
+            Bed = person.Bed,
+            Room = person.Room,
+            isChanged = person.isChanged,
+            VersionID = person.VersionID,
+            StayDep = person.StayDep,
+            ResponsibleDep = person.ResponsibleDep,
+            ResponsibleDepID = person.ResponsibleDepID.ToString(),
+            InResuscitation = person.InResuscitation,
+            ObservationMode = person.ObservationMode,
+            PhysicalRestraint = person.PhysicalRestraint,
+            ObservationType = person.ObservationType,
+            ServiceCaseNumber = person.ServiceCaseNumber,
+            Doctor = person.Doctor,
+            Diagnos = person.Diagnos,
+            SDDepTreatmentCase = person.SDDepTreatmentCase,
+            SDInpatientServiceCase = person.SDInpatientServiceCase.Value.ToString("dd.MM.yyyy HH:mm"),
+            AgeDescription = person.AgeDescription,
+            SexEnum = person.SexEnum,
+            DiagnosAnamnesisID = person.DiagnosAnamnesisID,
+            LifeAnamnesisID = person.LifeAnamnesisID,
+            Benefits = person.Benefits,
+            HealthcareServiceId = person.HealthcareServiceId,
+            HelpForm = person.HelpForm,
+            IsWorking = person.IsWorking,
+            IsWorkingStr = person.IsWorking ? "Работает" : "Не работает",
+            PathologyАnamnesisID = person.PathologyАnamnesisID,
+            SDReceptionCase = person.SDReceptionCase,
+            PersonnelID = person.PersonnelID,
+            Allergic = person.Allergic,
+            Diet = person.PatientTable,
+            AdmissionInfoDtc = person.AdmissionInfo?["Dtc"],
+            AdmissionInfoInpatientSrv = person.AdmissionInfo?["InpatientSrv"],
+            AdmissionInfoReceptCase = person.AdmissionInfo?["ReceptCase"],
+            AdmissionInfo = new AdmissionInfo
+            {
+                Dtc = person.AdmissionInfo?["Dtc"], InpatientSrv = person.AdmissionInfo?["InpatientSrv"],
+                ReceptCase = person.AdmissionInfo?["ReceptCase"]
+            },
+            InResuscitationString = person.InResuscitation ? "да" : "нет"
+        };
+        return patient;
     }
 
     private async Task<List<CustomGridPerson>> ConvertJsonToObjPersonCustomization(string json)
@@ -766,5 +785,20 @@
             }
         }
         return customGroupPersons;
+    }
+
+    private async Task<TableData<Patient>> ServerReload(TableState arg)
+    {
+        Tuple<int, List<Patient>> result;
+        try
+        {
+            result = await LoadPagingDataToIndexedDb(arg.Page, arg.PageSize, arg.SortLabel, arg.SortDirection == SortDirection.Descending);
+        }
+        finally
+        {
+            loaded = true;
+        }
+        LastSearchPersons = result.Item2?.ToArray();
+        return new TableData<Patient>() { TotalItems = result.Item1, Items = result.Item2 };
     }
 }
