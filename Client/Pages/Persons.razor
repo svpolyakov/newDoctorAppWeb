@@ -168,7 +168,7 @@
                         }
                 </ChildRowContent>
                 <PagerContent>
-                    <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:" />
+                    <MudTablePager InfoFormat="{first_item}-{last_item} из {all_items}" RowsPerPageString="Строк:"/>
                 </PagerContent>
             </MudTable>
         }
@@ -267,6 +267,15 @@
 </style>
 
 @code{
+
+
+    //Переменные для получения данных из БД
+    public PageParamDto PageParam { get; set; } //Данные для пагинации (Текущая страница, количество на странице)
+    public SortByParamDto SortBy { get; set; } = new SortByParamDto(); //Если идет сортировка по полю нужно заполнить этот класс
+    public SearchParamDto SearchCondition { get; set; } = new SearchParamDto();
+    public Guid DepartmentId { get; set; } //Вкладка Все пациенты ИД выбранного департмента присвоить сюда
+    public Guid DoctorId { get; set; } //Вкладка Все пациенты ИД выбранного доктора присвоить сюда
+    public string FioCardNum { get; set; } //Вкладка Все пациенты строку поиска присвоить сюда
 
     public int GetTabIndex()
     {
@@ -599,10 +608,26 @@
     {
         try
         {
+            if(PageParam == null)
+            {
+                PageParam = new PageParamDto();
+                PageParam.OffSet = 0;
+                PageParam.Size = 0;
+            }
+
+            SearchCondition.DepartmentId = DepartmentId;
+            SearchCondition.DoctorId = DoctorId;
+            SearchCondition.FIOCardNumber = string.Empty;
+
             string userName = (await AuthenticationState).User.Identity.Name;
             var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
             request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
+            request.Headers.Add("PageOffSet", PageParam.OffSet.ToString());
+            request.Headers.Add("PageSize", PageParam.Size.ToString());
+            request.Headers.Add("SearchDepartmentId", SearchCondition.DepartmentId.ToString());
+            request.Headers.Add("SearchDoctorId", SearchCondition.DoctorId.ToString());
+            request.Headers.Add("SearchFIOCardNumber", SearchCondition.FIOCardNumber);
             using var httpResponse = await Http.SendAsync(request);
             IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
             if (result != null && result.Any() || force)
