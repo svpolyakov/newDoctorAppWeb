@@ -39,17 +39,19 @@
                             <MudSelect Clearable="true"
                                        OnClearButtonClick="FindPatients"
                                        @bind-Value="@SelectedDepartment"
-                                       T="string"
+                                       T="Department"
                                        Label="Отделение"
                                        Margin="Margin.Dense"
-                                       Variant="Variant.Outlined">
+                                       Variant="Variant.Outlined"
+                                       ToStringFunc="@DepartmentFullName"
+                                       OnBlur="@SelectDocFilter">
                                 @if (Departments != null)
                                 {
                                 @foreach (Department dep in Departments)
                                 {
                                     if (dep != null)
                                     {
-                                    <MudSelectItem T="string" Value="@dep.BusinessElementFullName">@dep.BusinessElementFullName</MudSelectItem>
+                                    <MudSelectItem T="Department" Value="@dep">@dep.BusinessElementFullName</MudSelectItem>
                                         }
                                     }
                                 }
@@ -59,10 +61,12 @@
                             <MudSelect Clearable="true"
                                        OnClearButtonClick="FindPatients"
                                        @bind-Value="@SelectedDoctor"
-                                       T="string"
+                                       T="Doctor"
                                        Label="Лечащий врач"
                                        Margin="Margin.Dense"
-                                       Variant="Variant.Outlined">                                
+                                       Variant="Variant.Outlined"
+                                       ToStringFunc="@DoctorFIO"
+                                       OnBlur="@SelectDepFilter">                                
                                 @if (Doctors != null)
                                 {
                                 @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
@@ -70,7 +74,7 @@
                                     if (doctor != null)
                                     {
                                         string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
-                                    <MudSelectItem T="string" Value="@doc">@doc</MudSelectItem>
+                                    <MudSelectItem T="Doctor" Value="@doctor">@doc</MudSelectItem>
                                         }
                                     }
                                 }
@@ -92,7 +96,7 @@
                         if (field.WhereToDisplay)
                         {
                             <MudTh Class="tableHeader">
-                                <MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.GetPropertyValue(field.NameColumnEn))">
+                                <MudTableSortLabel SortLabel="@field.NameColumnEn" T="Patient">
                                     <span class="tableHeaderText">@field.NameColumnRu</span>
                                 </MudTableSortLabel>
                             </MudTh>
@@ -353,6 +357,10 @@
         navigationManager.NavigateTo(Pages.Diagnosis); //WhatNews
     }
 
+    private Func<Doctor, string> DoctorFIO = x => (x?.SurName + " " + x?.FirstName + " " + x?.Patronymic);
+
+    private Func<Department, string> DepartmentFullName = x => (x?.BusinessElementFullName);
+
     private async Task<InfoWindow> GetInfo(Patient person)
     {
         InfoWindow infoWindow = new InfoWindow();
@@ -383,62 +391,56 @@
         return infoWindow;
     }
 
-    void FindPatients()
+    void SelectDocFilter()
     {
-        FioCardNum = SearchQuery;
-
-        DepartmentId = Guid.Empty;
-        // if (!string.IsNullOrWhiteSpace(SelectedDepartment)) ///TODO
-        // DepartmentId = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID; 
-
-        DoctorId = Guid.Empty;
-        //if (!string.IsNullOrWhiteSpace(SelectedDoctor)) ///TODO
-        //DoctorId = Doctors.FirstOrDefault(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor))?.PersonId ?? Guid.Empty;  ///TODO
-
-        table.ReloadServerData(); //запускаем перепоиск через таблицу (он запустит ServerReload)
-
-        var tempPatientsResult = LastSearchPersons.ToList();
-
-        //
-        if (!string.IsNullOrWhiteSpace(SelectedDepartment))
+        if (SelectedDepartment != null)
         {
             // filtering doctors by department
-            Doctors = Doctors
-            .Where(doctor => doctor.PersonnelPositionList.Count() > 0 && doctor.PersonnelPositionList
-                .Where(position => position.Department != null && position.Department.ToLower().Equals(SelectedDepartment.ToLower()))
-            .Count() > 0);
-
-            //tempPatientsResult = tempPatientsResult.Where(x =>
-            //{
-            //    //string storeSearchResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == x.ResponsibleDep?.ToLower())?.BusinessElementID?.ToLower();
-            //    string selectedResult = Departments.FirstOrDefault(n => n.BusinessElementFullName?.ToLower() == SelectedDepartment.ToLower())?.BusinessElementID?.ToLower();
-            //    string storeSearchResult = Departments.FirstOrDefault(n => x.ResponsibleDepID?.ToLower() == selectedResult)?.BusinessElementID;
-
-
-            //    return storeSearchResult != null;
-            //}
-            //).ToList();
+            Doctors = FullDoctorsList.Where(doctor => doctor.PersonnelPositionList?.Where(position => position.Department != null
+                                                                    && position.Department.ToLower().Equals(FullDepartmentList.Where(x => x.BusinessElementID == SelectedDepartment.BusinessElementID)?.FirstOrDefault().BusinessElementFullName.ToLower())
+                                                            ).Count() > 0);
         }
         else
         {
             Doctors = FullDoctorsList;
         }
+    }
 
-        if (!string.IsNullOrWhiteSpace(SelectedDoctor))
+    void SelectDepFilter()
+    {
+        if (SelectedDoctor != null)
         {
             // filtering departments by doctor
-            var currentDoctor = Doctors.Where(doctor => (doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic).Equals(SelectedDoctor));
-            var doctorDepartments = currentDoctor.First().PersonnelPositionList.Select(pos => pos.Department);
-            Departments = Departments.Where(dep => doctorDepartments.Contains(dep.BusinessElementFullName));
-
-            //// todo: the implementation is incorrect due to bad data in "Doctor" property
-            //tempPatientsResult = tempPatientsResult.Where(x => (x.Doctor != null ? x.Doctor.Split(' ')[0].ToLower() : "").Equals(SelectedDoctor.ToLower().Split(' ')[0])).ToList();
-            ////tempPatientsResult = tempPatientsResult.Where(x => x.Doctor?.ToLower() == SelectedDoctor?.ToLower()).ToList();
+            var currentDoctor = FullDoctorsList.Where(doctor => doctor.PersonId.Equals(SelectedDoctor.PersonId))?.FirstOrDefault();
+            var doctorDepartments = currentDoctor?.PersonnelPositionList.Select(pos => pos.Department);
+            Departments = FullDepartmentList.Where(dep => doctorDepartments != null && doctorDepartments.Contains(dep.BusinessElementFullName));
         }
         else
         {
             Departments = FullDepartmentList;
         }
+    }
+
+    void FindPatients()
+    {
+        FioCardNum = SearchQuery;
+
+        if (SelectedDepartment != null)
+        {
+            if (Guid.TryParse(SelectedDepartment.BusinessElementID, out var departmentId)) { DepartmentId = departmentId; }
+        };
+
+        if (SelectedDoctor != null)
+        {
+            DoctorId = SelectedDoctor.PersonId;
+        }
+
+        if (table.CurrentPage == 0)
+            table.ReloadServerData(); //запускаем перепоиск через таблицу (он запустит ServerReload)
+        else
+            table.NavigateTo(0);
+
+        var tempPatientsResult = LastSearchPersons.ToList();
 
         tempPatientsResult = tempPatientsResult ?? new List<Patient>();
     }
@@ -464,9 +466,11 @@
     public string FullDocName { get; set; }
     private string GetDataButtonLabel;
     public Patient[] LastSearchPersons;
+    public SearchParamDto LastSearchCondition = new SearchParamDto();
+    public SortByParamDto LastSortByOrder = new SortByParamDto();
     private bool loaded;
-    public string SelectedDepartment = " ";
-    public string SelectedDoctor = " ";
+    public Department SelectedDepartment { get; set; }
+    public Doctor SelectedDoctor { get; set; }
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> Doctors { get; set; }
     public IEnumerable<Department> Departments { get; set; }
     public IEnumerable<DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor> FullDoctorsList { get; set; }
@@ -613,30 +617,21 @@
         StateHasChanged();
     }
 
-
-
-
-    private async Task<Tuple<int,List<Patient>>> LoadPagingDataToIndexedDb(int page, int pageSize, string sortLabel, bool isDesc, bool force = false)
+    private async Task<Tuple<int,List<Patient>>> LoadPagingDataToIndexedDb(int page, int pageSize, SortByParamDto sortByOrder, SearchParamDto searchCondition, bool force = false)
     {
         try
         {
-            var SearchCondition = new SearchParamDto();
-            SearchCondition.DepartmentId = DepartmentId;
-            SearchCondition.DoctorId = DoctorId;
-            SearchCondition.FIOCardNumber = string.Empty;
-
             string userName = (await AuthenticationState).User.Identity.Name;
             var request = new HttpRequestMessage(HttpMethod.Get, "Persons");
             request.Headers.Add("FilterType", PatientService.FilterType?.ToString());
             request.Headers.Add("UserLogin", userName);
-
-            request.Headers.Add("SearchDepartmentId", SearchCondition.DepartmentId.ToString());
-            request.Headers.Add("SearchDoctorId", SearchCondition.DoctorId.ToString());
-            request.Headers.Add("SearchFIOCardNumber", SearchCondition.FIOCardNumber);
+            request.Headers.Add("SearchDepartmentId", searchCondition.DepartmentId.ToString());
+            request.Headers.Add("SearchDoctorId", searchCondition.DoctorId.ToString());
+            request.Headers.Add("SearchFIOCardNumber", Uri.EscapeDataString(searchCondition.FIOCardNumber ?? ""));
             request.Headers.Add("Page", page.ToString());
             request.Headers.Add("PageSize", pageSize.ToString());
-            request.Headers.Add("SortLabel", sortLabel);
-            request.Headers.Add("IsDescending", isDesc.ToString());
+            request.Headers.Add("SortLabel", sortByOrder.AttributeName);
+            request.Headers.Add("IsDescending", sortByOrder.IsDescending.ToString());
             using var httpResponse = await Http.SendAsync(request);
             IEnumerable<PatientDto> result = await httpResponse.Content.ReadFromJsonAsync<IEnumerable<PatientDto>>();
             int? total = null;
@@ -657,6 +652,8 @@
                     }
                     //await db.SaveChanges();
                     LastSearchPersons = patients.ToArray();
+                    LastSearchCondition = searchCondition;
+                    LastSortByOrder = sortByOrder;
                     return new Tuple<int, List<Patient>>(total ?? 0, patients);
                 }
             }
@@ -680,7 +677,7 @@
             PersonID = person.PersonID,
             FIO = person.Fio, //person.Lastname + " " + person.Firstname + " " + person.Patronymic,
             Age = person.Age,
-            Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
+            Birthday = person.Birthday?.ToString("dd.MM.yyyy"),
             Bed = person.Bed,
             Room = person.Room,
             isChanged = person.isChanged,
@@ -696,7 +693,7 @@
             Doctor = person.Doctor,
             Diagnos = person.Diagnos,
             SDDepTreatmentCase = person.SDDepTreatmentCase,
-            SDInpatientServiceCase = person.SDInpatientServiceCase.Value.ToString("dd.MM.yyyy HH:mm"),
+            SDInpatientServiceCase = person.SDInpatientServiceCase?.ToString("dd.MM.yyyy HH:mm"),
             AgeDescription = person.AgeDescription,
             SexEnum = person.SexEnum,
             DiagnosAnamnesisID = person.DiagnosAnamnesisID,
@@ -800,7 +797,25 @@
         Tuple<int, List<Patient>> result;
         try
         {
-            result = await LoadPagingDataToIndexedDb(arg.Page, arg.PageSize, arg.SortLabel, arg.SortDirection == SortDirection.Descending);
+            var sortByOrder = new SortByParamDto();
+            sortByOrder.AttributeName = arg.SortLabel;
+            sortByOrder.IsDescending = arg.SortDirection == SortDirection.Descending;
+            if ((LastSortByOrder.AttributeName ?? "") != (sortByOrder.AttributeName ?? "") || LastSortByOrder.IsDescending != sortByOrder.IsDescending)
+            {
+                LastSortByOrder = sortByOrder;
+                table.NavigateTo(0);
+                return new TableData<Patient>() { TotalItems = table.TotalItems, Items = table.Items }; ;
+            }
+
+            var searchCondition = new SearchParamDto();
+            if (PatientService.FilterType == 7)
+            {
+                searchCondition.DepartmentId = DepartmentId;
+                searchCondition.DoctorId = DoctorId;
+                searchCondition.FIOCardNumber = FioCardNum;
+            }
+
+            result = await LoadPagingDataToIndexedDb(arg.Page, arg.PageSize, sortByOrder, searchCondition);
         }
         finally
         {
