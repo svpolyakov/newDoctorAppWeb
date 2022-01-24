@@ -96,7 +96,7 @@
                         if (field.WhereToDisplay)
                         {
                             <MudTh Class="tableHeader">
-                                <MudTableSortLabel SortLabel="@field.NameColumnEn" T="Patient">
+                                <MudTableSortLabel SortLabel="@field.NameColumnEn" T="Patient" Enabled="@EnabledSort(@field.NameColumnEn)">
                                     <span class="tableHeaderText">@field.NameColumnRu</span>
                                 </MudTableSortLabel>
                             </MudTh>
@@ -391,6 +391,11 @@
         return infoWindow;
     }
 
+    private bool EnabledSort(string columnNameRN)
+    {
+        return Array.Exists(new string[] { "FIO", "Birthday", "ResponsibleDep", "Doctor" }, (x => x == columnNameRN));
+    }
+
     void SelectDocFilter()
     {
         if (SelectedDepartment != null)
@@ -428,11 +433,19 @@
         if (SelectedDepartment != null)
         {
             if (Guid.TryParse(SelectedDepartment.BusinessElementID, out var departmentId)) { DepartmentId = departmentId; }
+        }
+        else
+        {
+            DepartmentId = Guid.Empty;
         };
 
         if (SelectedDoctor != null)
         {
             DoctorId = SelectedDoctor.PersonId;
+        }
+        else
+        {
+            DoctorId = Guid.Empty;
         }
 
         if (table.CurrentPage == 0)
