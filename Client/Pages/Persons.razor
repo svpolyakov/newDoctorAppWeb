@@ -608,7 +608,7 @@
     {
         try
         {
-            if(PageParam == null)
+            if(PageParam == null || true)
             {
                 PageParam = new PageParamDto();
                 PageParam.OffSet = 0;
@@ -645,7 +645,7 @@
                             PersonID = person.PersonID,
                             FIO = person.Fio,//person.Lastname + " " + person.Firstname + " " + person.Patronymic,
                             Age = person.Age,
-                            Birthday = person.Birthday.Value.ToString("dd.MM.yyyy"),
+                            Birthday = person.Birthday?.ToString("dd.MM.yyyy"),
                             Bed = person.Bed,
                             Room = person.Room,
                             isChanged = person.isChanged,
@@ -661,7 +661,7 @@
                             Doctor = person.Doctor,
                             Diagnos = person.Diagnos,
                             SDDepTreatmentCase = person.SDDepTreatmentCase,
-                            SDInpatientServiceCase = person.SDInpatientServiceCase.Value.ToString("dd.MM.yyyy HH:mm"),
+                            SDInpatientServiceCase = person.SDInpatientServiceCase?.ToString("dd.MM.yyyy HH:mm"),
                             AgeDescription = person.AgeDescription,
                             SexEnum = person.SexEnum,
                             DiagnosAnamnesisID = person.DiagnosAnamnesisID,
