@@ -36,49 +36,28 @@
                             <MudIconButton @onclick="FindPatients" Icon="@Icons.Material.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Class="searchButton" />
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect Clearable="true"
-                                       OnClearButtonClick="FindPatients"
+                            <MudAutocomplete Clearable="true"
+                                       OnClearButtonClick="ClearSelectedDepartment"
                                        @bind-Value="@SelectedDepartment"
                                        T="Department"
                                        Label="Отделение"
                                        Margin="Margin.Dense"
                                        Variant="Variant.Outlined"
                                        ToStringFunc="@DepartmentFullName"
-                                       OnBlur="@SelectDocFilter">
-                                @if (Departments != null)
-                                {
-                                @foreach (Department dep in Departments)
-                                {
-                                    if (dep != null)
-                                    {
-                                    <MudSelectItem T="Department" Value="@dep">@dep.BusinessElementFullName</MudSelectItem>
-                                        }
-                                    }
-                                }
-                            </MudSelect>
+                                       SearchFunc="@SelectDepFilter">
+                            </MudAutocomplete>
                         </MudItem>
                         <MudItem xs="6">
-                            <MudSelect Clearable="true"
-                                       OnClearButtonClick="FindPatients"
+                            <MudAutocomplete Clearable="true"
+                                       OnClearButtonClick="ClearSelectedDoctor"
                                        @bind-Value="@SelectedDoctor"
                                        T="Doctor"
                                        Label="Лечащий врач"
                                        Margin="Margin.Dense"
                                        Variant="Variant.Outlined"
                                        ToStringFunc="@DoctorFIO"
-                                       OnBlur="@SelectDepFilter">                                
-                                @if (Doctors != null)
-                                {
-                                @foreach (DoctorAppWeb.Shared.DataModel.MedOrganization.Doctor doctor in Doctors)
-                                {
-                                    if (doctor != null)
-                                    {
-                                        string doc = doctor.SurName + " " + doctor.FirstName + " " + doctor.Patronymic;
-                                    <MudSelectItem T="Doctor" Value="@doctor">@doc</MudSelectItem>
-                                        }
-                                    }
-                                }
-                            </MudSelect>
+                                       SearchFunc="@SelectDocFilter">
+                            </MudAutocomplete>
                         </MudItem>
                     </MudGrid>
 
@@ -396,34 +375,48 @@
         return Array.Exists(new string[] { "FIO", "Birthday", "ResponsibleDep", "Doctor" }, (x => x == columnNameRN));
     }
 
-    void SelectDocFilter()
+    private async Task<IEnumerable<Doctor>> SelectDocFilter(string searchFIO)
     {
-        if (SelectedDepartment != null)
-        {
-            // filtering doctors by department
-            Doctors = FullDoctorsList.Where(doctor => doctor.PersonnelPositionList?.Where(position => position.Department != null
-                                                                    && position.Department.ToLower().Equals(FullDepartmentList.Where(x => x.BusinessElementID == SelectedDepartment.BusinessElementID)?.FirstOrDefault().BusinessElementFullName.ToLower())
-                                                            ).Count() > 0);
-        }
-        else
-        {
-            Doctors = FullDoctorsList;
-        }
+        // filtering doctors by department
+        return FullDoctorsList
+                    .Where(doctor => (string.IsNullOrEmpty(searchFIO) || string.Concat(doctor.SurName, " ", doctor.FirstName, " ", doctor.Patronymic).ToLower().Contains(searchFIO.ToLower()))
+                        && (SelectedDepartment == null || (doctor.PersonnelPositionList != null
+                            && doctor.PersonnelPositionList.Exists(position => !string.IsNullOrEmpty(position.Department)
+                                && !string.IsNullOrEmpty(SelectedDepartment.BusinessElementFullName)
+                                && position.Department.ToLower().Substring(0, position.Department.Length - 1)
+                                        .Equals(SelectedDepartment.BusinessElementFullName
+                                            .ToLower().Substring(0, SelectedDepartment.BusinessElementFullName.Length < position.Department.Length - 1 ?
+                                                                                                SelectedDepartment.BusinessElementFullName.Length :
+                                                                                                position.Department.Length - 1))))));
     }
 
-    void SelectDepFilter()
+    private async Task<IEnumerable<Department>> SelectDepFilter(string searchDepName)
     {
-        if (SelectedDoctor != null)
-        {
-            // filtering departments by doctor
-            var currentDoctor = FullDoctorsList.Where(doctor => doctor.PersonId.Equals(SelectedDoctor.PersonId))?.FirstOrDefault();
-            var doctorDepartments = currentDoctor?.PersonnelPositionList.Select(pos => pos.Department);
-            Departments = FullDepartmentList.Where(dep => doctorDepartments != null && doctorDepartments.Contains(dep.BusinessElementFullName));
-        }
-        else
-        {
-            Departments = FullDepartmentList;
-        }
+        // filtering departments by doctor
+        // var currentDoctor = FullDoctorsList.Where(doctor => doctor.PersonId.Equals(SelectedDoctor.PersonId))?.FirstOrDefault();
+        // var doctorDepartments = currentDoctor?.PersonnelPositionList.Select(pos => pos.Department);
+        return FullDepartmentList
+                        .Where(dep => (string.IsNullOrEmpty(searchDepName) || dep.BusinessElementFullName.ToLower().Contains(searchDepName.ToLower()))
+                            && (SelectedDoctor == null || (SelectedDoctor.PersonnelPositionList != null
+                                && !string.IsNullOrEmpty(dep.BusinessElementFullName)
+                                && SelectedDoctor.PersonnelPositionList.Exists(x => !string.IsNullOrEmpty(x.Department)
+                                    && x.Department.ToLower().Substring(0, x.Department.Length - 1)
+                                            .Equals(dep.BusinessElementFullName.ToLower()
+                                                .Substring(0, dep.BusinessElementFullName.Length < x.Department.Length - 1 ?
+                                                                        dep.BusinessElementFullName.Length :
+                                                                        x.Department.Length - 1))))));
+    }
+
+    void ClearSelectedDoctor()
+    {
+        SelectedDoctor = null;
+        FindPatients();
+    }
+
+    void ClearSelectedDepartment()
+    {
+        SelectedDepartment = null;
+        FindPatients();
     }
 
     void FindPatients()
