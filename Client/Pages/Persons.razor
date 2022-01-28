@@ -336,7 +336,7 @@
         navigationManager.NavigateTo(Pages.Diagnosis); //WhatNews
     }
 
-    private Func<Doctor, string> DoctorFIO = x => (x?.SurName + " " + x?.FirstName + " " + x?.Patronymic);
+    private Func<Doctor, string> DoctorFIO = x => (x?.SurName + " " + x?.FirstName + " " + x?.Patronymic).Trim();
 
     private Func<Department, string> DepartmentFullName = x => (x?.BusinessElementFullName);
 
@@ -383,11 +383,8 @@
                         && (SelectedDepartment == null || (doctor.PersonnelPositionList != null
                             && doctor.PersonnelPositionList.Exists(position => !string.IsNullOrEmpty(position.Department)
                                 && !string.IsNullOrEmpty(SelectedDepartment.BusinessElementFullName)
-                                && position.Department.ToLower().Substring(0, position.Department.Length - 1)
-                                        .Equals(SelectedDepartment.BusinessElementFullName
-                                            .ToLower().Substring(0, SelectedDepartment.BusinessElementFullName.Length < position.Department.Length - 1 ?
-                                                                                                SelectedDepartment.BusinessElementFullName.Length :
-                                                                                                position.Department.Length - 1))))));
+                                && position.Department.ToLower()
+                                        .Equals(SelectedDepartment.BusinessElementFullName.ToLower())))));
     }
 
     private async Task<IEnumerable<Department>> SelectDepFilter(string searchDepName)
@@ -400,11 +397,8 @@
                             && (SelectedDoctor == null || (SelectedDoctor.PersonnelPositionList != null
                                 && !string.IsNullOrEmpty(dep.BusinessElementFullName)
                                 && SelectedDoctor.PersonnelPositionList.Exists(x => !string.IsNullOrEmpty(x.Department)
-                                    && x.Department.ToLower().Substring(0, x.Department.Length - 1)
-                                            .Equals(dep.BusinessElementFullName.ToLower()
-                                                .Substring(0, dep.BusinessElementFullName.Length < x.Department.Length - 1 ?
-                                                                        dep.BusinessElementFullName.Length :
-                                                                        x.Department.Length - 1))))));
+                                    && x.Department.ToLower()
+                                            .Equals(dep.BusinessElementFullName.ToLower())))));
     }
 
     void ClearSelectedDoctor()
